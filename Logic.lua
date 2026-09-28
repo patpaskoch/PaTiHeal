@@ -90,6 +90,23 @@ function Logic.RestoreDefaults(db)
     return db
 end
 
+-- Secret-value rule (AGENTS.md §8): check readability FIRST, compare or test only afterwards.
+-- isSecret is injected (issecretvalue in WoW), so these stay pure and testable.
+
+-- value for a widget: a secret value unchanged (widgets may show it), nil replaced by fallback.
+-- Replaces `value or fallback`, which would test a secret value.
+function Logic.ValueOr(value, fallback, isSecret)
+    if isSecret(value) then return value end
+    if value == nil then return fallback end
+    return value
+end
+
+-- A yes/no API flag: true for true or 1 (older client APIs return 1/nil), false for anything else, nil when secret.
+function Logic.Flag(value, isSecret)
+    if isSecret(value) then return nil end
+    return value == true or value == 1
+end
+
 -- "48%" for plain numbers. nil when a value is secret or unusable: the caller then hands the raw health
 -- value to the widget (allowed for secret values) instead of calculating with it.
 function Logic.HealthPercent(health, maximum, isSecret)

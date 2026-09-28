@@ -23,6 +23,8 @@ History before this file: `git log`.
 - The saved click binding of 0.6.0 is converted automatically (SavedVariables schema 2).
 - A binding whose spell is currently unknown is kept and applied again when the spell is available (0.6.0 deleted it).
 ### Fixed
+- Secret values: name, health, mana, power type and the offline/dead flags are now checked for secrecy before any
+  nil test or comparison (`Logic.ValueOr`, `Logic.Flag`); the dispel scan checks the debuff name before its nil test.
 - Changing the click binding left the previous binding active (stale secure attributes).
 - Party rows were shown/hidden in combat (blocked action); rows now follow their unit via RegisterUnitWatch.
 - The window could jump after /reload because the saved anchor was not restored.

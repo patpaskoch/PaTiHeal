@@ -28,7 +28,7 @@ local function read(unit)
     local list = {}
     for index = 1, 40 do
         local name, icon, dispelType = debuffAt(unit, index)
-        if name == nil or #list >= Dispels.MAX then break end
+        if (not isSecret(name) and name == nil) or #list >= Dispels.MAX then break end -- secrecy before the nil test
         if not (isSecret(name) or isSecret(icon) or isSecret(dispelType)) then
             list[#list + 1] = { name = name, icon = icon, dispelType = dispelType }
         end

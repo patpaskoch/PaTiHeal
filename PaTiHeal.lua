@@ -55,11 +55,18 @@ local function unitData(unit)
     end
     if not UnitExists(unit) then return nil end
     local _, classFile = UnitClass(unit)
-    local data = { name = UnitName(unit) or unit, classFile = classFile, health = 0, healthMax = 1, mana = 0, manaMax = 1 }
-    if not UnitIsConnected(unit) then data.state = "OFFLINE"; return data end
-    if UnitIsDeadOrGhost(unit) then data.state = "DEAD"; return data end
-    data.health, data.healthMax = UnitHealth(unit) or 0, UnitHealthMax(unit) or 1
-    if UnitPowerType(unit) == 0 then data.mana, data.manaMax = UnitPower(unit, 0) or 0, UnitPowerMax(unit, 0) or 0 end
+    -- Secret check before every nil test / comparison: Logic.ValueOr and Logic.Flag (unreadable flag = no state).
+    local data = { name = Logic.ValueOr(UnitName(unit), unit, isSecret), classFile = classFile,
+        health = 0, healthMax = 1, mana = 0, manaMax = 1 }
+    if Logic.Flag(UnitIsConnected(unit), isSecret) == false then data.state = "OFFLINE"; return data end
+    if Logic.Flag(UnitIsDeadOrGhost(unit), isSecret) then data.state = "DEAD"; return data end
+    data.health = Logic.ValueOr(UnitHealth(unit), 0, isSecret)
+    data.healthMax = Logic.ValueOr(UnitHealthMax(unit), 1, isSecret)
+    local powerType = UnitPowerType(unit)
+    if not isSecret(powerType) and powerType == 0 then
+        data.mana = Logic.ValueOr(UnitPower(unit, 0), 0, isSecret)
+        data.manaMax = Logic.ValueOr(UnitPowerMax(unit, 0), 0, isSecret)
+    end
     local role = UnitGroupRolesAssigned(unit)
     data.isTank = not isSecret(role) and role == "TANK"
     return data
