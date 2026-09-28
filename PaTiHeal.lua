@@ -107,7 +107,7 @@ testLabel:SetText("TESTMODUS – keine Zauber")
 testLabel:Hide()
 
 local function makeRow(index, unit)
-    local row=CreateFrame("Button","PaTiHealUnit"..index,frame,"SecureUnitButtonTemplate,SecureActionButtonTemplate")
+    local row=CreateFrame("Button","PaTiHealUnit"..index,frame,"SecureUnitButtonTemplate")
     row:SetSize(242,39)
     row:RegisterForClicks("AnyUp")
     row:SetAttribute("unit",unit)
@@ -139,6 +139,11 @@ local function makeRow(index, unit)
     return row
 end
 for index,unit in ipairs({"player","party1","party2","party3","party4"}) do rows[#rows+1]=makeRow(index,unit) end
+
+local function debugClickState()
+    local row=rows[1]
+    print("|cff68caffPaTiHeal Debug:|r Test="..tostring(testMode).." | Unit="..tostring(row:GetAttribute("unit")).." | Klick="..tostring(DB.clickModifier or "")..tostring(DB.clickButton or "LeftButton").." | Zauber="..tostring(DB.clickSpellID and spellName(DB.clickSpellID) or "keiner").." | type1="..tostring(row:GetAttribute("type1")).." | spell="..tostring(row:GetAttribute("spell")).." | ctrl-type1="..tostring(row:GetAttribute("ctrl-type1")).." | ctrl-spell="..tostring(row:GetAttribute("ctrl-spell")))
+end
 
 local function updateLayout()
     if InCombatLockdown() then return end
@@ -304,6 +309,7 @@ SlashCmdList.PATIHEAL=function(message)
     elseif command=="lock" then DB.locked=true
     elseif command=="unlock" then DB.locked=false
     elseif command=="spells" then local list=knownSpells(); local names={}; for _,id in ipairs(list) do names[#names+1]=(spellName(id) or id).." ("..id..")" end; print("|cff68caffPaTiHeal:|r "..(#names>0 and table.concat(names,", ") or "Keine bekannten Heilzauber."))
-    else print("|cff68caffPaTiHeal:|r /ph test, show, hide, lock, unlock, spells") end
+    elseif command=="debug" then debugClickState()
+    else print("|cff68caffPaTiHeal:|r /ph test, show, hide, lock, unlock, spells, debug") end
 end
 print("|cff68caffPaTiHeal|r geladen. Zahnrad oeffnet die Klickzauber-Einstellungen.")
