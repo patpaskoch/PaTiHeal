@@ -40,6 +40,26 @@ function Modal:AddControl(control)
     return control
 end
 
+-- Two short controls side by side (e.g. checkboxes); right may be nil.
+function Modal:AddControls(left, right)
+    left:SetPoint("TOPLEFT", self, "TOPLEFT", UI.Spacing.LG, self.cursor)
+    local height = left:GetHeight()
+    if right then
+        right:SetPoint("TOPLEFT", self, "TOPLEFT", self:GetWidth() / 2, self.cursor)
+        height = math.max(height, right:GetHeight())
+    end
+    self.cursor = self.cursor - height - UI.Spacing.SM
+end
+
+-- A small muted label that groups the following controls inside a section.
+function Modal:AddLabel(text)
+    local label = self:CreateFontString(nil, "OVERLAY", UI.Fonts.Muted)
+    label:SetPoint("TOPLEFT", UI.Spacing.LG, self.cursor - UI.Spacing.XS)
+    UI.BindText(label, text)
+    self.cursor = self.cursor - SECTION_HEIGHT - UI.Spacing.XS
+    return label
+end
+
 -- onDefaults nil = no "Restore Defaults" button.
 function Modal:Finish(onDefaults)
     self.cursor = self.cursor - UI.Spacing.MD
@@ -59,10 +79,15 @@ function Modal:Finish(onDefaults)
 end
 
 -- Controls with a Refresh method (dropdowns, checkboxes) re-read their value when the modal opens.
-function Modal:Refresh()
-    for _, child in ipairs({ self:GetChildren() }) do
-        if child.Refresh then child:Refresh() end
+-- Also finds controls inside container frames (e.g. two dropdowns in one row).
+local function refreshChildren(frame)
+    for _, child in ipairs({ frame:GetChildren() }) do
+        if child.Refresh then child:Refresh() else refreshChildren(child) end
     end
+end
+
+function Modal:Refresh()
+    refreshChildren(self)
 end
 
 -- name: global name, needed for ESC (e.g. "PaTiHealSettings"); title: see UI.Text.

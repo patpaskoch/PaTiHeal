@@ -1,6 +1,6 @@
 -- PaTiHeal: manual party frames. A click casts exactly the spell the player assigned to that click.
 local _, ns = ...
-local UI, L, Logic = ns.UI, ns.UI.L, ns.Logic
+local UI, L, Logic, Spells = ns.UI, ns.UI.L, ns.Logic, ns.Spells
 
 local DB
 local rows = {}
@@ -16,33 +16,14 @@ local function say(key, ...)
     print("|cff68caffPaTiHeal:|r " .. L[key]:format(...))
 end
 
--- WoW API adapters -------------------------------------------------------------------------------
+-- WoW API adapters (spell APIs: SpellBook.lua) ---------------------------------------------------
 
-local function isKnownSpell(id)
-    if C_SpellBook and C_SpellBook.IsSpellKnown then
-        local ok, known = pcall(C_SpellBook.IsSpellKnown, id)
-        return ok and known
-    end
-    return C_Spell and C_Spell.GetSpellInfo and C_Spell.GetSpellInfo(id) ~= nil
-end
-
-local function spellName(id)
-    if C_Spell and C_Spell.GetSpellInfo then
-        local info = C_Spell.GetSpellInfo(id)
-        return info and info.name
-    end
-    return GetSpellInfo and GetSpellInfo(id)
-end
-
-local function spellIcon(id)
-    if C_Spell and C_Spell.GetSpellTexture then return C_Spell.GetSpellTexture(id) end
-    return GetSpellTexture and GetSpellTexture(id)
-end
+local spellName, spellIcon = Spells.Name, Spells.Icon
 
 local function knownSpells()
     local result, seen = {}, {}
     for _, entry in ipairs(HEAL_SPELLS) do
-        if not seen[entry[1]] and isKnownSpell(entry[1]) then
+        if not seen[entry[1]] and Spells.IsKnown(entry[1]) then
             seen[entry[1]] = true
             result[#result + 1] = entry[1]
         end
@@ -83,11 +64,13 @@ end
 
 -- Window and rows -------------------------------------------------------------------------------
 
-local WIDTH, ROW_WIDTH, ROW_HEIGHT, ROW_GAP = 270, 242, 39, 4
+-- Row: health bar (20) on top, below it the mana bar and room for aura icons (AuraWatch.ROW_ICON_AREA).
+local WIDTH, ROW_WIDTH, ROW_HEIGHT, ROW_GAP = 270, 242, 42, 4
+local ROWS_LEFT = (WIDTH - ROW_WIDTH) / 2
 local ROWS_TOP = UI.Sizes.HeaderHeight + UI.Spacing.SM
-local FULL_HEIGHT = ROWS_TOP + 5 * (ROW_HEIGHT + ROW_GAP) + UI.Spacing.MD
+local ROWS_HEIGHT = 5 * (ROW_HEIGHT + ROW_GAP)
 
-local window = UI.CreateWindow("PaTiHealFrame", "PaTiHeal", WIDTH, FULL_HEIGHT)
+local window = UI.CreateWindow("PaTiHealFrame", "PaTiHeal", WIDTH, ROWS_TOP + ROWS_HEIGHT + UI.Spacing.MD)
 
 local function setBar(bar, value, maximum)
     bar:SetMinMaxValues(0, maximum)
@@ -97,8 +80,8 @@ end
 local function makeRow(index, unit)
     local row = CreateFrame("Button", "PaTiHealUnit" .. index, window, "SecureUnitButtonTemplate")
     row.unit = unit
+    row.index = index
     row:SetSize(ROW_WIDTH, ROW_HEIGHT)
-    row:SetPoint("TOPLEFT", (WIDTH - ROW_WIDTH) / 2, -ROWS_TOP - (index - 1) * (ROW_HEIGHT + ROW_GAP))
     row:RegisterForClicks("AnyUp")
     row:SetAttribute("unit", unit)
     local background = row:CreateTexture(nil, "BACKGROUND")
@@ -116,8 +99,8 @@ local function makeRow(index, unit)
     local status = health:CreateFontString(nil, "OVERLAY", UI.Fonts.Text)
     status:SetPoint("RIGHT", -6, 0)
     local mana = CreateFrame("StatusBar", nil, row)
-    mana:SetPoint("BOTTOMLEFT", 3, 3)
-    mana:SetSize(ROW_WIDTH - 6, 10)
+    mana:SetPoint("BOTTOMLEFT", 3, 5)
+    mana:SetSize(ROW_WIDTH - 6 - ns.AuraWatch.ROW_ICON_AREA - UI.Spacing.SM, 10)
     mana:SetStatusBarTexture(UI.WHITE)
     mana:SetStatusBarColor(UI.Color("Mana"))
     row.health, row.mana, row.name, row.status = health, mana, name, status
@@ -133,6 +116,16 @@ local function makeRow(index, unit)
     return row
 end
 for index, unit in ipairs({ "player", "party1", "party2", "party3", "party4" }) do rows[index] = makeRow(index, unit) end
+
+local updateLayout -- defined below; aura watch asks for a relayout after settings changes
+local auraWatch = ns.AuraWatch.Create({
+    window = window,
+    rows = rows,
+    getDB = function() return DB end,
+    isTestMode = function() return testMode end,
+    unitData = function(unit) return unitData(unit) end,
+    relayout = function() updateLayout() end,
+})
 
 local function paintRow(row, data)
     local name = data.name
@@ -161,24 +154,34 @@ end
 
 -- Secure changes: only out of combat; PLAYER_REGEN_ENABLED calls this again.
 -- RegisterUnitWatch shows/hides rows with their unit, also in combat (FOLLOW_UPS F2).
-local function updateLayout()
+function updateLayout()
     if not DB or InCombatLockdown() then return end
-    local watch = RegisterUnitWatch ~= nil
+    local unitWatch = RegisterUnitWatch ~= nil
+    local rowsTop = ROWS_TOP + auraWatch:TopHeight()
     for _, row in ipairs(rows) do
-        if watch and not DB.collapsed and not testMode then
+        row:ClearAllPoints()
+        row:SetPoint("TOPLEFT", window, "TOPLEFT", ROWS_LEFT, -rowsTop - (row.index - 1) * (ROW_HEIGHT + ROW_GAP))
+        if unitWatch and not DB.collapsed and not testMode then
             RegisterUnitWatch(row)
         else
-            if watch then UnregisterUnitWatch(row) end
+            if unitWatch then UnregisterUnitWatch(row) end
             row:SetShown(not DB.collapsed and (testMode or UnitExists(row.unit)))
         end
     end
-    window:SetHeight(DB.collapsed and UI.Sizes.HeaderHeight or FULL_HEIGHT)
+    auraWatch:Place(ROWS_LEFT, ROWS_TOP, rowsTop + ROWS_HEIGHT, ROW_WIDTH)
+    local height = rowsTop + ROWS_HEIGHT + auraWatch:BottomHeight() + UI.Spacing.MD
+    window:SetHeight(DB.collapsed and UI.Sizes.HeaderHeight or height)
+    if DB.collapsed then auraWatch.strip:Hide(); auraWatch.summary:Hide() end
     window:SetTestMode(testMode)
+end
+
+local function castName(id, rank)
+    return Spells.IsKnown(id) and Spells.CastName(id, rank) or nil
 end
 
 local function applyBindings()
     if not DB or InCombatLockdown() then return end
-    local names = Logic.SpellNames(DB.bindings, function(id) return isKnownSpell(id) and spellName(id) or nil end)
+    local names = Logic.SpellNames(DB.bindings, DB.bindingRanks, castName)
     local attributes = Logic.ClickAttributes(names)
     local anyBinding = next(names) ~= nil
     for _, row in ipairs(rows) do
@@ -205,32 +208,67 @@ local function spellItems(current)
     return items
 end
 
-local function buildSettings()
-    modal = UI.CreateModal("PaTiHealSettings", function() return "PaTiHeal " .. L.SETTINGS end)
-    modal:AddSection("CLICK_CASTING")
-    for _, binding in ipairs(Logic.BINDINGS) do
-        local key = binding.key
-        modal:AddRow(key, UI.CreateDropdown(modal, 200, {
-            items = function() return spellItems(DB.bindings[key]) end,
-            get = function() return DB.bindings[key] or 0 end,
-            set = function(id)
-                DB.bindings[key] = id ~= 0 and id or nil
-                if InCombatLockdown() then say("APPLY_AFTER_COMBAT") end
-                applyBindings()
-            end,
-        }))
+-- Rank choices for the spell bound to `key`: highest known (default) plus every known numbered rank.
+local function rankItems(key)
+    local items = { { value = 0, text = "RANK_HIGHEST" } }
+    local id = DB.bindings[key]
+    for _, entry in ipairs(id and Spells.Ranks(id) or {}) do
+        local subtext = entry.subtext
+        items[#items + 1] = { value = entry.rank, text = function() return subtext end }
     end
+    return items
+end
+
+local SPELL_WIDTH, RANK_WIDTH = 168, 84
+
+-- One settings row: [spell ▾] [rank ▾]. The rank dropdown is only active if the spell has ranks.
+local function bindingControls(key)
+    local holder = CreateFrame("Frame", nil, modal)
+    holder:SetSize(SPELL_WIDTH + UI.Spacing.SM + RANK_WIDTH, UI.Sizes.ButtonHeight)
+    local changed = function()
+        if InCombatLockdown() then say("APPLY_AFTER_COMBAT") end
+        applyBindings()
+    end
+    local rank = UI.CreateDropdown(holder, RANK_WIDTH, {
+        items = function() return rankItems(key) end,
+        get = function() return DB.bindingRanks[key] or 0 end,
+        set = function(value) DB.bindingRanks[key] = value ~= 0 and value or nil; changed() end,
+        enabled = function() return DB.bindings[key] ~= nil and #Spells.Ranks(DB.bindings[key]) > 1 end,
+    })
+    rank:SetPoint("RIGHT")
+    local spell = UI.CreateDropdown(holder, SPELL_WIDTH, {
+        items = function() return spellItems(DB.bindings[key]) end,
+        get = function() return DB.bindings[key] or 0 end,
+        set = function(id)
+            DB.bindings[key] = id ~= 0 and id or nil
+            DB.bindingRanks[key] = nil -- a new spell starts at its highest rank
+            rank:Refresh()
+            changed()
+        end,
+    })
+    spell:SetPoint("LEFT")
+    return holder
+end
+
+local function buildSettings()
+    modal = UI.CreateModal("PaTiHealSettings", function() return "PaTiHeal " .. L.SETTINGS end, 440)
+    modal:AddSection("CLICK_CASTING")
+    for _, binding in ipairs(Logic.BINDINGS) do modal:AddRow(binding.key, bindingControls(binding.key)) end
     modal:AddSection("GENERAL")
     modal:AddRow("LANGUAGE", UI.CreateLanguageDropdown(modal, DB, 200))
     modal:AddControl(UI.CreateCheckbox(modal, "LOCK_WINDOW", {
         get = function() return window:IsLocked() end,
         set = function(locked) window:SetLocked(locked) end,
     }))
+    auraWatch:BuildSettings(modal)
     modal:Finish(function()
         Logic.RestoreDefaults(DB)
         UI.SetLanguage(DB.language)
         window:SetLocked(DB.locked)
         applyBindings()
+        auraWatch:Rebuild()
+        updateLayout()
+        auraWatch:RefreshAll()
     end)
 end
 
@@ -250,9 +288,11 @@ end
 local function toggleTestMode()
     if combatBlocked() then return end
     testMode = not testMode
+    auraWatch:Rebuild()
     updateLayout()
     applyBindings()
     refresh()
+    auraWatch:RefreshAll()
 end
 
 local function toggleCollapsed()
@@ -260,6 +300,7 @@ local function toggleCollapsed()
     DB.collapsed = not DB.collapsed
     updateLayout()
     refresh()
+    auraWatch:RefreshAll()
 end
 
 local function setShown(shown)
@@ -295,10 +336,18 @@ local function printDebug()
     local row = rows[1]
     for _, binding in ipairs(Logic.BINDINGS) do
         local prefix = binding.modifier
-        print(("  %s: id=%s type=%s spell=%s"):format(binding.key, tostring(DB.bindings[binding.key]),
+        print(("  %s: id=%s rank=%s type=%s spell=%s"):format(binding.key, tostring(DB.bindings[binding.key]),
+            tostring(DB.bindingRanks[binding.key] or "highest"),
             tostring(row:GetAttribute(prefix .. "type" .. binding.button)),
             tostring(row:GetAttribute(prefix .. "spell" .. binding.button))))
     end
+    for _, line in ipairs(auraWatch:DebugLines()) do print("  " .. line) end
+end
+
+-- /ph auras: what this client reports for every aura profile spell ID (to confirm them in game).
+local function printAuraCheck()
+    print("|cff68caffPaTiHeal Auras:|r")
+    for _, line in ipairs(auraWatch:VerifyLines()) do print("  " .. line) end
 end
 
 local COMMANDS = {
@@ -309,6 +358,7 @@ local COMMANDS = {
     lock = function() window:SetLocked(true) end,
     unlock = function() window:SetLocked(false) end,
     spells = printSpells,
+    auras = printAuraCheck,
     debug = printDebug,
 }
 
@@ -323,26 +373,46 @@ end
 
 local events = CreateFrame("Frame")
 for _, event in ipairs({ "PLAYER_LOGIN", "PLAYER_ENTERING_WORLD", "GROUP_ROSTER_UPDATE", "UNIT_HEALTH", "UNIT_POWER_UPDATE",
-    "UNIT_CONNECTION", "UNIT_FLAGS", "PLAYER_REGEN_ENABLED", "SPELLS_CHANGED" }) do
+    "UNIT_CONNECTION", "UNIT_FLAGS", "UNIT_AURA", "PLAYER_REGEN_ENABLED", "SPELLS_CHANGED" }) do
     events:RegisterEvent(event)
 end
-events:SetScript("OnEvent", function(_, event)
+-- Talent/spec events differ between client generations; register the ones this client has.
+for _, event in ipairs({ "PLAYER_SPECIALIZATION_CHANGED", "ACTIVE_TALENT_GROUP_CHANGED", "CHARACTER_POINTS_CHANGED" }) do
+    pcall(events.RegisterEvent, events, event)
+end
+
+-- Spells, ranks or talents changed: recheck the aura profile. Secure parts wait for the end of combat.
+local function spellsChanged()
+    Spells.Rescan()
+    auraWatch:Rebuild()
+    updateLayout()
+    applyBindings()
+    auraWatch:RefreshAll()
+end
+
+events:SetScript("OnEvent", function(_, event, unit)
     if event == "PLAYER_LOGIN" then
         PaTiHealDB = Logic.Migrate(PaTiHealDB)
         DB = PaTiHealDB
         UI.SetLanguage(DB.language)
         window:Attach(DB, 330, 0)
-        updateLayout()
-        applyBindings()
+        spellsChanged()
     elseif not DB then
+        return
+    elseif event == "UNIT_AURA" then
+        auraWatch:RefreshUnit(unit) -- ignores units without a party frame
         return
     elseif event == "PLAYER_REGEN_ENABLED" then
         updateLayout()
         applyBindings()
-    elseif event == "GROUP_ROSTER_UPDATE" then
+    elseif event == "GROUP_ROSTER_UPDATE" or event == "PLAYER_ENTERING_WORLD" then
         updateLayout()
-    elseif event == "SPELLS_CHANGED" then
-        applyBindings()
+        auraWatch:RefreshAll()
+    elseif event == "SPELLS_CHANGED" or event == "PLAYER_SPECIALIZATION_CHANGED"
+        or event == "ACTIVE_TALENT_GROUP_CHANGED" or event == "CHARACTER_POINTS_CHANGED" then
+        spellsChanged()
+    elseif event == "UNIT_CONNECTION" or event == "UNIT_FLAGS" then
+        auraWatch:RefreshUnit(unit) -- offline/dead hides the unit's aura icons
     end
     refresh()
 end)

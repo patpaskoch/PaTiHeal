@@ -1,10 +1,12 @@
 -- PaTiShared: small list popup used by the header menu and dropdowns (own frames, no UIDropDownMenu).
+-- Every row starts with a marker: the item's icon, or a small dot, so all lists read the same way.
 local addonName, ns = ...
 local UI = ns.UI or {}
 ns.UI = UI
 
 local popup
 local rows = {}
+local DOT = 4
 
 function UI.HidePopup()
     if popup then popup:Hide() end
@@ -29,19 +31,17 @@ end
 local function getRow(index)
     if rows[index] then return rows[index] end
     local row = CreateFrame("Button", nil, popup)
-    row:SetHeight(UI.Sizes.ButtonHeight)
+    row:SetHeight(UI.Sizes.MenuRowHeight)
     row.hover = row:CreateTexture(nil, "BACKGROUND")
     row.hover:SetAllPoints()
     row.hover:SetColorTexture(UI.Color("PanelHover"))
     row.hover:Hide()
-    row.mark = row:CreateTexture(nil, "ARTWORK")
-    row.mark:SetPoint("TOPLEFT")
-    row.mark:SetPoint("BOTTOMLEFT")
-    row.mark:SetWidth(2)
-    row.mark:SetColorTexture(UI.Color("Accent"))
     row.icon = row:CreateTexture(nil, "ARTWORK")
     row.icon:SetSize(UI.Sizes.IconMedium, UI.Sizes.IconMedium)
     row.icon:SetPoint("LEFT", UI.Spacing.MD, 0)
+    row.dot = row:CreateTexture(nil, "ARTWORK")
+    row.dot:SetSize(DOT, DOT)
+    row.dot:SetPoint("CENTER", row.icon, "CENTER")
     row.label = row:CreateFontString(nil, "OVERLAY", UI.Fonts.Text)
     row.label:SetJustifyH("LEFT")
     row.label:SetWordWrap(false)
@@ -63,10 +63,8 @@ function UI.ShowPopup(anchor, items, minWidth, align)
     if not popup then createPopup() end
     if popup:IsShown() and popup.anchor == anchor then popup:Hide(); return end
 
-    local pad, height = UI.Spacing.SM, UI.Sizes.ButtonHeight
-    local hasIcon = false
-    for _, item in ipairs(items) do if item.icon then hasIcon = true end end
-    local textLeft = UI.Spacing.MD + (hasIcon and UI.Sizes.IconMedium + UI.Spacing.SM or 0)
+    local pad, height = UI.Spacing.SM, UI.Sizes.MenuRowHeight
+    local textLeft = UI.Spacing.MD + UI.Sizes.IconMedium + UI.Spacing.MD
 
     -- First pass: content and natural width (label anchored on one side only).
     local width = (minWidth or 0) - 2 * pad
@@ -76,10 +74,13 @@ function UI.ShowPopup(anchor, items, minWidth, align)
         row.label:ClearAllPoints()
         row.label:SetPoint("LEFT", textLeft, 0)
         row.label:SetText(UI.Text(item.text) or "")
-        row.label:SetTextColor(UI.Color(item.disabled and "TextMuted" or item.checked and "Accent" or "Text"))
+        local color = item.disabled and "TextMuted" or item.checked and "Accent" or "Text"
+        row.label:SetTextColor(UI.Color(color))
         row.icon:SetTexture(item.icon)
         row.icon:SetShown(item.icon ~= nil)
-        row.mark:SetShown(item.checked == true)
+        row.icon:SetDesaturated(item.disabled == true)
+        row.dot:SetColorTexture(UI.Color(item.checked and "Accent" or "TextMuted"))
+        row.dot:SetShown(item.icon == nil)
         row:SetEnabled(not item.disabled)
         row.patiTooltip = item.tooltip
         width = math.max(width, math.ceil(UI.TextWidth(row.label)) + textLeft + UI.Spacing.LG)

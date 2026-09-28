@@ -8,5 +8,10 @@
 Shared\Shared.xml
 Locales\enUS.lua
 Locales\deDE.lua
+SpellBook.lua
+Auras.lua
 Logic.lua
+AuraProfiles\Shaman.lua
+AuraScan.lua
+AuraWatch.lua
 PaTiHeal.lua

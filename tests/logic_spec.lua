@@ -2,7 +2,8 @@
 local wow = require("wow_api")
 
 local function load()
-    return wow.loadAddonFile("Logic.lua", {}).Logic
+    local ns = wow.loadAddonFile("Auras.lua", {})
+    return wow.loadAddonFile("Logic.lua", ns).Logic
 end
 
 local function attributeMap(attributes)
@@ -21,7 +22,10 @@ describe("Logic.Migrate", function()
         assert.is_false(db.locked)
         assert.is_false(db.collapsed)
         assert.equal("auto", db.language)
-        assert.equal(1, db.schema)
+        assert.equal(2, db.schema)
+        assert.same({}, db.bindingRanks)
+        assert.is_true(db.auraWatch.enabled)
+        assert.same({}, db.auraWatch.watch)
     end)
 
     it("moves the single 0.6.0 click binding and keeps position and lock", function()
@@ -41,10 +45,22 @@ describe("Logic.Migrate", function()
         assert.same({ LEFT = 8004 }, load().Migrate({ clickSpellID = 8004 }).bindings)
     end)
 
-    it("does not touch an already migrated table", function()
-        local db = { schema = 1, bindings = { ALT_LEFT = 331 }, locked = false, collapsed = false, language = "deDE" }
-        assert.same({ schema = 1, bindings = { ALT_LEFT = 331 }, locked = false, collapsed = false, language = "deDE" },
-            load().Migrate(db))
+    it("upgrades schema 1 (0.7 development) without touching its settings", function()
+        local db = load().Migrate({ schema = 1, bindings = { ALT_LEFT = 331 }, locked = false, collapsed = false, language = "deDE" })
+        assert.equal(2, db.schema)
+        assert.same({ ALT_LEFT = 331 }, db.bindings)
+        assert.same({}, db.bindingRanks)
+        assert.equal("deDE", db.language)
+    end)
+
+    it("keeps aura watch choices, including switched-off entries", function()
+        local db = load().Migrate({ schema = 2, bindings = {}, bindingRanks = { LEFT = 3 },
+            auraWatch = { enabled = false, showTimers = false, watch = { RIPTIDE = false } } })
+        assert.is_false(db.auraWatch.enabled)
+        assert.is_false(db.auraWatch.showTimers)
+        assert.is_true(db.auraWatch.showCharges)
+        assert.is_false(db.auraWatch.watch.RIPTIDE)
+        assert.same({ LEFT = 3 }, db.bindingRanks)
     end)
 end)
 
@@ -68,15 +84,24 @@ end)
 
 describe("Logic.SpellNames", function()
     it("keeps only spells the resolver can cast", function()
-        local names = load().SpellNames({ LEFT = 331, RIGHT = 999 }, function(id) return id == 331 and "Heilende Welle" or nil end)
+        local names = load().SpellNames({ LEFT = 331, RIGHT = 999 }, {}, function(id) return id == 331 and "Heilende Welle" or nil end)
         assert.same({ LEFT = "Heilende Welle" }, names)
+    end)
+
+    it("passes the chosen rank to the resolver", function()
+        local names = load().SpellNames({ LEFT = 331 }, { LEFT = 3 }, function(_, rank) return "Heilende Welle(Rang " .. rank .. ")" end)
+        assert.same({ LEFT = "Heilende Welle(Rang 3)" }, names)
     end)
 end)
 
 describe("Logic.RestoreDefaults", function()
     it("clears bindings, lock and language but keeps the position", function()
-        local db = load().RestoreDefaults({ x = 5, y = 6, locked = true, language = "koKR", bindings = { LEFT = 331 } })
+        local db = load().RestoreDefaults({ x = 5, y = 6, locked = true, language = "koKR", bindings = { LEFT = 331 },
+            bindingRanks = { LEFT = 2 }, auraWatch = { enabled = false, watch = { RIPTIDE = false } } })
         assert.same({}, db.bindings)
+        assert.same({}, db.bindingRanks)
+        assert.is_true(db.auraWatch.enabled)
+        assert.same({}, db.auraWatch.watch)
         assert.is_false(db.locked)
         assert.equal("auto", db.language)
         assert.equal(5, db.x)
