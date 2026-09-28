@@ -3,7 +3,7 @@ local addonName = ...
 local DB
 local rows = {}
 local isTestMode = false
-local selectedHealSpell
+local clickSpellButton
 
 local defaults = {
     point = "CENTER",
@@ -49,14 +49,27 @@ local function getSpellInfo(spellID)
     end
 end
 
-local function chooseHealSpell()
-    selectedHealSpell = nil
+local function getSelectedHealSpell()
+    local spellID = DB and DB.clickSpellID
+    if spellID and isKnownSpell(spellID) then
+        return spellID
+    end
+end
+
+local function getNextKnownHealSpell()
+    local current = DB and DB.clickSpellID
+    local firstKnown
+    local foundCurrent = false
     for _, spell in ipairs(healingSpells) do
         if isKnownSpell(spell.id) then
-            selectedHealSpell = spell.id
-            return spell.id
+            firstKnown = firstKnown or spell.id
+            if foundCurrent then
+                return spell.id
+            end
+            foundCurrent = spell.id == current
         end
     end
+    return firstKnown
 end
 
 local function unitStatus(unit)
@@ -150,13 +163,18 @@ testLabel:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", -14, 25)
 testLabel:SetTextColor(1, 0.82, 0)
 testLabel:Hide()
 
+clickSpellButton = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
+clickSpellButton:SetSize(122, 20)
+clickSpellButton:SetPoint("BOTTOMLEFT", frame, "BOTTOMLEFT", 14, 3)
+clickSpellButton:SetText("Zauber waehlen")
+
 local function makeRow(index, unit)
     local row = CreateFrame("Button", "PaTiHealUnit" .. index, frame, "SecureActionButtonTemplate")
     row:SetSize(242, 39)
     row:SetPoint("TOPLEFT", frame, "TOPLEFT", 14, -55 - ((index - 1) * 43))
-    row:RegisterForClicks("AnyUp", "AnyDown")
+    row:RegisterForClicks("LeftButtonUp")
     row:SetAttribute("unit", unit)
-    row:SetAttribute("type", "spell")
+    row:SetAttribute("type1", "spell")
 
     local background = row:CreateTexture(nil, "BACKGROUND")
     background:SetAllPoints()
@@ -177,9 +195,11 @@ local function makeRow(index, unit)
     mana:SetStatusBarColor(0.16, 0.42, 0.90, 0.9)
     row.mana = mana
 
-    local name = row:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
-    name:SetPoint("LEFT", row, "LEFT", 8, 5)
+    local name = health:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+    name:SetPoint("LEFT", health, "LEFT", 6, 0)
+    name:SetWidth(150)
     name:SetJustifyH("LEFT")
+    name:SetTextColor(1, 1, 1)
     row.name = name
 
     local status = row:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
@@ -308,18 +328,38 @@ local function applyClickSpell()
     if InCombatLockdown() then
         return
     end
-    local spellID = chooseHealSpell()
+    local spellID = getSelectedHealSpell()
     for _, row in ipairs(rows) do
-        row:SetAttribute("spell", spellID)
+        row:SetAttribute("spell1", spellID)
         row:SetEnabled(not isTestMode and spellID ~= nil)
     end
     if spellID then
         local name = getSpellInfo(spellID)
         hint:SetText("Linksklick: " .. (name or "Heilzauber"))
+        clickSpellButton:SetText("Zauber: " .. (name or spellID))
     else
-        hint:SetText("Kein Heilzauber gefunden")
+        hint:SetText("Kein Klickzauber – unten waehlen")
+        clickSpellButton:SetText("Zauber waehlen")
     end
+    clickSpellButton:SetEnabled(not InCombatLockdown())
 end
+
+local function selectNextHealSpell()
+    if InCombatLockdown() then
+        print("|cff68caffPaTiHeal:|r Zauberwahl ist im Kampf nicht moeglich.")
+        return
+    end
+    local spellID = getNextKnownHealSpell()
+    if not spellID then
+        print("|cff68caffPaTiHeal:|r Kein bekannter Heilzauber gefunden.")
+        return
+    end
+    DB.clickSpellID = spellID
+    applyClickSpell()
+    updateDisplay()
+end
+
+clickSpellButton:SetScript("OnClick", selectNextHealSpell)
 
 frame:SetScript("OnDragStart", function(self)
     if not DB.locked and not InCombatLockdown() then
@@ -380,8 +420,37 @@ SlashCmdList.PATIHEAL = function(message)
         frame:Show()
     elseif command == "hide" then
         frame:Hide()
+    elseif command == "spells" then
+        local known = {}
+        for _, spell in ipairs(healingSpells) do
+            if isKnownSpell(spell.id) then
+                known[#known + 1] = (getSpellInfo(spell.id) or spell.label) .. " (" .. spell.id .. ")"
+            end
+        end
+        print("|cff68caffPaTiHeal:|r Bekannte Heilzauber: " .. (#known > 0 and table.concat(known, ", ") or "keine"))
+    elseif command == "spell clear" then
+        if InCombatLockdown() then
+            print("|cff68caffPaTiHeal:|r Zauberwahl ist im Kampf nicht moeglich.")
+            return
+        end
+        DB.clickSpellID = nil
+        applyClickSpell()
+        updateDisplay()
     else
-        print("|cff68caffPaTiHeal:|r /ph test, /ph lock, /ph unlock, /ph show, /ph hide")
+        local spellID = tonumber(command:match("^spell%s+(%d+)$"))
+        if spellID then
+            if InCombatLockdown() then
+                print("|cff68caffPaTiHeal:|r Zauberwahl ist im Kampf nicht moeglich.")
+            elseif not isKnownSpell(spellID) then
+                print("|cff68caffPaTiHeal:|r Dieser Zauber ist bei diesem Charakter nicht bekannt.")
+            else
+                DB.clickSpellID = spellID
+                applyClickSpell()
+                updateDisplay()
+            end
+        else
+            print("|cff68caffPaTiHeal:|r /ph test, /ph lock, /ph unlock, /ph show, /ph hide, /ph spells, /ph spell <ID>, /ph spell clear")
+        end
     end
 end
 
