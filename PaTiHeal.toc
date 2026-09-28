@@ -2,9 +2,10 @@
 ## Title: PaTiHeal
 ## Notes: Kompakte Gruppenanzeige fuer Schamanen-Heilung
 ## Author: PaTi
-## Version: 0.4.0
+## Version: 0.4.1
 ## SavedVariablesPerCharacter: PaTiHealDB
 
 PaTiHeal.lua
+
 
 

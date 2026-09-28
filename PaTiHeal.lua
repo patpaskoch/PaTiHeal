@@ -50,8 +50,8 @@ frame:EnableMouse(true)
 frame:RegisterForDrag("LeftButton")
 frame:SetClampedToScreen(true)
 frame:SetBackdrop({bgFile="Interface\\DialogFrame\\UI-DialogBox-Background", edgeFile="Interface\\Tooltips\\UI-Tooltip-Border", edgeSize=14, insets={left=3,right=3,top=3,bottom=3}})
-frame:SetBackdropColor(0.08, 0.11, 0.13, 0.96)
-frame:SetBackdropBorderColor(0.36, 0.62, 0.72, 1)
+frame:SetBackdropColor(0.12, 0.10, 0.08, 0.95)
+frame:SetBackdropBorderColor(0.65, 0.58, 0.42, 1)
 
 local title=frame:CreateFontString(nil,"OVERLAY","GameFontNormal")
 title:SetPoint("TOPLEFT",14,-11)
@@ -63,29 +63,29 @@ close:SetPoint("TOPRIGHT",-2,-2)
 close:SetScript("OnClick",function() frame:Hide() end)
 
 local gear=CreateFrame("Button",nil,frame)
-gear:SetSize(22,22)
+gear:SetSize(24,24)
 gear:SetPoint("RIGHT",close,"LEFT",-3,0)
 local gearIcon=gear:CreateTexture(nil,"ARTWORK")
 gearIcon:SetAllPoints()
 gearIcon:SetTexture("Interface\\Buttons\\UI-OptionsButton")
 local gearActive=gear:CreateTexture(nil,"BACKGROUND")
 gearActive:SetAllPoints()
-gearActive:SetColorTexture(0.08,0.35,0.72,0.95)
+gearActive:SetColorTexture(0.22,0.25,0.30,0.98)
 gearActive:Hide()
 gear:SetScript("OnEnter",function(self) GameTooltip:SetOwner(self,"ANCHOR_RIGHT"); GameTooltip:SetText("Klickzauber einstellen"); GameTooltip:Show() end)
 gear:SetScript("OnLeave",function() GameTooltip:Hide() end)
 
 local chevron=CreateFrame("Button",nil,frame,"UIPanelButtonTemplate")
-chevron:SetSize(20,20)
+chevron:SetSize(24,24)
 chevron:SetPoint("RIGHT",gear,"LEFT",-3,0)
-chevron:SetText("v")
+chevron:SetText("⌄")
 
 local settings=CreateFrame("Frame",nil,frame,"BackdropTemplate")
 settings:SetPoint("TOPLEFT",10,-38)
 settings:SetSize(250,58)
 settings:SetBackdrop({bgFile="Interface\\Buttons\\WHITE8X8", edgeFile="Interface\\Tooltips\\UI-Tooltip-Border", edgeSize=10, insets={left=2,right=2,top=2,bottom=2}})
-settings:SetBackdropColor(0.06,0.19,0.42,0.95)
-settings:SetBackdropBorderColor(0.25,0.58,0.95,1)
+settings:SetBackdropColor(0.12,0.14,0.17,0.98)
+settings:SetBackdropBorderColor(0.42,0.46,0.52,1)
 settings:Hide()
 local clickHeader=settings:CreateFontString(nil,"OVERLAY","GameFontNormalSmall")
 clickHeader:SetPoint("TOPLEFT",10,-9)
@@ -145,7 +145,7 @@ local function updateLayout()
     local hideRows = settingsOpen or collapsed
     settings:SetShown(settingsOpen)
     gearActive:SetShown(settingsOpen)
-    chevron:SetText(collapsed and ">" or "v")
+    chevron:SetText(collapsed and "›" or "⌄")
     if settingsOpen then frame:SetSize(270,112) elseif collapsed then frame:SetSize(270,36) else frame:SetSize(270,350) end
     for index,row in ipairs(rows) do
         if hideRows then row:Hide() else row:ClearAllPoints(); row:SetPoint("TOPLEFT",frame,"TOPLEFT",14,-55-((index-1)*43)); row:Show() end
@@ -157,7 +157,7 @@ local function applyClickSpell()
     if InCombatLockdown() then return end
     local id=DB.clickSpellID
     if not (id and isKnownSpell(id)) then id=nil; DB.clickSpellID=nil end
-    for _,row in ipairs(rows) do row:SetAttribute("spell1",id); row:SetEnabled(not testMode and id~=nil) end
+    for _,row in ipairs(rows) do row:SetAttribute("spell",id); row:SetAttribute("spell1",id); row:SetAttribute("type","spell"); row:SetAttribute("type1","spell"); row:SetEnabled(not testMode and id~=nil) end
     spellButton:SetText(id and (spellName(id) or "Zauber") or "Zauber auswaehlen")
 end
 
