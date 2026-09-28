@@ -260,9 +260,22 @@ local function bindingControls(key)
     return holder
 end
 
+-- Column titles above the binding rows: Click | Spell | Rank (aligned with bindingControls).
+local function columnHeaders()
+    local holder = CreateFrame("Frame", nil, modal)
+    holder:SetSize(SPELL_WIDTH + UI.Spacing.SM + RANK_WIDTH, 14)
+    for _, column in ipairs({ { "COLUMN_SPELL", 0 }, { "COLUMN_RANK", SPELL_WIDTH + UI.Spacing.SM } }) do
+        local title = holder:CreateFontString(nil, "OVERLAY", UI.Fonts.Muted)
+        title:SetPoint("LEFT", column[2] + UI.Spacing.MD, 0)
+        UI.BindText(title, column[1])
+    end
+    return holder
+end
+
 local function buildSettings()
     modal = UI.CreateModal("PaTiHealSettings", function() return "PaTiHeal " .. L.SETTINGS end, 440)
     modal:AddSection("CLICK_CASTING")
+    modal:AddRow("COLUMN_CLICK", columnHeaders()):SetTextColor(UI.Color("TextMuted"))
     for _, binding in ipairs(Logic.BINDINGS) do modal:AddRow(binding.key, bindingControls(binding.key)) end
     modal:AddSection("GENERAL")
     modal:AddRow("LANGUAGE", UI.CreateLanguageDropdown(modal, DB, 200))

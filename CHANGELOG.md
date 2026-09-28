@@ -9,7 +9,7 @@ History before this file: `git log`.
 - Header menu (•••): Settings, Lock/Unlock, Collapse/Expand, Test Mode, Hide.
 - Settings modal with language choice (Automatic, English, Deutsch, 简体中文, 繁體中文, 한국어) and window lock; ESC closes it.
 - `/ph settings`; `/ph debug` also shows the PaTiShared UI version.
-- Spell rank per click binding ("Highest" = always the highest known rank, as before); needs a client that lists ranks.
+- Spell rank per click binding in its own column (Click · Spell · Rank; "Highest" = always the highest known rank, as before); needs a client that lists ranks.
 - Dispellable debuffs: up to two small icons per party frame, coloured by debuff type (display only; can be switched off).
 - Menus and dropdowns: roomier rows with an icon or dot in front (PaTiShared 0.2.0).
 - English UI texts; German translation. Chinese and Korean fall back to English except for shared menu texts.
