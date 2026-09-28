@@ -3,6 +3,7 @@ local DB
 local rows = {}
 local testMode = false
 local settingsOpen = false
+local collapsed = false
 
 local spells = {
     {331, "Heilende Welle"}, {8004, "Welle der Heilung"}, {1064, "Kettenheilung"}, {61295, "Springflut"}, {73920, "Heilender Regen"},
@@ -67,8 +68,17 @@ gear:SetPoint("RIGHT",close,"LEFT",-3,0)
 local gearIcon=gear:CreateTexture(nil,"ARTWORK")
 gearIcon:SetAllPoints()
 gearIcon:SetTexture("Interface\\Buttons\\UI-OptionsButton")
+local gearActive=gear:CreateTexture(nil,"BACKGROUND")
+gearActive:SetAllPoints()
+gearActive:SetColorTexture(0.08,0.35,0.72,0.95)
+gearActive:Hide()
 gear:SetScript("OnEnter",function(self) GameTooltip:SetOwner(self,"ANCHOR_RIGHT"); GameTooltip:SetText("Klickzauber einstellen"); GameTooltip:Show() end)
 gear:SetScript("OnLeave",function() GameTooltip:Hide() end)
+
+local chevron=CreateFrame("Button",nil,frame,"UIPanelButtonTemplate")
+chevron:SetSize(20,20)
+chevron:SetPoint("RIGHT",gear,"LEFT",-3,0)
+chevron:SetText("v")
 
 local settings=CreateFrame("Frame",nil,frame,"BackdropTemplate")
 settings:SetPoint("TOPLEFT",10,-38)
@@ -130,10 +140,17 @@ local function makeRow(index, unit)
 end
 for index,unit in ipairs({"player","party1","party2","party3","party4"}) do rows[#rows+1]=makeRow(index,unit) end
 
-local function layoutRows()
+local function updateLayout()
     if InCombatLockdown() then return end
-    local top=settingsOpen and -106 or -55
-    for index,row in ipairs(rows) do row:ClearAllPoints(); row:SetPoint("TOPLEFT",frame,"TOPLEFT",14,top-((index-1)*43)) end
+    local hideRows = settingsOpen or collapsed
+    settings:SetShown(settingsOpen)
+    gearActive:SetShown(settingsOpen)
+    chevron:SetText(collapsed and ">" or "v")
+    if settingsOpen then frame:SetSize(270,112) elseif collapsed then frame:SetSize(270,36) else frame:SetSize(270,350) end
+    for index,row in ipairs(rows) do
+        if hideRows then row:Hide() else row:ClearAllPoints(); row:SetPoint("TOPLEFT",frame,"TOPLEFT",14,-55-((index-1)*43)); row:Show() end
+    end
+    testLabel:SetShown(testMode and not hideRows)
 end
 
 local function applyClickSpell()
@@ -157,8 +174,15 @@ spellButton:SetScript("OnClick",selectNextSpell)
 gear:SetScript("OnClick",function()
     if InCombatLockdown() then print("|cff68caffPaTiHeal:|r Einstellungen sind im Kampf gesperrt."); return end
     settingsOpen=not settingsOpen
-    settings:SetShown(settingsOpen)
-    layoutRows()
+    updateLayout()
+end)
+
+chevron:SetScript("OnClick",function()
+    if InCombatLockdown() then print("|cff68caffPaTiHeal:|r Ein- und Ausklappen ist im Kampf gesperrt."); return end
+    settingsOpen=false
+    collapsed=not collapsed
+    DB.collapsed=collapsed
+    updateLayout()
 end)
 
 local function unitData(unit)
@@ -176,6 +200,11 @@ local function unitData(unit)
     return name,class,UnitHealth(unit) or 0,UnitHealthMax(unit) or 1,mana,manaMax
 end
 local function refresh()
+    if settingsOpen or collapsed then
+        for _,row in ipairs(rows) do row:Hide() end
+        testLabel:Hide()
+        return
+    end
     for _,row in ipairs(rows) do
         local name,class,h,hmax,m,mmax,state=unitData(row:GetAttribute("unit"))
         if not name then row:Hide() else
@@ -193,7 +222,7 @@ frame:SetScript("OnDragStop",function(self) self:StopMovingOrSizing(); local _,_
 local events=CreateFrame("Frame")
 for _,event in ipairs({"PLAYER_LOGIN","PLAYER_ENTERING_WORLD","GROUP_ROSTER_UPDATE","UNIT_HEALTH","UNIT_POWER_UPDATE","UNIT_CONNECTION","UNIT_FLAGS","PLAYER_REGEN_ENABLED","SPELLS_CHANGED"}) do events:RegisterEvent(event) end
 events:SetScript("OnEvent",function(_,event)
-    if event=="PLAYER_LOGIN" then PaTiHealDB=PaTiHealDB or {}; DB=PaTiHealDB; DB.x=DB.x or 330; DB.y=DB.y or 0; DB.locked=DB.locked or false; frame:ClearAllPoints(); frame:SetPoint("CENTER",UIParent,"CENTER",DB.x,DB.y); layoutRows(); applyClickSpell()
+    if event=="PLAYER_LOGIN" then PaTiHealDB=PaTiHealDB or {}; DB=PaTiHealDB; DB.x=DB.x or 330; DB.y=DB.y or 0; DB.locked=DB.locked or false; collapsed=DB.collapsed or false; frame:ClearAllPoints(); frame:SetPoint("CENTER",UIParent,"CENTER",DB.x,DB.y); updateLayout(); applyClickSpell()
     elseif event=="PLAYER_REGEN_ENABLED" or event=="SPELLS_CHANGED" then applyClickSpell() end
     refresh()
 end)
