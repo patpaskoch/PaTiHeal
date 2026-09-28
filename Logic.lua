@@ -1,0 +1,82 @@
+-- PaTiHeal: pure logic without WoW API calls (unit-tested in tests/logic_spec.lua).
+local _, ns = ...
+local Logic = {}
+ns.Logic = Logic
+
+-- The click combinations offered in the settings, in display order. `key` is the DB key and the L key.
+Logic.BINDINGS = {
+    { key = "LEFT", modifier = "", button = 1 },
+    { key = "RIGHT", modifier = "", button = 2 },
+    { key = "MIDDLE", modifier = "", button = 3 },
+    { key = "SHIFT_LEFT", modifier = "shift-", button = 1 },
+    { key = "SHIFT_RIGHT", modifier = "shift-", button = 2 },
+    { key = "CTRL_LEFT", modifier = "ctrl-", button = 1 },
+    { key = "CTRL_RIGHT", modifier = "ctrl-", button = 2 },
+    { key = "ALT_LEFT", modifier = "alt-", button = 1 },
+    { key = "ALT_RIGHT", modifier = "alt-", button = 2 },
+}
+
+-- Attributes written by PaTiHeal <= 0.6.0 that are not part of BINDINGS.
+local LEGACY_ATTRIBUTES = { "type", "spell", "shift-spell", "ctrl-spell", "alt-spell" }
+
+-- bindings: DB.bindings (key -> spellID). resolve(spellID) -> castable spell name or nil.
+-- Returns key -> spell name for the bindings that can be cast right now.
+function Logic.SpellNames(bindings, resolve)
+    local names = {}
+    for _, binding in ipairs(Logic.BINDINGS) do
+        local id = bindings[binding.key]
+        if id then names[binding.key] = resolve(id) end
+    end
+    return names
+end
+
+-- Every secure attribute PaTiHeal owns, as an ordered list of { name, value }. Unassigned
+-- combinations get value nil, so an earlier assignment can never keep casting (FOLLOW_UPS F1).
+function Logic.ClickAttributes(names)
+    local attributes = {}
+    for _, name in ipairs(LEGACY_ATTRIBUTES) do attributes[#attributes + 1] = { name = name } end
+    for _, binding in ipairs(Logic.BINDINGS) do
+        local spell = names[binding.key]
+        local suffix = binding.modifier .. "%s" .. binding.button
+        attributes[#attributes + 1] = { name = suffix:format("type"), value = spell and "spell" or nil }
+        attributes[#attributes + 1] = { name = suffix:format("spell"), value = spell }
+    end
+    return attributes
+end
+
+Logic.SCHEMA = 1
+
+-- 0.6.0 stored one binding as clickButton + clickModifier + clickSpellID.
+local LEGACY_BINDING = {
+    LeftButton = "LEFT", RightButton = "RIGHT",
+    ["shift-LeftButton"] = "SHIFT_LEFT", ["shift-RightButton"] = "SHIFT_RIGHT",
+    ["ctrl-LeftButton"] = "CTRL_LEFT", ["ctrl-RightButton"] = "CTRL_RIGHT",
+    ["alt-LeftButton"] = "ALT_LEFT", ["alt-RightButton"] = "ALT_RIGHT",
+}
+
+-- Brings any saved table (nil, 0.6.0 or current) to the current schema. Keeps position and lock.
+function Logic.Migrate(db)
+    db = db or {}
+    if (db.schema or 0) < 1 then
+        db.bindings = db.bindings or {}
+        if db.clickSpellID then
+            local key = LEGACY_BINDING[(db.clickModifier or "") .. (db.clickButton or "LeftButton")]
+            if key and db.bindings[key] == nil then db.bindings[key] = db.clickSpellID end
+        end
+        db.clickSpellID, db.clickButton, db.clickModifier = nil, nil, nil
+        db.schema = 1
+    end
+    if db.bindings == nil then db.bindings = {} end
+    if db.locked == nil then db.locked = false end
+    if db.collapsed == nil then db.collapsed = false end
+    if db.language == nil then db.language = "auto" end
+    return db
+end
+
+-- Settings restored by "Restore Defaults". Position is kept on purpose.
+function Logic.RestoreDefaults(db)
+    db.bindings = {}
+    db.locked = false
+    db.language = "auto"
+    return db
+end

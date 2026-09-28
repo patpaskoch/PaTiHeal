@@ -1,15 +1,22 @@
--- PaTiHeal: manual group frames and an explicitly chosen click spell.
+-- PaTiHeal: manual party frames. A click casts exactly the spell the player assigned to that click.
+local _, ns = ...
+local UI, L, Logic = ns.UI, ns.UI.L, ns.Logic
+
 local DB
 local rows = {}
 local testMode = false
-local settingsOpen = false
-local collapsed = false
 
-local spells = {
+local HEAL_SPELLS = {
     {331, "Heilende Welle"}, {8004, "Welle der Heilung"}, {1064, "Kettenheilung"}, {61295, "Springflut"}, {73920, "Heilender Regen"},
     {2050, "Geringes Heilen"}, {2060, "Heilen"}, {2061, "Blitzheilung"}, {2061, "Große Heilung"},
     {635, "Heiliges Licht"}, {19750, "Lichtblitz"}, {5185, "Heilende Berührung"}, {8936, "Nachwachsen"}, {774, "Verjüngung"},
 }
+
+local function say(key, ...)
+    print("|cff68caffPaTiHeal:|r " .. L[key]:format(...))
+end
+
+-- WoW API adapters -------------------------------------------------------------------------------
 
 local function isKnownSpell(id)
     if C_SpellBook and C_SpellBook.IsSpellKnown then
@@ -27,9 +34,14 @@ local function spellName(id)
     return GetSpellInfo and GetSpellInfo(id)
 end
 
+local function spellIcon(id)
+    if C_Spell and C_Spell.GetSpellTexture then return C_Spell.GetSpellTexture(id) end
+    return GetSpellTexture and GetSpellTexture(id)
+end
+
 local function knownSpells()
     local result, seen = {}, {}
-    for _, entry in ipairs(spells) do
+    for _, entry in ipairs(HEAL_SPELLS) do
         if not seen[entry[1]] and isKnownSpell(entry[1]) then
             seen[entry[1]] = true
             result[#result + 1] = entry[1]
@@ -38,301 +50,302 @@ local function knownSpells()
     return result
 end
 
+local function className(classFile)
+    return LOCALIZED_CLASS_NAMES_MALE and LOCALIZED_CLASS_NAMES_MALE[classFile] or classFile
+end
+
+local TEST_UNITS = {
+    player = { nameKey = "TEST_HEALER", class = "SHAMAN", health = 82, mana = 72 },
+    party1 = { nameKey = "TEST_TANK", class = "WARRIOR", health = 48, mana = 20, isTank = true },
+    party2 = { nameKey = "TEST_MEMBER", class = "MAGE", health = 100, mana = 90 },
+    party3 = { nameKey = "TEST_MEMBER", class = "PRIEST", health = 15, mana = 60 },
+    party4 = { nameKey = "TEST_MEMBER", class = "HUNTER", health = 0, mana = 0, state = "OFFLINE" },
+}
+
+-- One unit as a plain table: name, class, health, healthMax, mana, manaMax, state, isTank.
+-- Health values can be secret values: they are only handed to widgets, never calculated with.
+local function unitData(unit)
+    if testMode then
+        local fake = TEST_UNITS[unit]
+        return { name = L[fake.nameKey], class = className(fake.class), health = fake.health, healthMax = 100,
+            mana = fake.mana, manaMax = 100, state = fake.state, isTank = fake.isTank }
+    end
+    if not UnitExists(unit) then return nil end
+    local data = { name = UnitName(unit) or unit, class = UnitClass(unit) or L.UNKNOWN_CLASS,
+        health = 0, healthMax = 1, mana = 0, manaMax = 1 }
+    if not UnitIsConnected(unit) then data.state = "OFFLINE"; return data end
+    if UnitIsDeadOrGhost(unit) then data.state = "DEAD"; return data end
+    data.health, data.healthMax = UnitHealth(unit) or 0, UnitHealthMax(unit) or 1
+    if UnitPowerType(unit) == 0 then data.mana, data.manaMax = UnitPower(unit, 0) or 0, UnitPowerMax(unit, 0) or 0 end
+    data.isTank = UnitGroupRolesAssigned(unit) == "TANK"
+    return data
+end
+
+-- Window and rows -------------------------------------------------------------------------------
+
+local WIDTH, ROW_WIDTH, ROW_HEIGHT, ROW_GAP = 270, 242, 39, 4
+local ROWS_TOP = UI.Sizes.HeaderHeight + UI.Spacing.SM
+local FULL_HEIGHT = ROWS_TOP + 5 * (ROW_HEIGHT + ROW_GAP) + UI.Spacing.MD
+
+local window = UI.CreateWindow("PaTiHealFrame", "PaTiHeal", WIDTH, FULL_HEIGHT)
+
 local function setBar(bar, value, maximum)
     bar:SetMinMaxValues(0, maximum)
     bar:SetValue(value)
 end
 
-local frame = CreateFrame("Frame", "PaTiHealFrame", UIParent, "BackdropTemplate")
-frame:SetSize(270, 350)
-frame:SetMovable(true)
-frame:EnableMouse(true)
-frame:RegisterForDrag("LeftButton")
-frame:SetClampedToScreen(true)
-frame:SetBackdrop({bgFile="Interface\\DialogFrame\\UI-DialogBox-Background", edgeFile="Interface\\Tooltips\\UI-Tooltip-Border", edgeSize=14, insets={left=3,right=3,top=3,bottom=3}})
-frame:SetBackdropColor(0.12, 0.10, 0.08, 0.95)
-frame:SetBackdropBorderColor(0.65, 0.58, 0.42, 1)
-
-local title=frame:CreateFontString(nil,"OVERLAY","GameFontNormal")
-title:SetPoint("TOPLEFT",14,-11)
-title:SetText("PaTiHeal")
-
-local close=CreateFrame("Button",nil,frame,"UIPanelCloseButton")
-close:SetSize(24,24)
-close:SetPoint("TOPRIGHT",-2,-2)
-close:SetScript("OnClick",function() frame:Hide() end)
-
-local gear=CreateFrame("Button",nil,frame)
-gear:SetSize(24,24)
-gear:SetPoint("RIGHT",close,"LEFT",-3,0)
-local gearIcon=gear:CreateTexture(nil,"ARTWORK")
-gearIcon:SetAllPoints()
-gearIcon:SetTexture("Interface\\Buttons\\UI-OptionsButton")
-local gearActive=gear:CreateTexture(nil,"BACKGROUND")
-gearActive:SetAllPoints()
-gearActive:SetColorTexture(0.22,0.25,0.30,0.98)
-gearActive:Hide()
-gear:SetScript("OnEnter",function(self) GameTooltip:SetOwner(self,"ANCHOR_RIGHT"); GameTooltip:SetText("Klickzauber einstellen"); GameTooltip:Show() end)
-gear:SetScript("OnLeave",function() GameTooltip:Hide() end)
-
-local chevron=CreateFrame("Button",nil,frame,"UIPanelButtonTemplate")
-chevron:SetSize(24,24)
-chevron:SetPoint("RIGHT",gear,"LEFT",-3,0)
-chevron:SetText("⌄")
-
-local settings=CreateFrame("Frame",nil,frame,"BackdropTemplate")
-settings:SetPoint("TOPLEFT",10,-38)
-settings:SetSize(250,58)
-settings:SetBackdrop({bgFile="Interface\\Buttons\\WHITE8X8", edgeFile="Interface\\Tooltips\\UI-Tooltip-Border", edgeSize=10, insets={left=2,right=2,top=2,bottom=2}})
-settings:SetBackdropColor(0.12,0.14,0.17,0.98)
-settings:SetBackdropBorderColor(0.42,0.46,0.52,1)
-settings:Hide()
-local clickHeader=settings:CreateFontString(nil,"OVERLAY","GameFontNormalSmall")
-clickHeader:SetPoint("TOPLEFT",10,-9)
-clickHeader:SetText("Klick")
-local actionHeader=settings:CreateFontString(nil,"OVERLAY","GameFontNormalSmall")
-actionHeader:SetPoint("TOPLEFT",106,-9)
-actionHeader:SetText("Aktion")
-local clickValue=settings:CreateFontString(nil,"OVERLAY","GameFontHighlightSmall")
-clickValue:SetPoint("TOPLEFT",10,-31)
-clickValue:SetText("Linksklick")
-local spellButton=CreateFrame("Button",nil,settings,"UIPanelButtonTemplate")
-spellButton:SetSize(136,21)
-spellButton:SetPoint("TOPRIGHT",-8,-27)
-
-local testLabel=frame:CreateFontString(nil,"OVERLAY","GameFontNormalSmall")
-testLabel:SetPoint("BOTTOMRIGHT",-14,12)
-testLabel:SetTextColor(1,0.82,0)
-testLabel:SetText("TESTMODUS – keine Zauber")
-testLabel:Hide()
-
 local function makeRow(index, unit)
-    local row=CreateFrame("Button","PaTiHealUnit"..index,frame,"SecureUnitButtonTemplate")
-    row:SetSize(242,39)
+    local row = CreateFrame("Button", "PaTiHealUnit" .. index, window, "SecureUnitButtonTemplate")
+    row.unit = unit
+    row:SetSize(ROW_WIDTH, ROW_HEIGHT)
+    row:SetPoint("TOPLEFT", (WIDTH - ROW_WIDTH) / 2, -ROWS_TOP - (index - 1) * (ROW_HEIGHT + ROW_GAP))
     row:RegisterForClicks("AnyUp")
-    row:SetAttribute("unit",unit)
-    row:SetAttribute("type1","spell")
-    local background=row:CreateTexture(nil,"BACKGROUND")
+    row:SetAttribute("unit", unit)
+    local background = row:CreateTexture(nil, "BACKGROUND")
     background:SetAllPoints()
-    background:SetColorTexture(0.12,0.15,0.18,0.95)
-    local health=CreateFrame("StatusBar",nil,row)
-    health:SetPoint("TOPLEFT",3,-3)
-    health:SetSize(236,20)
-    health:SetStatusBarTexture("Interface\\Buttons\\WHITE8X8")
-    health:SetStatusBarColor(0.18,0.64,0.30,1)
-    local name=health:CreateFontString(nil,"OVERLAY","GameFontHighlightSmall")
-    name:SetPoint("LEFT",6,0)
+    background:SetColorTexture(UI.Color("Panel"))
+    local health = CreateFrame("StatusBar", nil, row)
+    health:SetPoint("TOPLEFT", 3, -3)
+    health:SetSize(ROW_WIDTH - 6, 20)
+    health:SetStatusBarTexture(UI.WHITE)
+    local name = health:CreateFontString(nil, "OVERLAY", UI.Fonts.Text)
+    name:SetPoint("LEFT", 6, 0)
     name:SetWidth(155)
     name:SetJustifyH("LEFT")
-    name:SetTextColor(1,1,1)
-    local status=health:CreateFontString(nil,"OVERLAY","GameFontHighlightSmall")
-    status:SetPoint("RIGHT",-6,0)
-    local mana=CreateFrame("StatusBar",nil,row)
-    mana:SetPoint("BOTTOMLEFT",3,3)
-    mana:SetSize(236,10)
-    mana:SetStatusBarTexture("Interface\\Buttons\\WHITE8X8")
-    mana:SetStatusBarColor(0.16,0.42,0.9,1)
-    row.health,row.mana,row.name,row.status=health,mana,name,status
-    row:SetHighlightTexture("Interface\\Buttons\\ButtonHilight-Square","ADD")
-    row:SetScript("OnEnter",function(self) if not testMode and UnitExists(unit) then GameTooltip:SetOwner(self,"ANCHOR_RIGHT"); GameTooltip:SetUnit(unit); GameTooltip:Show() end end)
-    row:SetScript("OnLeave",function() GameTooltip:Hide() end)
+    name:SetWordWrap(false)
+    local status = health:CreateFontString(nil, "OVERLAY", UI.Fonts.Text)
+    status:SetPoint("RIGHT", -6, 0)
+    local mana = CreateFrame("StatusBar", nil, row)
+    mana:SetPoint("BOTTOMLEFT", 3, 3)
+    mana:SetSize(ROW_WIDTH - 6, 10)
+    mana:SetStatusBarTexture(UI.WHITE)
+    mana:SetStatusBarColor(UI.Color("Mana"))
+    row.health, row.mana, row.name, row.status = health, mana, name, status
+    row:SetHighlightTexture("Interface\\Buttons\\ButtonHilight-Square", "ADD")
+    row:SetScript("OnEnter", function(self)
+        if not testMode and UnitExists(unit) then
+            GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+            GameTooltip:SetUnit(unit)
+            GameTooltip:Show()
+        end
+    end)
+    row:SetScript("OnLeave", function() GameTooltip:Hide() end)
     return row
 end
-for index,unit in ipairs({"player","party1","party2","party3","party4"}) do rows[#rows+1]=makeRow(index,unit) end
+for index, unit in ipairs({ "player", "party1", "party2", "party3", "party4" }) do rows[index] = makeRow(index, unit) end
 
-local function debugClickState()
-    local row=rows[1]
-    local spellID=DB.clickSpellID
-    local slot=C_SpellBook and C_SpellBook.FindSpellBookSlotForSpell and spellID and C_SpellBook.FindSpellBookSlotForSpell(spellID)
-    print("|cff68caffPaTiHeal Debug:|r Test="..tostring(testMode).." | Unit="..tostring(row:GetAttribute("unit")).." | Klick="..tostring(DB.clickModifier or "")..tostring(DB.clickButton or "LeftButton").." | ID="..tostring(spellID).." | Zauber="..tostring(spellID and spellName(spellID) or "keiner").." | Zauberbuch-Slot="..tostring(slot).." | type1="..tostring(row:GetAttribute("type1")).." | spell="..tostring(row:GetAttribute("spell")).." | ctrl-type1="..tostring(row:GetAttribute("ctrl-type1")).." | ctrl-spell="..tostring(row:GetAttribute("ctrl-spell")))
-end
-
-local function updateLayout()
-    if InCombatLockdown() then return end
-    local hideRows = settingsOpen or collapsed
-    settings:SetShown(settingsOpen)
-    gearActive:SetShown(settingsOpen)
-    chevron:SetText(collapsed and "›" or "⌄")
-    if settingsOpen then frame:SetSize(270,112) elseif collapsed then frame:SetSize(270,36) else frame:SetSize(270,350) end
-    for index,row in ipairs(rows) do
-        if hideRows then row:Hide() else row:ClearAllPoints(); row:SetPoint("TOPLEFT",frame,"TOPLEFT",14,-55-((index-1)*43)); row:Show() end
+local function paintRow(row, data)
+    local name = data.name
+    if row.unit == "player" then name = name .. " " .. L.SUFFIX_YOU
+    elseif data.isTank then name = name .. " " .. L.SUFFIX_TANK end
+    row.name:SetText(name .. " – " .. data.class)
+    setBar(row.health, data.health, data.healthMax)
+    setBar(row.mana, data.mana, data.manaMax)
+    if data.state then
+        row.status:SetText(L[data.state])
+        row.health:SetStatusBarColor(UI.Color("Danger"))
+    else
+        row.status:SetText(data.health)
+        row.health:SetStatusBarColor(UI.Color("Health"))
     end
-    testLabel:SetShown(testMode and not hideRows)
 end
 
-local function applyClickSpell()
-    if InCombatLockdown() then return end
-    local id=DB.clickSpellID
-    if not (id and isKnownSpell(id)) then id=nil; DB.clickSpellID=nil end
-    local castSpell=id and spellName(id)
-    for _,row in ipairs(rows) do row:SetAttribute("spell",castSpell); row:SetAttribute("spell1",castSpell); row:SetAttribute("type","spell"); row:SetAttribute("type1","spell"); row:SetEnabled(not testMode and castSpell~=nil) end
-    spellButton:SetText(castSpell or "Zauber auswaehlen")
-end
-
-local function selectNextSpell()
-    if InCombatLockdown() then print("|cff68caffPaTiHeal:|r Zauberwahl ist im Kampf nicht moeglich."); return end
-    local list=knownSpells()
-    if #list==0 then print("|cff68caffPaTiHeal:|r Keine bekannten Heilzauber gefunden."); return end
-    local nextID=list[1]
-    for index,id in ipairs(list) do if id==DB.clickSpellID then nextID=list[index+1] or list[1]; break end end
-    DB.clickSpellID=nextID
-    applyClickSpell()
-end
-spellButton:SetScript("OnClick",selectNextSpell)
-gear:SetScript("OnClick",function()
-    if InCombatLockdown() then print("|cff68caffPaTiHeal:|r Einstellungen sind im Kampf gesperrt."); return end
-    settingsOpen=not settingsOpen
-    updateLayout()
-end)
-
-chevron:SetScript("OnClick",function()
-    if InCombatLockdown() then print("|cff68caffPaTiHeal:|r Ein- und Ausklappen ist im Kampf gesperrt."); return end
-    settingsOpen=false
-    collapsed=not collapsed
-    DB.collapsed=collapsed
-    updateLayout()
-end)
-
--- Zentraler Einstellungsdialog: nur Konfiguration, keine Zauberauslösung.
-settings:SetParent(UIParent)
-settings:ClearAllPoints()
-settings:SetPoint("CENTER", UIParent, "CENTER", 0, 80)
-settings:SetSize(370, 150)
-settings:SetFrameStrata("DIALOG")
-settings:SetFrameLevel(100)
-settings:SetBackdropColor(0.12, 0.10, 0.08, 0.98)
-settings:SetBackdropBorderColor(0.65, 0.58, 0.42, 1)
-clickHeader:SetText("Klick")
-actionHeader:SetText("Aktion")
-local modalTitle=settings:CreateFontString(nil,"OVERLAY","GameFontNormal")
-modalTitle:SetPoint("TOPLEFT",14,-12)
-modalTitle:SetText("PaTiHeal – Klickaktion einstellen")
--- Echte zweispaltige Tabelle für Klick und Aktion.
-settings:SetSize(370, 142)
-clickValue:Hide()
-clickHeader:ClearAllPoints()
-clickHeader:SetPoint("TOPLEFT", settings, "TOPLEFT", 18, -51)
-clickHeader:SetText("KLICK")
-actionHeader:ClearAllPoints()
-actionHeader:SetPoint("TOPLEFT", settings, "TOPLEFT", 205, -51)
-actionHeader:SetText("AKTION")
-local tableHeader=settings:CreateTexture(nil,"BACKGROUND")
-tableHeader:SetPoint("TOPLEFT",settings,"TOPLEFT",12,-42)
-tableHeader:SetSize(346,25)
-tableHeader:SetColorTexture(0.20,0.17,0.12,0.95)
-local tableBorder=settings:CreateTexture(nil,"BORDER")
-tableBorder:SetPoint("TOPLEFT",settings,"TOPLEFT",12,-42)
-tableBorder:SetSize(346,1)
-tableBorder:SetColorTexture(0.65,0.58,0.42,0.8)
-local divider=settings:CreateTexture(nil,"BORDER")
-divider:SetPoint("TOPLEFT",settings,"TOPLEFT",190,-42)
-divider:SetSize(1,58)
-divider:SetColorTexture(0.65,0.58,0.42,0.6)
-local modalClose=CreateFrame("Button",nil,settings,"UIPanelCloseButton")
-modalClose:SetSize(24,24)
-modalClose:SetPoint("TOPRIGHT",-2,-2)
-local recordButton=CreateFrame("Button",nil,settings,"UIPanelButtonTemplate")
-recordButton:SetSize(150,24)
-recordButton:SetPoint("TOPLEFT",18,-76)
-local actionButton=spellButton
-actionButton:ClearAllPoints()
-actionButton:SetSize(170,24)
-actionButton:SetPoint("TOPRIGHT",-18,-76)
-local function clickInfo()
-    local button=DB.clickButton or "LeftButton"
-    local modifier=DB.clickModifier or ""
-    local modifierText=modifier=="ctrl-" and "Strg + " or modifier=="shift-" and "Shift + " or modifier=="alt-" and "Alt + " or ""
-    return button,modifier,modifierText..(button=="RightButton" and "Rechtsklick" or "Linksklick")
-end
-local function modifierPrefix()
-    if IsControlKeyDown() then return "ctrl-" end
-    if IsShiftKeyDown() then return "shift-" end
-    if IsAltKeyDown() then return "alt-" end
-    return ""
-end
-applyClickSpell=function()
-    if InCombatLockdown() then return end
-    local id=DB.clickSpellID
-    if not (id and isKnownSpell(id)) then id=nil; DB.clickSpellID=nil end
-    local castSpell=id and spellName(id)
-    local button,modifier,label=clickInfo()
-    local number=button=="RightButton" and "2" or "1"
-    for _,row in ipairs(rows) do
-        row:SetAttribute("type"..number,nil); row:SetAttribute("spell"..number,nil)
-        row:SetAttribute(modifier.."type"..number,"spell")
-        row:SetAttribute(modifier.."spell",castSpell)
-        row:SetAttribute(modifier.."spell"..number,castSpell)
-        row:SetEnabled(not testMode and castSpell~=nil)
-    end
-    recordButton:SetText(label)
-    actionButton:SetText(castSpell or "Zauber auswaehlen")
-end
-recordButton:SetScript("OnClick",function(_,button)
-    if InCombatLockdown() then return end
-    DB.clickButton=(button=="RightButton") and "RightButton" or "LeftButton"
-    DB.clickModifier=modifierPrefix()
-    applyClickSpell()
-end)
-modalClose:SetScript("OnClick",function() settingsOpen=false; settings:Hide(); gearActive:Hide() end)
-gear:SetScript("OnClick",function()
-    if InCombatLockdown() then return end
-    settingsOpen=not settingsOpen
-    settings:SetShown(settingsOpen)
-    gearActive:SetShown(settingsOpen)
-    if settingsOpen then applyClickSpell() end
-end)
-
-local function unitData(unit)
-    if testMode then
-        local t={player={"Du","Priester",82,100,72,100},party1={"Tank","Krieger",48,100,20,100},party2={"Gruppe 2","Magier",100,100,90,100},party3={"Gruppe 3","Priester",15,100,60,100},party4={"Offline","Jäger",0,100,0,100,"OFFLINE"}}
-        return unpack(t[unit])
-    end
-    if not UnitExists(unit) then return nil end
-    local name=UnitName(unit) or unit
-    local class=UnitClass(unit) or "Unbekannt"
-    if not UnitIsConnected(unit) then return name,class,0,1,0,1,"OFFLINE" end
-    if UnitIsDeadOrGhost(unit) then return name,class,0,1,0,1,"TOT" end
-    local mana,manaMax=0,0
-    if UnitPowerType(unit)==0 then mana,manaMax=UnitPower(unit,0) or 0,UnitPowerMax(unit,0) or 0 end
-    return name,class,UnitHealth(unit) or 0,UnitHealthMax(unit) or 1,mana,manaMax
-end
+-- Row contents only; visibility is handled by updateLayout / the unit watch.
 local function refresh()
-    if collapsed then
-        for _,row in ipairs(rows) do row:Hide() end
-        testLabel:Hide()
-        return
+    if not DB or DB.collapsed then return end
+    for _, row in ipairs(rows) do
+        local data = unitData(row.unit)
+        if data then paintRow(row, data) end
     end
-    for _,row in ipairs(rows) do
-        local name,class,h,hmax,m,mmax,state=unitData(row:GetAttribute("unit"))
-        if not name then row:Hide() else
-            row:Show(); if row:GetAttribute("unit")=="player" then name=name.." (Du)" elseif not testMode and UnitGroupRolesAssigned(row:GetAttribute("unit"))=="TANK" then name=name.." (Tank)" end
-            row.name:SetText(name.." – "..class)
-            setBar(row.health,h,hmax); setBar(row.mana,m,mmax)
-            if state then row.status:SetText(state); row.health:SetStatusBarColor(0.45,0.12,0.12,1) else row.status:SetText(h); row.health:SetStatusBarColor(0.18,0.64,0.30,1) end
+end
+
+-- Secure changes: only out of combat; PLAYER_REGEN_ENABLED calls this again.
+-- RegisterUnitWatch shows/hides rows with their unit, also in combat (FOLLOW_UPS F2).
+local function updateLayout()
+    if not DB or InCombatLockdown() then return end
+    local watch = RegisterUnitWatch ~= nil
+    for _, row in ipairs(rows) do
+        if watch and not DB.collapsed and not testMode then
+            RegisterUnitWatch(row)
+        else
+            if watch then UnregisterUnitWatch(row) end
+            row:SetShown(not DB.collapsed and (testMode or UnitExists(row.unit)))
         end
     end
-    testLabel:SetShown(testMode)
+    window:SetHeight(DB.collapsed and UI.Sizes.HeaderHeight or FULL_HEIGHT)
+    window:SetTestMode(testMode)
 end
 
-frame:SetScript("OnDragStart",function(self) if not DB.locked and not InCombatLockdown() then self:StartMoving() end end)
-frame:SetScript("OnDragStop",function(self) self:StopMovingOrSizing(); local _,_,_,x,y=self:GetPoint(); DB.x=x; DB.y=y end)
-local events=CreateFrame("Frame")
-for _,event in ipairs({"PLAYER_LOGIN","PLAYER_ENTERING_WORLD","GROUP_ROSTER_UPDATE","UNIT_HEALTH","UNIT_POWER_UPDATE","UNIT_CONNECTION","UNIT_FLAGS","PLAYER_REGEN_ENABLED","SPELLS_CHANGED"}) do events:RegisterEvent(event) end
-events:SetScript("OnEvent",function(_,event)
-    if event=="PLAYER_LOGIN" then PaTiHealDB=PaTiHealDB or {}; DB=PaTiHealDB; DB.x=DB.x or 330; DB.y=DB.y or 0; DB.locked=DB.locked or false; collapsed=DB.collapsed or false; frame:ClearAllPoints(); frame:SetPoint("CENTER",UIParent,"CENTER",DB.x,DB.y); updateLayout(); applyClickSpell()
-    elseif event=="PLAYER_REGEN_ENABLED" or event=="SPELLS_CHANGED" then applyClickSpell() end
+local function applyBindings()
+    if not DB or InCombatLockdown() then return end
+    local names = Logic.SpellNames(DB.bindings, function(id) return isKnownSpell(id) and spellName(id) or nil end)
+    local attributes = Logic.ClickAttributes(names)
+    local anyBinding = next(names) ~= nil
+    for _, row in ipairs(rows) do
+        for _, attribute in ipairs(attributes) do row:SetAttribute(attribute.name, attribute.value) end
+        row:SetEnabled(not testMode and anyBinding)
+    end
+end
+
+-- Settings modal (built on first open, when DB exists) -----------------------------------------
+
+local modal
+
+local function spellItems(current)
+    local items, listed = { { value = 0, text = "NO_SPELL" } }, {}
+    local ids = knownSpells()
+    if current and current ~= 0 then ids[#ids + 1] = current end -- keep an assigned spell visible after a respec
+    for _, id in ipairs(ids) do
+        if not listed[id] then
+            listed[id] = true
+            local name = spellName(id) or tostring(id)
+            items[#items + 1] = { value = id, text = function() return name end, icon = spellIcon(id) }
+        end
+    end
+    return items
+end
+
+local function buildSettings()
+    modal = UI.CreateModal("PaTiHealSettings", function() return "PaTiHeal " .. L.SETTINGS end)
+    modal:AddSection("CLICK_CASTING")
+    for _, binding in ipairs(Logic.BINDINGS) do
+        local key = binding.key
+        modal:AddRow(key, UI.CreateDropdown(modal, 200, {
+            items = function() return spellItems(DB.bindings[key]) end,
+            get = function() return DB.bindings[key] or 0 end,
+            set = function(id)
+                DB.bindings[key] = id ~= 0 and id or nil
+                if InCombatLockdown() then say("APPLY_AFTER_COMBAT") end
+                applyBindings()
+            end,
+        }))
+    end
+    modal:AddSection("GENERAL")
+    modal:AddRow("LANGUAGE", UI.CreateLanguageDropdown(modal, DB, 200))
+    modal:AddControl(UI.CreateCheckbox(modal, "LOCK_WINDOW", {
+        get = function() return window:IsLocked() end,
+        set = function(locked) window:SetLocked(locked) end,
+    }))
+    modal:Finish(function()
+        Logic.RestoreDefaults(DB)
+        UI.SetLanguage(DB.language)
+        window:SetLocked(DB.locked)
+        applyBindings()
+    end)
+end
+
+local function openSettings()
+    if not DB then return end
+    if not modal then buildSettings() end
+    modal:Show()
+end
+
+-- Actions (menu and slash commands) --------------------------------------------------------------
+
+local function combatBlocked()
+    if InCombatLockdown() then say("COMBAT_LOCKED"); return true end
+    return false
+end
+
+local function toggleTestMode()
+    if combatBlocked() then return end
+    testMode = not testMode
+    updateLayout()
+    applyBindings()
+    refresh()
+end
+
+local function toggleCollapsed()
+    if combatBlocked() then return end
+    DB.collapsed = not DB.collapsed
+    updateLayout()
+    refresh()
+end
+
+local function setShown(shown)
+    if combatBlocked() then return end
+    window:SetShown(shown)
+    if not shown then say("HIDDEN_HINT") end
+end
+
+window:SetMenu(function()
+    if not DB then return {} end
+    local combat = InCombatLockdown()
+    local combatTip = combat and "COMBAT_LOCKED" or nil
+    return {
+        { text = "SETTINGS", onClick = openSettings },
+        { text = window:IsLocked() and "UNLOCK" or "LOCK", onClick = function() window:SetLocked(not window:IsLocked()) end },
+        { text = DB.collapsed and "EXPAND" or "COLLAPSE", disabled = combat, tooltip = combatTip, onClick = toggleCollapsed },
+        { text = "TEST_MODE", checked = testMode, disabled = combat, tooltip = combatTip, onClick = toggleTestMode },
+        { text = "HIDE", disabled = combat, tooltip = combatTip, onClick = function() setShown(false) end },
+    }
+end)
+
+local function printSpells()
+    local names = {}
+    for _, id in ipairs(knownSpells()) do names[#names + 1] = (spellName(id) or id) .. " (" .. id .. ")" end
+    if #names == 0 then say("NO_SPELLS") else say("KNOWN_SPELLS", table.concat(names, ", ")) end
+end
+
+local function printDebug()
+    local getMetadata = (C_AddOns and C_AddOns.GetAddOnMetadata) or GetAddOnMetadata
+    print(("|cff68caffPaTiHeal Debug:|r PaTiHeal %s · PaTiShared UI %s · %s · test=%s"):format(
+        tostring(getMetadata and getMetadata("PaTiHeal", "Version")), tostring(UI.VERSION),
+        UI.GetLanguage(), tostring(testMode)))
+    local row = rows[1]
+    for _, binding in ipairs(Logic.BINDINGS) do
+        local prefix = binding.modifier
+        print(("  %s: id=%s type=%s spell=%s"):format(binding.key, tostring(DB.bindings[binding.key]),
+            tostring(row:GetAttribute(prefix .. "type" .. binding.button)),
+            tostring(row:GetAttribute(prefix .. "spell" .. binding.button))))
+    end
+end
+
+local COMMANDS = {
+    settings = openSettings,
+    test = toggleTestMode,
+    show = function() setShown(true) end,
+    hide = function() setShown(false) end,
+    lock = function() window:SetLocked(true) end,
+    unlock = function() window:SetLocked(false) end,
+    spells = printSpells,
+    debug = printDebug,
+}
+
+SLASH_PATIHEAL1 = "/patiheal"
+SLASH_PATIHEAL2 = "/ph"
+SlashCmdList.PATIHEAL = function(message)
+    local command = COMMANDS[(message or ""):match("^%s*(.-)%s*$"):lower()]
+    if command and DB then command() else say("HELP") end
+end
+
+-- Events -----------------------------------------------------------------------------------------
+
+local events = CreateFrame("Frame")
+for _, event in ipairs({ "PLAYER_LOGIN", "PLAYER_ENTERING_WORLD", "GROUP_ROSTER_UPDATE", "UNIT_HEALTH", "UNIT_POWER_UPDATE",
+    "UNIT_CONNECTION", "UNIT_FLAGS", "PLAYER_REGEN_ENABLED", "SPELLS_CHANGED" }) do
+    events:RegisterEvent(event)
+end
+events:SetScript("OnEvent", function(_, event)
+    if event == "PLAYER_LOGIN" then
+        PaTiHealDB = Logic.Migrate(PaTiHealDB)
+        DB = PaTiHealDB
+        UI.SetLanguage(DB.language)
+        window:Attach(DB, 330, 0)
+        updateLayout()
+        applyBindings()
+    elseif not DB then
+        return
+    elseif event == "PLAYER_REGEN_ENABLED" then
+        updateLayout()
+        applyBindings()
+    elseif event == "GROUP_ROSTER_UPDATE" then
+        updateLayout()
+    elseif event == "SPELLS_CHANGED" then
+        applyBindings()
+    end
     refresh()
 end)
-SLASH_PATIHEAL1="/patiheal"; SLASH_PATIHEAL2="/ph"
-SlashCmdList.PATIHEAL=function(message)
-    local command=(message or ""):match("^%s*(.-)%s*$"):lower()
-    if command=="test" then if InCombatLockdown() then print("|cff68caffPaTiHeal:|r Testmodus ist im Kampf gesperrt.") else testMode=not testMode; applyClickSpell(); refresh() end
-    elseif command=="show" then frame:Show()
-    elseif command=="hide" then frame:Hide()
-    elseif command=="lock" then DB.locked=true
-    elseif command=="unlock" then DB.locked=false
-    elseif command=="spells" then local list=knownSpells(); local names={}; for _,id in ipairs(list) do names[#names+1]=(spellName(id) or id).." ("..id..")" end; print("|cff68caffPaTiHeal:|r "..(#names>0 and table.concat(names,", ") or "Keine bekannten Heilzauber."))
-    elseif command=="debug" then debugClickState()
-    else print("|cff68caffPaTiHeal:|r /ph test, show, hide, lock, unlock, spells, debug") end
-end
-print("|cff68caffPaTiHeal|r geladen. Zahnrad oeffnet die Klickzauber-Einstellungen.")
+UI.OnLanguageChanged(refresh)
+
+say("LOADED")

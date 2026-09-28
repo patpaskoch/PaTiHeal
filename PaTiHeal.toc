@@ -5,15 +5,8 @@
 ## Version: 0.6.0
 ## SavedVariablesPerCharacter: PaTiHealDB
 
+Shared\Shared.xml
+Locales\enUS.lua
+Locales\deDE.lua
+Logic.lua
 PaTiHeal.lua
-
-
-
-
-
-
-
-
-
-
-

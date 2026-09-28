@@ -1,0 +1,32 @@
+-- PaTiHeal strings, Deutsch. Missing keys fall back to English.
+local _, ns = ...
+ns.Locales = ns.Locales or {}
+local L = ns.Locales.deDE or {}
+ns.Locales.deDE = L
+
+L.CLICK_CASTING = "Klickzauber"
+L.LEFT = "Linksklick"
+L.RIGHT = "Rechtsklick"
+L.MIDDLE = "Mittelklick"
+L.SHIFT_LEFT = "Shift + Linksklick"
+L.SHIFT_RIGHT = "Shift + Rechtsklick"
+L.CTRL_LEFT = "Strg + Linksklick"
+L.CTRL_RIGHT = "Strg + Rechtsklick"
+L.ALT_LEFT = "Alt + Linksklick"
+L.ALT_RIGHT = "Alt + Rechtsklick"
+L.NO_SPELL = "Keiner"
+L.GENERAL = "Allgemein"
+L.LOCK_WINDOW = "Fenster sperren"
+L.SUFFIX_YOU = "(Du)"
+L.SUFFIX_TANK = "(Tank)"
+L.OFFLINE = "OFFLINE"
+L.DEAD = "TOT"
+L.UNKNOWN_CLASS = "Unbekannt"
+L.TEST_HEALER = "Heiler"
+L.TEST_TANK = "Tank"
+L.TEST_MEMBER = "Gruppenmitglied"
+L.LOADED = "geladen. /ph settings öffnet die Einstellungen."
+L.HIDDEN_HINT = "ausgeblendet. /ph show zeigt es wieder."
+L.APPLY_AFTER_COMBAT = "Klickzauber-Änderungen werden nach dem Kampf übernommen."
+L.NO_SPELLS = "Keine bekannten Heilzauber."
+L.KNOWN_SPELLS = "Bekannte Heilzauber: %s"
