@@ -107,7 +107,7 @@ testLabel:SetText("TESTMODUS – keine Zauber")
 testLabel:Hide()
 
 local function makeRow(index, unit)
-    local row=CreateFrame("Button","PaTiHealUnit"..index,frame,"SecureActionButtonTemplate")
+    local row=CreateFrame("Button","PaTiHealUnit"..index,frame,"SecureUnitButtonTemplate,SecureActionButtonTemplate")
     row:SetSize(242,39)
     row:RegisterForClicks("AnyUp")
     row:SetAttribute("unit",unit)
