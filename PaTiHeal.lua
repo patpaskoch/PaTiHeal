@@ -109,7 +109,7 @@ testLabel:Hide()
 local function makeRow(index, unit)
     local row=CreateFrame("Button","PaTiHealUnit"..index,frame,"SecureActionButtonTemplate")
     row:SetSize(242,39)
-    row:RegisterForClicks("LeftButtonUp")
+    row:RegisterForClicks("AnyUp")
     row:SetAttribute("unit",unit)
     row:SetAttribute("type1","spell")
     local background=row:CreateTexture(nil,"BACKGROUND")
@@ -186,6 +186,73 @@ chevron:SetScript("OnClick",function()
     updateLayout()
 end)
 
+-- Zentraler Einstellungsdialog: nur Konfiguration, keine Zauberauslösung.
+settings:SetParent(UIParent)
+settings:ClearAllPoints()
+settings:SetPoint("CENTER", UIParent, "CENTER", 0, 80)
+settings:SetSize(370, 150)
+settings:SetFrameStrata("DIALOG")
+settings:SetFrameLevel(100)
+settings:SetBackdropColor(0.12, 0.10, 0.08, 0.98)
+settings:SetBackdropBorderColor(0.65, 0.58, 0.42, 1)
+clickHeader:SetText("Klick")
+actionHeader:SetText("Aktion")
+local modalTitle=settings:CreateFontString(nil,"OVERLAY","GameFontNormal")
+modalTitle:SetPoint("TOPLEFT",14,-12)
+modalTitle:SetText("PaTiHeal – Klickaktion einstellen")
+local modalClose=CreateFrame("Button",nil,settings,"UIPanelCloseButton")
+modalClose:SetSize(24,24)
+modalClose:SetPoint("TOPRIGHT",-2,-2)
+local recordButton=CreateFrame("Button",nil,settings,"UIPanelButtonTemplate")
+recordButton:SetSize(150,24)
+recordButton:SetPoint("TOPLEFT",14,-68)
+local actionButton=spellButton
+actionButton:ClearAllPoints()
+actionButton:SetSize(170,24)
+actionButton:SetPoint("TOPRIGHT",-14,-68)
+local function clickInfo()
+    local button=DB.clickButton or "LeftButton"
+    local modifier=DB.clickModifier or ""
+    local modifierText=modifier=="ctrl-" and "Strg + " or modifier=="shift-" and "Shift + " or modifier=="alt-" and "Alt + " or ""
+    return button,modifier,modifierText..(button=="RightButton" and "Rechtsklick" or "Linksklick")
+end
+local function modifierPrefix()
+    if IsControlKeyDown() then return "ctrl-" end
+    if IsShiftKeyDown() then return "shift-" end
+    if IsAltKeyDown() then return "alt-" end
+    return ""
+end
+applyClickSpell=function()
+    if InCombatLockdown() then return end
+    local id=DB.clickSpellID
+    if not (id and isKnownSpell(id)) then id=nil; DB.clickSpellID=nil end
+    local castSpell=id and spellName(id)
+    local button,modifier,label=clickInfo()
+    local number=button=="RightButton" and "2" or "1"
+    for _,row in ipairs(rows) do
+        row:SetAttribute("type"..number,nil); row:SetAttribute("spell"..number,nil)
+        row:SetAttribute(modifier.."type"..number,"spell")
+        row:SetAttribute(modifier.."spell"..number,castSpell)
+        row:SetEnabled(not testMode and castSpell~=nil)
+    end
+    recordButton:SetText(label)
+    actionButton:SetText(castSpell or "Zauber auswaehlen")
+end
+recordButton:SetScript("OnClick",function(_,button)
+    if InCombatLockdown() then return end
+    DB.clickButton=(button=="RightButton") and "RightButton" or "LeftButton"
+    DB.clickModifier=modifierPrefix()
+    applyClickSpell()
+end)
+modalClose:SetScript("OnClick",function() settingsOpen=false; settings:Hide(); gearActive:Hide() end)
+gear:SetScript("OnClick",function()
+    if InCombatLockdown() then return end
+    settingsOpen=not settingsOpen
+    settings:SetShown(settingsOpen)
+    gearActive:SetShown(settingsOpen)
+    if settingsOpen then applyClickSpell() end
+end)
+
 local function unitData(unit)
     if testMode then
         local t={player={"Du","Priester",82,100,72,100},party1={"Tank","Krieger",48,100,20,100},party2={"Gruppe 2","Magier",100,100,90,100},party3={"Gruppe 3","Priester",15,100,60,100},party4={"Offline","Jäger",0,100,0,100,"OFFLINE"}}
@@ -201,7 +268,7 @@ local function unitData(unit)
     return name,class,UnitHealth(unit) or 0,UnitHealthMax(unit) or 1,mana,manaMax
 end
 local function refresh()
-    if settingsOpen or collapsed then
+    if collapsed then
         for _,row in ipairs(rows) do row:Hide() end
         testLabel:Hide()
         return
