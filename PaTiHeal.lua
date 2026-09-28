@@ -142,7 +142,9 @@ for index,unit in ipairs({"player","party1","party2","party3","party4"}) do rows
 
 local function debugClickState()
     local row=rows[1]
-    print("|cff68caffPaTiHeal Debug:|r Test="..tostring(testMode).." | Unit="..tostring(row:GetAttribute("unit")).." | Klick="..tostring(DB.clickModifier or "")..tostring(DB.clickButton or "LeftButton").." | Zauber="..tostring(DB.clickSpellID and spellName(DB.clickSpellID) or "keiner").." | type1="..tostring(row:GetAttribute("type1")).." | spell="..tostring(row:GetAttribute("spell")).." | ctrl-type1="..tostring(row:GetAttribute("ctrl-type1")).." | ctrl-spell="..tostring(row:GetAttribute("ctrl-spell")))
+    local spellID=DB.clickSpellID
+    local slot=C_SpellBook and C_SpellBook.FindSpellBookSlotForSpell and spellID and C_SpellBook.FindSpellBookSlotForSpell(spellID)
+    print("|cff68caffPaTiHeal Debug:|r Test="..tostring(testMode).." | Unit="..tostring(row:GetAttribute("unit")).." | Klick="..tostring(DB.clickModifier or "")..tostring(DB.clickButton or "LeftButton").." | ID="..tostring(spellID).." | Zauber="..tostring(spellID and spellName(spellID) or "keiner").." | Zauberbuch-Slot="..tostring(slot).." | type1="..tostring(row:GetAttribute("type1")).." | spell="..tostring(row:GetAttribute("spell")).." | ctrl-type1="..tostring(row:GetAttribute("ctrl-type1")).." | ctrl-spell="..tostring(row:GetAttribute("ctrl-spell")))
 end
 
 local function updateLayout()
@@ -205,16 +207,37 @@ actionHeader:SetText("Aktion")
 local modalTitle=settings:CreateFontString(nil,"OVERLAY","GameFontNormal")
 modalTitle:SetPoint("TOPLEFT",14,-12)
 modalTitle:SetText("PaTiHeal – Klickaktion einstellen")
+-- Echte zweispaltige Tabelle für Klick und Aktion.
+settings:SetSize(370, 142)
+clickValue:Hide()
+clickHeader:ClearAllPoints()
+clickHeader:SetPoint("TOPLEFT", settings, "TOPLEFT", 18, -51)
+clickHeader:SetText("KLICK")
+actionHeader:ClearAllPoints()
+actionHeader:SetPoint("TOPLEFT", settings, "TOPLEFT", 205, -51)
+actionHeader:SetText("AKTION")
+local tableHeader=settings:CreateTexture(nil,"BACKGROUND")
+tableHeader:SetPoint("TOPLEFT",settings,"TOPLEFT",12,-42)
+tableHeader:SetSize(346,25)
+tableHeader:SetColorTexture(0.20,0.17,0.12,0.95)
+local tableBorder=settings:CreateTexture(nil,"BORDER")
+tableBorder:SetPoint("TOPLEFT",settings,"TOPLEFT",12,-42)
+tableBorder:SetSize(346,1)
+tableBorder:SetColorTexture(0.65,0.58,0.42,0.8)
+local divider=settings:CreateTexture(nil,"BORDER")
+divider:SetPoint("TOPLEFT",settings,"TOPLEFT",190,-42)
+divider:SetSize(1,58)
+divider:SetColorTexture(0.65,0.58,0.42,0.6)
 local modalClose=CreateFrame("Button",nil,settings,"UIPanelCloseButton")
 modalClose:SetSize(24,24)
 modalClose:SetPoint("TOPRIGHT",-2,-2)
 local recordButton=CreateFrame("Button",nil,settings,"UIPanelButtonTemplate")
 recordButton:SetSize(150,24)
-recordButton:SetPoint("TOPLEFT",14,-68)
+recordButton:SetPoint("TOPLEFT",18,-76)
 local actionButton=spellButton
 actionButton:ClearAllPoints()
 actionButton:SetSize(170,24)
-actionButton:SetPoint("TOPRIGHT",-14,-68)
+actionButton:SetPoint("TOPRIGHT",-18,-76)
 local function clickInfo()
     local button=DB.clickButton or "LeftButton"
     local modifier=DB.clickModifier or ""
