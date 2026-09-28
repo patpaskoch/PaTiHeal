@@ -89,14 +89,34 @@ describe("Logic.SpellNames", function()
 end)
 
 describe("Logic.RestoreDefaults", function()
-    it("clears bindings, lock and language but keeps the position", function()
+    it("resets settings but keeps click bindings, ranks and the position", function()
         local db = load().RestoreDefaults({ x = 5, y = 6, locked = true, language = "koKR", bindings = { LEFT = 331 },
             bindingRanks = { LEFT = 2 }, showDispels = false })
-        assert.same({}, db.bindings)
-        assert.same({}, db.bindingRanks)
+        assert.same({ LEFT = 331 }, db.bindings)
+        assert.same({ LEFT = 2 }, db.bindingRanks)
         assert.is_true(db.showDispels)
         assert.is_false(db.locked)
         assert.equal("auto", db.language)
         assert.equal(5, db.x)
+    end)
+end)
+
+describe("Logic.HealthPercent", function()
+    local never = function() return false end
+    it("rounds to whole percent", function()
+        local Logic = load()
+        assert.equal("48%", Logic.HealthPercent(4812, 10000, never))
+        assert.equal("100%", Logic.HealthPercent(100, 100, never))
+        assert.equal("0%", Logic.HealthPercent(0, 100, never))
+    end)
+
+    it("never calculates with secret or unusable values", function()
+        local Logic = load()
+        local secret = {}
+        local isSecret = function(value) return value == secret end
+        assert.is_nil(Logic.HealthPercent(secret, 100, isSecret))
+        assert.is_nil(Logic.HealthPercent(50, secret, isSecret))
+        assert.is_nil(Logic.HealthPercent(50, 0, never))
+        assert.is_nil(Logic.HealthPercent(nil, 100, never))
     end)
 end)

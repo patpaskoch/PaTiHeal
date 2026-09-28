@@ -81,12 +81,19 @@ function Logic.Migrate(db)
     return db
 end
 
--- Settings restored by "Restore Defaults". Position is kept on purpose.
+-- Settings restored by "Restore Defaults". Position and click bindings are kept on purpose: there are no
+-- default bindings, so wiping them would only lose the player's setup (clear one binding with "None").
 function Logic.RestoreDefaults(db)
-    db.bindings = {}
-    db.bindingRanks = {}
     db.showDispels = true
     db.locked = false
     db.language = "auto"
     return db
+end
+
+-- "48%" for plain numbers. nil when a value is secret or unusable: the caller then hands the raw health
+-- value to the widget (allowed for secret values) instead of calculating with it.
+function Logic.HealthPercent(health, maximum, isSecret)
+    if isSecret(health) or isSecret(maximum) then return nil end
+    if type(health) ~= "number" or type(maximum) ~= "number" or maximum <= 0 then return nil end
+    return ("%d%%"):format(math.floor(health / maximum * 100 + 0.5))
 end

@@ -6,15 +6,21 @@ local DB
 local rows = {}
 local testMode = false
 
+-- Single-target heals offered for click casting (the names are only for reading this list; the UI shows the
+-- client's names). Only spells cast on a unit belong here: ground-targeted spells such as Healing Rain do not
+-- work as "click a frame → cast on that unit". Greater Heal is missing until its ID is confirmed in this client
+-- (the old list used 2061, which is Flash Heal) — see PaTiAdmin/docs/WOW_API_COMPAT.md.
 local HEAL_SPELLS = {
-    {331, "Heilende Welle"}, {8004, "Welle der Heilung"}, {1064, "Kettenheilung"}, {61295, "Springflut"}, {73920, "Heilender Regen"},
-    {2050, "Geringes Heilen"}, {2060, "Heilen"}, {2061, "Blitzheilung"}, {2061, "Große Heilung"},
+    {331, "Heilende Welle"}, {8004, "Welle der Heilung"}, {1064, "Kettenheilung"}, {61295, "Springflut"},
+    {2050, "Geringes Heilen"}, {2060, "Heilen"}, {2061, "Blitzheilung"},
     {635, "Heiliges Licht"}, {19750, "Lichtblitz"}, {5185, "Heilende Berührung"}, {8936, "Nachwachsen"}, {774, "Verjüngung"},
 }
 
 local function say(key, ...)
     print("|cff68caffPaTiHeal:|r " .. L[key]:format(...))
 end
+
+local function isSecret(value) return issecretvalue ~= nil and issecretvalue(value) == true end
 
 -- WoW API adapters (spells: SpellBook.lua, debuffs: Dispels.lua) ----------------------------------
 
@@ -31,10 +37,6 @@ local function knownSpells()
     return result
 end
 
-local function className(classFile)
-    return LOCALIZED_CLASS_NAMES_MALE and LOCALIZED_CLASS_NAMES_MALE[classFile] or classFile
-end
-
 local TEST_UNITS = {
     player = { nameKey = "TEST_HEALER", class = "SHAMAN", health = 82, mana = 72 },
     party1 = { nameKey = "TEST_TANK", class = "WARRIOR", health = 48, mana = 20, isTank = true },
@@ -43,22 +45,23 @@ local TEST_UNITS = {
     party4 = { nameKey = "TEST_MEMBER", class = "HUNTER", health = 0, mana = 0, state = "OFFLINE" },
 }
 
--- One unit as a plain table: name, class, health, healthMax, mana, manaMax, state, isTank.
--- Health values can be secret values: they are only handed to widgets, never calculated with.
+-- One unit as a plain table: name, classFile, health, healthMax, mana, manaMax, state, isTank.
+-- Health values can be secret values: only Logic.HealthPercent (which checks) or widgets touch them.
 local function unitData(unit)
     if testMode then
         local fake = TEST_UNITS[unit]
-        return { name = L[fake.nameKey], class = className(fake.class), health = fake.health, healthMax = 100,
+        return { name = L[fake.nameKey], classFile = fake.class, health = fake.health, healthMax = 100,
             mana = fake.mana, manaMax = 100, state = fake.state, isTank = fake.isTank }
     end
     if not UnitExists(unit) then return nil end
-    local data = { name = UnitName(unit) or unit, class = UnitClass(unit) or L.UNKNOWN_CLASS,
-        health = 0, healthMax = 1, mana = 0, manaMax = 1 }
+    local _, classFile = UnitClass(unit)
+    local data = { name = UnitName(unit) or unit, classFile = classFile, health = 0, healthMax = 1, mana = 0, manaMax = 1 }
     if not UnitIsConnected(unit) then data.state = "OFFLINE"; return data end
     if UnitIsDeadOrGhost(unit) then data.state = "DEAD"; return data end
     data.health, data.healthMax = UnitHealth(unit) or 0, UnitHealthMax(unit) or 1
     if UnitPowerType(unit) == 0 then data.mana, data.manaMax = UnitPower(unit, 0) or 0, UnitPowerMax(unit, 0) or 0 end
-    data.isTank = UnitGroupRolesAssigned(unit) == "TANK"
+    local role = UnitGroupRolesAssigned(unit)
+    data.isTank = not isSecret(role) and role == "TANK"
     return data
 end
 
@@ -68,7 +71,8 @@ local WIDTH, ROW_WIDTH, ROW_HEIGHT, ROW_GAP = 270, 242, 39, 4
 local ROWS_TOP = UI.Sizes.HeaderHeight + UI.Spacing.SM
 local FULL_HEIGHT = ROWS_TOP + 5 * (ROW_HEIGHT + ROW_GAP) + UI.Spacing.MD
 
-local DISPEL_ICON = 13 -- fits between the health bar and the bottom edge of a row
+local DISPEL_ICON = 13 -- fits between the health bar and the bottom edge of a row; judge the size in game
+local TANK_MARK = 3 -- width of the tank stripe
 
 local window = UI.CreateWindow("PaTiHealFrame", "PaTiHeal", WIDTH, FULL_HEIGHT)
 
@@ -91,13 +95,21 @@ local function makeRow(index, unit)
     health:SetPoint("TOPLEFT", 3, -3)
     health:SetSize(ROW_WIDTH - 6, 20)
     health:SetStatusBarTexture(UI.WHITE)
-    local name = health:CreateFontString(nil, "OVERLAY", UI.Fonts.Text)
-    name:SetPoint("LEFT", 6, 0)
-    name:SetWidth(155)
-    name:SetJustifyH("LEFT")
-    name:SetWordWrap(false)
     local status = health:CreateFontString(nil, "OVERLAY", UI.Fonts.Text)
     status:SetPoint("RIGHT", -6, 0)
+    local name = health:CreateFontString(nil, "OVERLAY", UI.Fonts.Text)
+    name:SetPoint("LEFT", 6, 0)
+    name:SetPoint("RIGHT", status, "LEFT", -UI.Spacing.SM, 0)
+    name:SetJustifyH("LEFT")
+    name:SetWordWrap(false)
+    -- Tank: an accent stripe on the left edge — recognisable at a glance without extra text.
+    local tankMark = row:CreateTexture(nil, "ARTWORK")
+    tankMark:SetPoint("TOPLEFT")
+    tankMark:SetPoint("BOTTOMLEFT")
+    tankMark:SetWidth(TANK_MARK)
+    tankMark:SetColorTexture(UI.Color("Accent"))
+    tankMark:Hide()
+    row.tankMark = tankMark
     local mana = CreateFrame("StatusBar", nil, row)
     mana:SetPoint("BOTTOMLEFT", 3, 3)
     mana:SetSize(ROW_WIDTH - 6 - Dispels.MAX * (DISPEL_ICON + UI.Spacing.XS) - UI.Spacing.SM, 10)
@@ -127,18 +139,19 @@ local function makeRow(index, unit)
 end
 for index, unit in ipairs({ "player", "party1", "party2", "party3", "party4" }) do rows[index] = makeRow(index, unit) end
 
+-- Name in class colour (class details stay in the unit tooltip), health in percent on the right.
 local function paintRow(row, data)
-    local name = data.name
-    if row.unit == "player" then name = name .. " " .. L.SUFFIX_YOU
-    elseif data.isTank then name = name .. " " .. L.SUFFIX_TANK end
-    row.name:SetText(name .. " – " .. data.class)
+    row.name:SetText(data.name)
+    local color = RAID_CLASS_COLORS and data.classFile and not isSecret(data.classFile) and RAID_CLASS_COLORS[data.classFile]
+    if color then row.name:SetTextColor(color.r, color.g, color.b) else row.name:SetTextColor(UI.Color("Text")) end
+    row.tankMark:SetShown(data.isTank == true)
     setBar(row.health, data.health, data.healthMax)
     setBar(row.mana, data.mana, data.manaMax)
     if data.state then
         row.status:SetText(L[data.state])
         row.health:SetStatusBarColor(UI.Color("Danger"))
     else
-        row.status:SetText(data.health)
+        row.status:SetText(Logic.HealthPercent(data.health, data.healthMax, isSecret) or data.health)
         row.health:SetStatusBarColor(UI.Color("Health"))
     end
 end
@@ -402,11 +415,13 @@ events:SetScript("OnEvent", function(_, event, unit)
         applyBindings()
     elseif not DB then
         return
-    elseif event == "UNIT_AURA" then
-        -- Only the debuff icons of that one frame can change; no full redraw.
+    elseif event == "UNIT_AURA" or event == "UNIT_HEALTH" or event == "UNIT_POWER_UPDATE"
+        or event == "UNIT_CONNECTION" or event == "UNIT_FLAGS" then
+        -- Unit events repaint only that unit's frame (and ignore target, nameplates, raid units).
         local row = rowByUnit[unit]
         if row and not DB.collapsed and not testMode then
             local data = unitData(unit)
+            if data and event ~= "UNIT_AURA" then paintRow(row, data) end
             paintDispels(row, data and data.state)
         end
         return

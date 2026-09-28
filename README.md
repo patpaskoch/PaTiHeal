@@ -4,7 +4,8 @@ Kompakte Gruppenanzeige für manuelle Heilung. Das Addon wählt weder Ziele noch
 ein Klick auf einen Gruppenbalken wirkt genau den Zauber, den du dieser Klick-Kombination zugewiesen hast.
 
 ## Funktionen
-- Lebens- und Mana-Balken mit `Name – Klasse`, Zustände tot und offline
+- Lebens- und Mana-Balken: Name in Klassenfarbe, Leben in Prozent, Zustände tot und offline;
+  der Tank hat einen farbigen Streifen am linken Rand
 - Klickzauber für neun Kombinationen: Links-, Rechts-, Mittelklick sowie Shift/Strg/Alt + Links/Rechts,
   jeweils mit Rangwahl („Höchster“ oder ein bestimmter Rang)
 - Bannbare Debuffs als kleine Icons am Gruppenrahmen (nur Anzeige)

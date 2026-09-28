@@ -14,6 +14,10 @@ History before this file: `git log`.
 - Menus and dropdowns: roomier rows with an icon or dot in front (PaTiShared 0.2.0).
 - English UI texts; German translation. Chinese and Korean fall back to English except for shared menu texts.
 ### Changed
+- Party frames: only the name (in class colour) and health in percent; the class is in the unit tooltip.
+  Tanks get an accent stripe on the left edge instead of "(Tank)". Secret health values are shown raw, never calculated.
+- Restore Defaults keeps your click bindings and ranks (there are no default bindings); it resets language, lock and dispel display.
+- Health, power, connection and aura events repaint only the affected frame.
 - New PaTiShared look: flat dark window, TEST badge instead of the yellow test label; the window moves by its header.
 - Settings are no longer shown inside the party window.
 - The saved click binding of 0.6.0 is converted automatically (SavedVariables schema 2).
@@ -23,6 +27,8 @@ History before this file: `git log`.
 - Party rows were shown/hidden in combat (blocked action); rows now follow their unit via RegisterUnitWatch.
 - The window could jump after /reload because the saved anchor was not restored.
 ### Removed
+- Healing Rain from the click-casting list (ground-targeted, cannot be cast on a clicked unit) and the second
+  2061 entry labelled Greater Heal (2061 is Flash Heal; Greater Heal returns once its ID is confirmed in this client).
 - Gear, chevron and close buttons in the header (replaced by the ••• menu).
 ### Known Issues
 - Owner-tested in game before ranks/dispels: bindings, migration, settings, language. Ranks and dispel icons not yet tested in game.
