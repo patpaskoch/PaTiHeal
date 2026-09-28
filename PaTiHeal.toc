@@ -11,4 +11,5 @@ Locales\deDE.lua
 Logic.lua
 SpellBook.lua
 Dispels.lua
+Settings.lua
 PaTiHeal.lua

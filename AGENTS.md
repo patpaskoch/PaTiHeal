@@ -7,7 +7,7 @@ Addon facts: `../../PaTiAdmin/docs/ARCHITECTURE.md` · open issues: `../../PaTiA
 ## This addon
 - Purpose: compact party frames for a healer; the player clicks a frame, the addon casts exactly the spell the player assigned to that click.
 - Files: `Logic.lua` (pure: bindings → secure attributes, SavedVariables migration; tested in `tests/logic_spec.lua`),
-  `SpellBook.lua` (spell/spellbook adapter, ranks), `Dispels.lua` (dispellable debuffs adapter), `PaTiHeal.lua` (rows, menu, settings, events), `Locales/` (enUS source, deDE), `Shared/` (PaTiShared, synced — never edit).
+  `SpellBook.lua` (spell/spellbook adapter, ranks), `Dispels.lua` (dispellable debuffs adapter), `Settings.lua` (settings modal), `PaTiHeal.lua` (rows, menu, commands, events), `Locales/` (enUS source, deDE), `Shared/` (PaTiShared, synced — never edit).
 - SavedVariables: `PaTiHealDB` (per character), schema 2: point, relativePoint, x, y, locked, collapsed, language,
   showDispels, bindings = { LEFT = spellID, … }, bindingRanks = { LEFT = rank } (missing = highest). 0.6.0 keys clickSpellID/clickButton/clickModifier are migrated by `Logic.Migrate`.
   Any shape change: bump `Logic.SCHEMA`, add a migration step and a test.
