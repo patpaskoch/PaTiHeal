@@ -232,6 +232,7 @@ applyClickSpell=function()
     for _,row in ipairs(rows) do
         row:SetAttribute("type"..number,nil); row:SetAttribute("spell"..number,nil)
         row:SetAttribute(modifier.."type"..number,"spell")
+        row:SetAttribute(modifier.."spell",castSpell)
         row:SetAttribute(modifier.."spell"..number,castSpell)
         row:SetEnabled(not testMode and castSpell~=nil)
     end
