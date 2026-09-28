@@ -1,6 +1,6 @@
 -- PaTiHeal: manual party frames. A click casts exactly the spell the player assigned to that click.
 local _, ns = ...
-local UI, L, Logic = ns.UI, ns.UI.L, ns.Logic
+local UI, L, Logic, Spells, Dispels = ns.UI, ns.UI.L, ns.Logic, ns.Spells, ns.Dispels
 
 local DB
 local rows = {}
@@ -16,33 +16,14 @@ local function say(key, ...)
     print("|cff68caffPaTiHeal:|r " .. L[key]:format(...))
 end
 
--- WoW API adapters -------------------------------------------------------------------------------
+-- WoW API adapters (spells: SpellBook.lua, debuffs: Dispels.lua) ----------------------------------
 
-local function isKnownSpell(id)
-    if C_SpellBook and C_SpellBook.IsSpellKnown then
-        local ok, known = pcall(C_SpellBook.IsSpellKnown, id)
-        return ok and known
-    end
-    return C_Spell and C_Spell.GetSpellInfo and C_Spell.GetSpellInfo(id) ~= nil
-end
-
-local function spellName(id)
-    if C_Spell and C_Spell.GetSpellInfo then
-        local info = C_Spell.GetSpellInfo(id)
-        return info and info.name
-    end
-    return GetSpellInfo and GetSpellInfo(id)
-end
-
-local function spellIcon(id)
-    if C_Spell and C_Spell.GetSpellTexture then return C_Spell.GetSpellTexture(id) end
-    return GetSpellTexture and GetSpellTexture(id)
-end
+local spellName, spellIcon = Spells.Name, Spells.Icon
 
 local function knownSpells()
     local result, seen = {}, {}
     for _, entry in ipairs(HEAL_SPELLS) do
-        if not seen[entry[1]] and isKnownSpell(entry[1]) then
+        if not seen[entry[1]] and Spells.IsKnown(entry[1]) then
             seen[entry[1]] = true
             result[#result + 1] = entry[1]
         end
@@ -87,6 +68,8 @@ local WIDTH, ROW_WIDTH, ROW_HEIGHT, ROW_GAP = 270, 242, 39, 4
 local ROWS_TOP = UI.Sizes.HeaderHeight + UI.Spacing.SM
 local FULL_HEIGHT = ROWS_TOP + 5 * (ROW_HEIGHT + ROW_GAP) + UI.Spacing.MD
 
+local DISPEL_ICON = 13 -- fits between the health bar and the bottom edge of a row
+
 local window = UI.CreateWindow("PaTiHealFrame", "PaTiHeal", WIDTH, FULL_HEIGHT)
 
 local function setBar(bar, value, maximum)
@@ -117,10 +100,20 @@ local function makeRow(index, unit)
     status:SetPoint("RIGHT", -6, 0)
     local mana = CreateFrame("StatusBar", nil, row)
     mana:SetPoint("BOTTOMLEFT", 3, 3)
-    mana:SetSize(ROW_WIDTH - 6, 10)
+    mana:SetSize(ROW_WIDTH - 6 - Dispels.MAX * (DISPEL_ICON + UI.Spacing.XS) - UI.Spacing.SM, 10)
     mana:SetStatusBarTexture(UI.WHITE)
     mana:SetStatusBarColor(UI.Color("Mana"))
     row.health, row.mana, row.name, row.status = health, mana, name, status
+    -- Dispellable debuffs: small plain icons (not secure), bottom right next to the mana bar.
+    row.dispelIcons = {}
+    for slot = 1, Dispels.MAX do
+        local icon = UI.StyleAuraIcon(CreateFrame("Frame", nil, row), DISPEL_ICON)
+        icon:SetPoint("BOTTOMRIGHT", -3 - (slot - 1) * (DISPEL_ICON + UI.Spacing.XS), 2)
+        icon:EnableMouse(true)
+        UI.SetTooltip(icon, function() return icon.tooltipLines end)
+        icon:Hide()
+        row.dispelIcons[slot] = icon
+    end
     row:SetHighlightTexture("Interface\\Buttons\\ButtonHilight-Square", "ADD")
     row:SetScript("OnEnter", function(self)
         if not testMode and UnitExists(unit) then
@@ -150,12 +143,28 @@ local function paintRow(row, data)
     end
 end
 
+-- Offline/dead members show no debuff icons (their state is the important information).
+local function paintDispels(row, state)
+    local debuffs = {}
+    if DB.showDispels and not state then
+        debuffs = testMode and (Dispels.TEST[row.unit] or {}) or Dispels.Read(row.unit)
+    end
+    for slot, icon in ipairs(row.dispelIcons) do
+        local debuff = debuffs[slot]
+        if debuff then
+            icon:SetAura(debuff.icon, "ACTIVE", nil, Dispels.Color(debuff.dispelType))
+            icon.tooltipLines = { debuff.name, debuff.dispelType }
+        end
+        icon:SetShown(debuff ~= nil)
+    end
+end
+
 -- Row contents only; visibility is handled by updateLayout / the unit watch.
 local function refresh()
     if not DB or DB.collapsed then return end
     for _, row in ipairs(rows) do
         local data = unitData(row.unit)
-        if data then paintRow(row, data) end
+        if data then paintRow(row, data); paintDispels(row, data.state) end
     end
 end
 
@@ -176,9 +185,13 @@ local function updateLayout()
     window:SetTestMode(testMode)
 end
 
+local function castName(id, rank)
+    return Spells.IsKnown(id) and Spells.CastName(id, rank) or nil
+end
+
 local function applyBindings()
     if not DB or InCombatLockdown() then return end
-    local names = Logic.SpellNames(DB.bindings, function(id) return isKnownSpell(id) and spellName(id) or nil end)
+    local names = Logic.SpellNames(DB.bindings, DB.bindingRanks, castName)
     local attributes = Logic.ClickAttributes(names)
     local anyBinding = next(names) ~= nil
     for _, row in ipairs(rows) do
@@ -205,32 +218,67 @@ local function spellItems(current)
     return items
 end
 
-local function buildSettings()
-    modal = UI.CreateModal("PaTiHealSettings", function() return "PaTiHeal " .. L.SETTINGS end)
-    modal:AddSection("CLICK_CASTING")
-    for _, binding in ipairs(Logic.BINDINGS) do
-        local key = binding.key
-        modal:AddRow(key, UI.CreateDropdown(modal, 200, {
-            items = function() return spellItems(DB.bindings[key]) end,
-            get = function() return DB.bindings[key] or 0 end,
-            set = function(id)
-                DB.bindings[key] = id ~= 0 and id or nil
-                if InCombatLockdown() then say("APPLY_AFTER_COMBAT") end
-                applyBindings()
-            end,
-        }))
+-- Rank choices for the spell bound to `key`: highest known (default) plus every known numbered rank.
+local function rankItems(key)
+    local items = { { value = 0, text = "RANK_HIGHEST" } }
+    local id = DB.bindings[key]
+    for _, entry in ipairs(id and Spells.Ranks(id) or {}) do
+        local subtext = entry.subtext
+        items[#items + 1] = { value = entry.rank, text = function() return subtext end }
     end
+    return items
+end
+
+local SPELL_WIDTH, RANK_WIDTH = 168, 84
+
+-- One settings row: [spell ▾] [rank ▾]. The rank dropdown is only active if the spell has several ranks.
+local function bindingControls(key)
+    local holder = CreateFrame("Frame", nil, modal)
+    holder:SetSize(SPELL_WIDTH + UI.Spacing.SM + RANK_WIDTH, UI.Sizes.ButtonHeight)
+    local changed = function()
+        if InCombatLockdown() then say("APPLY_AFTER_COMBAT") end
+        applyBindings()
+    end
+    local rank = UI.CreateDropdown(holder, RANK_WIDTH, {
+        items = function() return rankItems(key) end,
+        get = function() return DB.bindingRanks[key] or 0 end,
+        set = function(value) DB.bindingRanks[key] = value ~= 0 and value or nil; changed() end,
+        enabled = function() return DB.bindings[key] ~= nil and #Spells.Ranks(DB.bindings[key]) > 1 end,
+    })
+    rank:SetPoint("RIGHT")
+    local spell = UI.CreateDropdown(holder, SPELL_WIDTH, {
+        items = function() return spellItems(DB.bindings[key]) end,
+        get = function() return DB.bindings[key] or 0 end,
+        set = function(id)
+            DB.bindings[key] = id ~= 0 and id or nil
+            DB.bindingRanks[key] = nil -- a new spell starts at its highest rank
+            rank:Refresh()
+            changed()
+        end,
+    })
+    spell:SetPoint("LEFT")
+    return holder
+end
+
+local function buildSettings()
+    modal = UI.CreateModal("PaTiHealSettings", function() return "PaTiHeal " .. L.SETTINGS end, 440)
+    modal:AddSection("CLICK_CASTING")
+    for _, binding in ipairs(Logic.BINDINGS) do modal:AddRow(binding.key, bindingControls(binding.key)) end
     modal:AddSection("GENERAL")
     modal:AddRow("LANGUAGE", UI.CreateLanguageDropdown(modal, DB, 200))
-    modal:AddControl(UI.CreateCheckbox(modal, "LOCK_WINDOW", {
+    modal:AddControls(UI.CreateCheckbox(modal, "LOCK_WINDOW", {
         get = function() return window:IsLocked() end,
         set = function(locked) window:SetLocked(locked) end,
+    }), UI.CreateCheckbox(modal, "SHOW_DISPELS", {
+        get = function() return DB.showDispels end,
+        set = function(show) DB.showDispels = show; refresh() end,
     }))
     modal:Finish(function()
         Logic.RestoreDefaults(DB)
         UI.SetLanguage(DB.language)
         window:SetLocked(DB.locked)
         applyBindings()
+        refresh()
     end)
 end
 
@@ -295,7 +343,8 @@ local function printDebug()
     local row = rows[1]
     for _, binding in ipairs(Logic.BINDINGS) do
         local prefix = binding.modifier
-        print(("  %s: id=%s type=%s spell=%s"):format(binding.key, tostring(DB.bindings[binding.key]),
+        print(("  %s: id=%s rank=%s type=%s spell=%s"):format(binding.key, tostring(DB.bindings[binding.key]),
+            tostring(DB.bindingRanks[binding.key] or "highest"),
             tostring(row:GetAttribute(prefix .. "type" .. binding.button)),
             tostring(row:GetAttribute(prefix .. "spell" .. binding.button))))
     end
@@ -323,18 +372,30 @@ end
 
 local events = CreateFrame("Frame")
 for _, event in ipairs({ "PLAYER_LOGIN", "PLAYER_ENTERING_WORLD", "GROUP_ROSTER_UPDATE", "UNIT_HEALTH", "UNIT_POWER_UPDATE",
-    "UNIT_CONNECTION", "UNIT_FLAGS", "PLAYER_REGEN_ENABLED", "SPELLS_CHANGED" }) do
+    "UNIT_CONNECTION", "UNIT_FLAGS", "UNIT_AURA", "PLAYER_REGEN_ENABLED", "SPELLS_CHANGED" }) do
     events:RegisterEvent(event)
 end
-events:SetScript("OnEvent", function(_, event)
+local rowByUnit = {}
+for _, row in ipairs(rows) do rowByUnit[row.unit] = row end
+
+events:SetScript("OnEvent", function(_, event, unit)
     if event == "PLAYER_LOGIN" then
         PaTiHealDB = Logic.Migrate(PaTiHealDB)
         DB = PaTiHealDB
         UI.SetLanguage(DB.language)
         window:Attach(DB, 330, 0)
+        Spells.Rescan()
         updateLayout()
         applyBindings()
     elseif not DB then
+        return
+    elseif event == "UNIT_AURA" then
+        -- Only the debuff icons of that one frame can change; no full redraw.
+        local row = rowByUnit[unit]
+        if row and not DB.collapsed and not testMode then
+            local data = unitData(unit)
+            paintDispels(row, data and data.state)
+        end
         return
     elseif event == "PLAYER_REGEN_ENABLED" then
         updateLayout()
@@ -342,6 +403,7 @@ events:SetScript("OnEvent", function(_, event)
     elseif event == "GROUP_ROSTER_UPDATE" then
         updateLayout()
     elseif event == "SPELLS_CHANGED" then
+        Spells.Rescan() -- new ranks become selectable
         applyBindings()
     end
     refresh()

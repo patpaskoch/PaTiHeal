@@ -9,4 +9,6 @@ Shared\Shared.xml
 Locales\enUS.lua
 Locales\deDE.lua
 Logic.lua
+SpellBook.lua
+Dispels.lua
 PaTiHeal.lua

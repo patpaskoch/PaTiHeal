@@ -5,7 +5,9 @@ ein Klick auf einen Gruppenbalken wirkt genau den Zauber, den du dieser Klick-Ko
 
 ## Funktionen
 - Lebens- und Mana-Balken mit `Name – Klasse`, Zustände tot und offline
-- Klickzauber für neun Kombinationen: Links-, Rechts-, Mittelklick sowie Shift/Strg/Alt + Links/Rechts
+- Klickzauber für neun Kombinationen: Links-, Rechts-, Mittelklick sowie Shift/Strg/Alt + Links/Rechts,
+  jeweils mit Rangwahl („Höchster“ oder ein bestimmter Rang)
+- Bannbare Debuffs als kleine Icons am Gruppenrahmen (nur Anzeige)
 - Menü `•••` im Fensterkopf: Einstellungen, Sperren/Entsperren, Ein-/Ausklappen, Testmodus, Ausblenden
 - Einstellungsfenster mit Klickzaubern, Sprache (Automatisch, English, Deutsch, 简体中文, 繁體中文, 한국어) und Fenstersperre
 - Testmodus mit Beispieldaten; Klickzauber sind dann deaktiviert

@@ -19,13 +19,14 @@ Logic.BINDINGS = {
 -- Attributes written by PaTiHeal <= 0.6.0 that are not part of BINDINGS.
 local LEGACY_ATTRIBUTES = { "type", "spell", "shift-spell", "ctrl-spell", "alt-spell" }
 
--- bindings: DB.bindings (key -> spellID). resolve(spellID) -> castable spell name or nil.
+-- bindings: DB.bindings (key -> spellID); ranks: DB.bindingRanks (key -> rank, nil = highest known).
+-- resolve(spellID, rank) -> castable spell name ("Name" or "Name(Rank 3)") or nil.
 -- Returns key -> spell name for the bindings that can be cast right now.
-function Logic.SpellNames(bindings, resolve)
+function Logic.SpellNames(bindings, ranks, resolve)
     local names = {}
     for _, binding in ipairs(Logic.BINDINGS) do
         local id = bindings[binding.key]
-        if id then names[binding.key] = resolve(id) end
+        if id then names[binding.key] = resolve(id, ranks[binding.key]) end
     end
     return names
 end
@@ -44,7 +45,7 @@ function Logic.ClickAttributes(names)
     return attributes
 end
 
-Logic.SCHEMA = 1
+Logic.SCHEMA = 2
 
 -- 0.6.0 stored one binding as clickButton + clickModifier + clickSpellID.
 local LEGACY_BINDING = {
@@ -66,16 +67,25 @@ function Logic.Migrate(db)
         db.clickSpellID, db.clickButton, db.clickModifier = nil, nil, nil
         db.schema = 1
     end
+    if db.schema < 2 then
+        -- 2: chosen spell ranks per binding (empty = highest rank, the 0.6 behaviour).
+        db.bindingRanks = db.bindingRanks or {}
+        db.schema = 2
+    end
     if db.bindings == nil then db.bindings = {} end
+    if db.bindingRanks == nil then db.bindingRanks = {} end
     if db.locked == nil then db.locked = false end
     if db.collapsed == nil then db.collapsed = false end
     if db.language == nil then db.language = "auto" end
+    if db.showDispels == nil then db.showDispels = true end
     return db
 end
 
 -- Settings restored by "Restore Defaults". Position is kept on purpose.
 function Logic.RestoreDefaults(db)
     db.bindings = {}
+    db.bindingRanks = {}
+    db.showDispels = true
     db.locked = false
     db.language = "auto"
     return db

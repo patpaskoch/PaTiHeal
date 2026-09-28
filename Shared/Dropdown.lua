@@ -6,7 +6,8 @@ ns.UI = UI
 local ICON = UI.Sizes.IconMedium
 
 -- options.items() -> { { value, text, icon? }, ... }  (called on every open/refresh)
--- options.get() -> current value; options.set(value); options.placeholder: text when nothing matches.
+-- options.get() -> current value; options.set(value); options.placeholder: text when nothing matches;
+-- options.enabled() -> boolean (optional, re-checked on every refresh).
 function UI.CreateDropdown(parent, width, options)
     local dropdown = UI.CreateButton(parent, nil, width or 180)
     dropdown.options = options
@@ -31,6 +32,7 @@ function UI.CreateDropdown(parent, width, options)
     end
 
     function dropdown:Refresh()
+        if self.options.enabled then self:SetEnabled(self.options.enabled()) end
         local current = self.options.get()
         local selected
         for _, item in ipairs(self.options.items()) do

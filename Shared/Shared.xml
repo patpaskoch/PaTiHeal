@@ -12,6 +12,7 @@
     <Script file="Button.lua"/>
     <Script file="Popup.lua"/>
     <Script file="Badge.lua"/>
+    <Script file="AuraIcon.lua"/>
     <Script file="Window.lua"/>
     <Script file="Modal.lua"/>
     <Script file="Dropdown.lua"/>

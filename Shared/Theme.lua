@@ -29,6 +29,8 @@ UI.Sizes = {
     IconSmall    = 12,
     IconMedium   = 16,
     ModalWidth   = 380,
+    MenuRowHeight = 26, -- popup/menu rows: roomier than buttons for easy reading
+    AuraIcon     = 16,
 }
 
 -- Blizzard font objects only: they carry the client's CJK fallbacks.
@@ -37,6 +39,7 @@ UI.Fonts = {
     Label = "GameFontNormalSmall",
     Text  = "GameFontHighlightSmall",
     Muted = "GameFontDisableSmall",
+    Number = "NumberFontNormalSmall", -- timers and stack counts on icons
 }
 
 UI.WHITE = "Interface\\Buttons\\WHITE8X8"
