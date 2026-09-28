@@ -157,8 +157,9 @@ local function applyClickSpell()
     if InCombatLockdown() then return end
     local id=DB.clickSpellID
     if not (id and isKnownSpell(id)) then id=nil; DB.clickSpellID=nil end
-    for _,row in ipairs(rows) do row:SetAttribute("spell",id); row:SetAttribute("spell1",id); row:SetAttribute("type","spell"); row:SetAttribute("type1","spell"); row:SetEnabled(not testMode and id~=nil) end
-    spellButton:SetText(id and (spellName(id) or "Zauber") or "Zauber auswaehlen")
+    local castSpell=id and spellName(id)
+    for _,row in ipairs(rows) do row:SetAttribute("spell",castSpell); row:SetAttribute("spell1",castSpell); row:SetAttribute("type","spell"); row:SetAttribute("type1","spell"); row:SetEnabled(not testMode and castSpell~=nil) end
+    spellButton:SetText(castSpell or "Zauber auswaehlen")
 end
 
 local function selectNextSpell()
