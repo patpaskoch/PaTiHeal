@@ -1,5 +1,7 @@
 # PaTiHeal
 
+<img src="assets/icon-128.png" width="96" alt="PaTiHeal icon">
+
 Compact party frames for healers in World of Warcraft: Forever (Interface 16001). You click a frame, PaTiHeal casts
 exactly the spell you assigned to that click — it never picks a target or a spell by itself.
 
@@ -27,6 +29,13 @@ exactly the spell you assigned to that click — it never picks a target or a sp
 - `/ph test` shows example frames (clicks do nothing in test mode)
 - `/ph` shows or hides the window; drag it by its header
 
+## Settings
+`/ph settings` or ••• → Settings:
+- **Click casting:** a spell and rank per click combination; dispel spells are in the same list (click dispel)
+- **HoTs & shields:** each aura on/off, timers, charges, position (right of or below the health bar)
+- **General:** language, scale (applied after combat if changed in combat), window lock, dispellable debuffs on/off
+- *Restore Defaults* keeps your click bindings and the window position.
+
 ## Commands
 `/ph` or `/patiheal` — alone: show/hide · `settings` · `test` · `show` · `hide` · `lock` · `unlock` · `reset` (position) ·
 `spells` (known heals with ID) · `auras` (which HoT/shield/dispel spells your client knows) · `debug` · `version`
@@ -38,3 +47,6 @@ Click-casting changes made in combat apply after combat.
 - HoT/shield and dispel spell IDs are not yet confirmed in the Forever client — `/ph auras` shows what it knows.
 - Not yet tested in game: rank choice, dispel icons, HoTs & shields, click dispel.
 - Party only (no raid frames).
+
+## License
+MIT — see [LICENSE](LICENSE). Copyright (c) 2026 Patrick Koch.

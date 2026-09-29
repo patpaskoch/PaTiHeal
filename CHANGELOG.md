@@ -5,6 +5,9 @@ History before this file: `git log`.
 
 ## [Unreleased]
 ### Added
+- AddOns list icon from the PaTiSuite icon set (`Media/icon.tga`, `## IconTexture`); platform images in `assets/`.
+- MIT license (`LICENSE`, not part of the release zip).
+- Scale setting (80–150 %); changed in combat it is applied after combat (the window holds secure rows).
 - Click casting for nine combinations (left, right, middle; Shift/Ctrl/Alt + left/right), chosen per dropdown with spell icons.
 - Header menu (•••): Settings, Lock/Unlock, Collapse/Expand, Test Mode, Hide.
 - Settings modal with language choice (Automatic, English, Deutsch, 简体中文, 繁體中文, 한국어) and window lock; ESC closes it.
@@ -35,6 +38,8 @@ History before this file: `git log`.
 - The saved click binding of 0.6.0 is converted automatically (SavedVariables schema 2).
 - A binding whose spell is currently unknown is kept and applied again when the spell is available (0.6.0 deleted it).
 ### Fixed
+- Dispellable debuffs are no longer re-read on every health/power event of a party member (only on aura,
+  connection and flag changes).
 - Secret values: name, health, mana, power type and the offline/dead flags are now checked for secrecy before any
   nil test or comparison (`Logic.ValueOr`, `Logic.Flag`); the dispel scan checks the debuff name before its nil test.
 - Changing the click binding left the previous binding active (stale secure attributes).
