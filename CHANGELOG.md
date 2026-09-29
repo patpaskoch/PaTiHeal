@@ -21,6 +21,9 @@ History before this file: `git log`.
 - `/ph auras` lists what the client reports for the profile's spell IDs.
 - English UI texts; German translation. Chinese and Korean fall back to English except for shared menu texts.
 ### Changed
+- AddOns list description in English with a German translation (`## Notes-deDE`); README rewritten for players
+  (features, installation, first steps, commands, known limitations).
+- `/ph` alone shows/hides the window; new `/ph reset` (position, blocked in combat) and `/ph version`.
 - Party frames: only the name (in class colour) and health in percent; the class is in the unit tooltip.
   Tanks get an accent stripe on the left edge instead of "(Tank)". Secret health values are shown raw, never calculated.
 - Restore Defaults keeps your click bindings, ranks, position and collapsed state; it resets language, lock,

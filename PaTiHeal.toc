@@ -1,6 +1,7 @@
 ## Interface: 16001
 ## Title: PaTiHeal
-## Notes: Kompakte Gruppenanzeige fuer Schamanen-Heilung
+## Notes: Compact party frames for healers: click casting, HoTs, shields, dispellable debuffs
+## Notes-deDE: Kompakte Gruppenrahmen für Heiler: Klickzauber, HoTs, Schilde, bannbare Debuffs
 ## Author: PaTi
 ## Version: 0.6.0
 ## SavedVariablesPerCharacter: PaTiHealDB
