@@ -4,6 +4,7 @@
 ## Notes-deDE: Kompakte Gruppenrahmen für Heiler: Klickzauber, HoTs, Schilde, bannbare Debuffs
 ## Author: PaTi
 ## Version: 0.6.0
+## IconTexture: Interface\AddOns\PaTiHeal\Media\icon
 ## SavedVariablesPerCharacter: PaTiHealDB
 
 Shared\Shared.xml
