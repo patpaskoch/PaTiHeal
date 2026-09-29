@@ -1,15 +1,15 @@
 -- PaTiHeal: settings modal (built on first open, when the DB exists). Moved out of PaTiHeal.lua (FOLLOW_UPS F13).
 -- PaTiHeal.lua hands over what the modal needs via Settings.Init; nothing here runs before the first open.
 local _, ns = ...
-local UI, L, Logic, Spells = ns.UI, ns.UI.L, ns.Logic, ns.Spells
+local UI, L, Logic, Spells, HoTs = ns.UI, ns.UI.L, ns.Logic, ns.Spells, ns.HoTs
 
 local Settings = {}
 ns.Settings = Settings
 
-local DB, window, applyBindings, refresh, knownSpells, say
+local DB, window, applyBindings, refresh, knownSpells, say, hotsChanged
 local spellName, spellIcon = Spells.Name, Spells.Icon
 
--- app = { db = function() return PaTiHealDB end, window, applyBindings, refresh, knownSpells, say }
+-- app = { db = function() return PaTiHealDB end, window, applyBindings, refresh, knownSpells, say, hotsChanged }
 local app
 function Settings.Init(callbacks) app = callbacks end
 
@@ -88,6 +88,38 @@ local function buildSettings()
     modal:AddSection("CLICK_CASTING")
     modal:AddRow("COLUMN_CLICK", columnHeaders()):SetTextColor(UI.Color("TextMuted"))
     for _, binding in ipairs(Logic.BINDINGS) do modal:AddRow(binding.key, bindingControls(binding.key)) end
+    -- Click dispel is an ordinary binding: the dispel spells are in the spell list, no combination is preset.
+    modal:AddNote("CLICK_DISPEL_TITLE", nil, "CLICK_DISPEL_TEXT", 2)
+
+    -- HoTs & shields of your class profile (names from the client; unknown IDs are simply not listed).
+    modal:AddSection("HOTS_SHIELDS")
+    local profile, boxes = HoTs.Profile(false), {}
+    for _, def in ipairs(profile and profile.auras or {}) do
+        local name = Spells.Name(def.spellID)
+        if name then
+            boxes[#boxes + 1] = UI.CreateCheckbox(modal, function() return name end, {
+                get = function() return DB.hots[def.key] ~= false end,
+                set = function(value) DB.hots[def.key] = value; hotsChanged() end,
+            })
+        end
+    end
+    if #boxes == 0 then modal:AddLabel("NO_HEAL_PROFILE") end
+    for index = 1, #boxes, 2 do modal:AddControls(boxes[index], boxes[index + 1]) end
+    local function hotBox(label, key)
+        return UI.CreateCheckbox(modal, label, {
+            get = function() return DB[key] end,
+            set = function(value) DB[key] = value; hotsChanged() end,
+        })
+    end
+    modal:AddControls(hotBox("SHOW_HOT_TIMERS", "showHotTimers"), hotBox("SHOW_HOT_CHARGES", "showHotCharges"))
+    local positions = {}
+    for _, position in ipairs(HoTs.POSITIONS) do positions[#positions + 1] = { value = position, text = "HOT_POSITION_" .. position } end
+    modal:AddRow("HOT_POSITION", UI.CreateDropdown(modal, 200, {
+        items = function() return positions end,
+        get = function() return DB.hotPosition end,
+        set = function(position) DB.hotPosition = position; hotsChanged() end,
+    }))
+
     modal:AddSection("GENERAL")
     modal:AddRow("LANGUAGE", UI.CreateLanguageDropdown(modal, DB, 200))
     modal:AddControls(UI.CreateCheckbox(modal, "LOCK_WINDOW", {
@@ -102,7 +134,7 @@ local function buildSettings()
         UI.SetLanguage(DB.language)
         window:SetLocked(DB.locked)
         applyBindings()
-        refresh()
+        hotsChanged()
     end)
 end
 
@@ -110,6 +142,7 @@ function Settings.Open()
     DB = app.db()
     if not DB then return end
     window, applyBindings, refresh, knownSpells, say = app.window, app.applyBindings, app.refresh, app.knownSpells, app.say
+    hotsChanged = app.hotsChanged
     if not modal then buildSettings() end
     modal:Show()
 end

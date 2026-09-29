@@ -1,10 +1,11 @@
 -- PaTiHeal: manual party frames. A click casts exactly the spell the player assigned to that click.
 local _, ns = ...
-local UI, L, Logic, Spells, Dispels, Settings = ns.UI, ns.UI.L, ns.Logic, ns.Spells, ns.Dispels, ns.Settings
+local UI, L, Logic, Spells, Dispels, HoTs, Settings = ns.UI, ns.UI.L, ns.Logic, ns.Spells, ns.Dispels, ns.HoTs, ns.Settings
 
 local DB
 local rows = {}
 local testMode = false
+local hotEntries = {} -- HoTs.Entries for your class profile (rebuilt on login, spells, settings, test mode)
 
 -- Single-target heals offered for click casting (the names are only for reading this list; the UI shows the
 -- client's names). Only spells cast on a unit belong here: ground-targeted spells such as Healing Rain do not
@@ -32,6 +33,17 @@ local function knownSpells()
         if not seen[entry[1]] and Spells.IsKnown(entry[1]) then
             seen[entry[1]] = true
             result[#result + 1] = entry[1]
+        end
+    end
+    -- Your class profile adds its HoTs/shields and dispels (click dispel = a normal binding with a dispel spell).
+    local profile = HoTs.Profile(false)
+    local extra = {}
+    for _, def in ipairs(profile and profile.auras or {}) do extra[#extra + 1] = def.spellID end
+    for _, dispel in ipairs(profile and profile.dispels or {}) do extra[#extra + 1] = dispel.spellID end
+    for _, id in ipairs(extra) do
+        if not seen[id] and Spells.IsKnown(id) then
+            seen[id] = true
+            result[#result + 1] = id
         end
     end
     return result
@@ -79,6 +91,7 @@ local ROWS_TOP = UI.Sizes.HeaderHeight + UI.Spacing.SM
 local FULL_HEIGHT = ROWS_TOP + 5 * (ROW_HEIGHT + ROW_GAP) + UI.Spacing.MD
 
 local DISPEL_ICON = 13 -- fits between the health bar and the bottom edge of a row; judge the size in game
+local HOT_ICON_RIGHT, HOT_ICON_BELOW = 20, 13 -- HoT icons: as tall as the health bar, or as the dispel icons
 local TANK_MARK = 3 -- width of the tank stripe
 
 local window = UI.CreateWindow("PaTiHealFrame", "PaTiHeal", WIDTH, FULL_HEIGHT)
@@ -134,6 +147,15 @@ local function makeRow(index, unit)
         row.dispelIcons[slot] = icon
     end
     row:SetHighlightTexture("Interface\\Buttons\\ButtonHilight-Square", "ADD")
+    -- Your HoTs/shields: plain icons (not secure); placed by layoutHoTs (right of the health bar or bottom line).
+    row.hotIcons = {}
+    for slot = 1, HoTs.MAX do
+        local icon = UI.StyleAuraIcon(CreateFrame("Frame", nil, row), HOT_ICON_RIGHT)
+        icon:EnableMouse(true)
+        UI.SetTooltip(icon, function() return icon.tooltipLines end)
+        icon:Hide()
+        row.hotIcons[slot] = icon
+    end
     row:SetScript("OnEnter", function(self)
         if not testMode and UnitExists(unit) then
             GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
@@ -179,13 +201,86 @@ local function paintDispels(row, state)
     end
 end
 
+-- HoTs & shields ------------------------------------------------------------------------------------
+
+-- Places the HoT icons and sizes health/mana bars. Only as many slots are reserved as auras are switched on,
+-- so the health bar keeps its full width without a profile. Plain (non-secure) child frames: fine in combat.
+local DISPEL_SPACE = Dispels.MAX * (DISPEL_ICON + UI.Spacing.XS) + UI.Spacing.SM
+local function layoutHoTs(row)
+    local slots = math.min(#hotEntries, HoTs.MAX)
+    local below = DB.hotPosition == "BELOW"
+    local size = below and HOT_ICON_BELOW or HOT_ICON_RIGHT
+    local space = slots > 0 and slots * (size + UI.Spacing.XS) + UI.Spacing.XS or 0
+    row.health:SetWidth(ROW_WIDTH - 6 - (below and 0 or space))
+    row.mana:SetWidth(ROW_WIDTH - 6 - DISPEL_SPACE - (below and space or 0))
+    for slot, icon in ipairs(row.hotIcons) do
+        icon:SetSize(size, size)
+        icon:ClearAllPoints()
+        local x = -3 - (slots - slot) * (size + UI.Spacing.XS)
+        if below then icon:SetPoint("BOTTOMRIGHT", x - DISPEL_SPACE, 2) else icon:SetPoint("TOPRIGHT", x, -3) end
+    end
+end
+
+local hotTicker = CreateFrame("Frame") -- redraws timer texts every 0.5 s, only while a timer is shown
+hotTicker:Hide()
+
+local function hotText(icon, now)
+    local item = icon.item
+    if icon.expires then item.remaining = math.max(0, icon.expires - now) end
+    return HoTs.IconText(item, DB, UI.FormatRemaining)
+end
+
+local function paintHoTs(row, state)
+    local now = GetTime()
+    local shown = {}
+    if not state and #hotEntries > 0 then
+        local auras = testMode and HoTs.TestAuras(row.unit, hotEntries, now) or HoTs.Read(row.unit)
+        shown = HoTs.Match(hotEntries, auras, now)
+    end
+    for slot, icon in ipairs(row.hotIcons) do
+        local item = shown[slot]
+        icon.item = item
+        icon.expires = item and item.remaining and now + item.remaining or nil
+        if item then
+            icon:SetAura(item.icon or Spells.Icon(item.entry.spellID), "ACTIVE", hotText(icon, now))
+            icon.tooltipLines = { item.entry.name }
+            if icon.expires and DB.showHotTimers then hotTicker:Show() end
+        end
+        icon:SetShown(item ~= nil)
+    end
+end
+
+local elapsedSinceTick = 0
+hotTicker:SetScript("OnUpdate", function(self, elapsed)
+    elapsedSinceTick = elapsedSinceTick + elapsed
+    if elapsedSinceTick < 0.5 then return end
+    elapsedSinceTick = 0
+    local now, running = GetTime(), false
+    for _, row in ipairs(rows) do
+        for _, icon in ipairs(row.hotIcons) do
+            if icon.item and icon.expires and icon:IsShown() then
+                icon.auraText:SetText(hotText(icon, now) or "")
+                running = running or icon.expires > now
+            end
+        end
+    end
+    if not running or not DB.showHotTimers or DB.collapsed then self:Hide() end
+end)
+
 -- Row contents only; visibility is handled by updateLayout / the unit watch.
 local function refresh()
     if not DB or DB.collapsed then return end
     for _, row in ipairs(rows) do
         local data = unitData(row.unit)
-        if data then paintRow(row, data); paintDispels(row, data.state) end
+        if data then paintRow(row, data); paintDispels(row, data.state); paintHoTs(row, data.state) end
     end
+end
+
+-- Profile entries changed (login, spells learned, settings, test mode): rebuild and re-place; callers repaint.
+local function rebuildHoTs()
+    if not DB then return end
+    hotEntries = HoTs.Entries(HoTs.Profile(testMode), DB, Spells.Name)
+    for _, row in ipairs(rows) do layoutHoTs(row) end
 end
 
 -- Secure changes: only out of combat; PLAYER_REGEN_ENABLED calls this again.
@@ -223,7 +318,7 @@ end
 -- Settings modal: Settings.lua ---------------------------------------------------------------
 
 Settings.Init({ db = function() return DB end, window = window, applyBindings = applyBindings, refresh = refresh,
-    knownSpells = knownSpells, say = say })
+    knownSpells = knownSpells, say = say, hotsChanged = function() rebuildHoTs(); refresh() end })
 local openSettings = Settings.Open
 
 -- Actions (menu and slash commands) --------------------------------------------------------------
@@ -238,6 +333,7 @@ local function toggleTestMode()
     testMode = not testMode
     updateLayout()
     applyBindings()
+    rebuildHoTs()
     refresh()
 end
 
@@ -288,6 +384,23 @@ local function printDebug()
     end
 end
 
+-- /ph auras: what this client reports for the profile's spell IDs (to confirm them in game).
+local function printAuraCheck()
+    local profile = HoTs.Profile(false)
+    print(("|cff68caffPaTiHeal Auras:|r profile %s · aura API %s · issecretvalue %s"):format(
+        profile and profile.name or "none", (C_UnitAuras and C_UnitAuras.GetAuraDataByIndex) and "C_UnitAuras"
+        or (UnitAura and "UnitAura" or "none"), issecretvalue and "yes" or "no"))
+    local function describe(label, id, extra)
+        local name = spellName(id)
+        print(("  %s id=%d: %s · known=%s%s"):format(label, id, name or "ID NOT FOUND",
+            tostring(name ~= nil and Spells.IsKnown(id)), extra or ""))
+    end
+    for _, def in ipairs(profile and profile.auras or {}) do describe("HoT/shield " .. def.key, def.spellID) end
+    for _, dispel in ipairs(profile and profile.dispels or {}) do
+        describe("dispel", dispel.spellID, " · removes " .. table.concat(dispel.types, ", "))
+    end
+end
+
 local COMMANDS = {
     settings = openSettings,
     test = toggleTestMode,
@@ -296,6 +409,7 @@ local COMMANDS = {
     lock = function() window:SetLocked(true) end,
     unlock = function() window:SetLocked(false) end,
     spells = printSpells,
+    auras = printAuraCheck,
     debug = printDebug,
 }
 
@@ -325,6 +439,7 @@ events:SetScript("OnEvent", function(_, event, unit)
         Spells.Rescan()
         updateLayout()
         applyBindings()
+        rebuildHoTs()
     elseif not DB then
         return
     elseif event == "UNIT_AURA" or event == "UNIT_HEALTH" or event == "UNIT_POWER_UPDATE"
@@ -335,6 +450,8 @@ events:SetScript("OnEvent", function(_, event, unit)
             local data = unitData(unit)
             if data and event ~= "UNIT_AURA" then paintRow(row, data) end
             paintDispels(row, data and data.state)
+            -- HoTs only change with auras or the offline/dead state, not on the health/power hot path.
+            if event ~= "UNIT_HEALTH" and event ~= "UNIT_POWER_UPDATE" then paintHoTs(row, data and data.state) end
         end
         return
     elseif event == "PLAYER_REGEN_ENABLED" then
@@ -345,6 +462,7 @@ events:SetScript("OnEvent", function(_, event, unit)
     elseif event == "SPELLS_CHANGED" then
         Spells.Rescan() -- new ranks become selectable
         applyBindings()
+        rebuildHoTs() -- a newly learned HoT/shield appears
     end
     refresh()
 end)

@@ -11,5 +11,8 @@ Locales\deDE.lua
 Logic.lua
 SpellBook.lua
 Dispels.lua
+Profiles\Shaman.lua
+Profiles\Priest.lua
+HoTs.lua
 Settings.lua
 PaTiHeal.lua

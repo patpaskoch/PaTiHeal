@@ -78,13 +78,22 @@ function Logic.Migrate(db)
     if db.collapsed == nil then db.collapsed = false end
     if db.language == nil then db.language = "auto" end
     if db.showDispels == nil then db.showDispels = true end
+    -- HoTs & shields (no schema step: only new keys with defaults, nothing renamed).
+    if db.hots == nil then db.hots = {} end -- key -> false hides that aura
+    if db.hotPosition ~= "RIGHT" and db.hotPosition ~= "BELOW" then db.hotPosition = "RIGHT" end
+    if db.showHotTimers == nil then db.showHotTimers = true end
+    if db.showHotCharges == nil then db.showHotCharges = true end
     return db
 end
 
--- Settings restored by "Restore Defaults". Position and click bindings are kept on purpose: there are no
--- default bindings, so wiping them would only lose the player's setup (clear one binding with "None").
+-- Settings restored by "Restore Defaults". Position, collapsed state and click bindings are kept on purpose:
+-- there are no default bindings, so wiping them would only lose the player's setup (clear one with "None").
 function Logic.RestoreDefaults(db)
     db.showDispels = true
+    db.hots = {}
+    db.hotPosition = "RIGHT"
+    db.showHotTimers = true
+    db.showHotCharges = true
     db.locked = false
     db.language = "auto"
     return db
