@@ -171,6 +171,7 @@ for index, unit in ipairs({ "player", "party1", "party2", "party3", "party4" }) 
 -- Name in class colour (class details stay in the unit tooltip), health in percent on the right.
 local function paintRow(row, data)
     row.name:SetText(data.name)
+    row.alertName = data.name -- for the optional PaTiAlerts report (may be secret: display only)
     local color = RAID_CLASS_COLORS and data.classFile and not isSecret(data.classFile) and RAID_CLASS_COLORS[data.classFile]
     if color then row.name:SetTextColor(color.r, color.g, color.b) else row.name:SetTextColor(UI.Color("Text")) end
     row.tankMark:SetShown(data.isTank == true)
@@ -199,6 +200,28 @@ local function paintDispels(row, state)
         end
         icon:SetShown(debuff ~= nil)
     end
+    row.dispelCount = #debuffs
+end
+
+-- PaTiAlerts is optional (AGENTS.md §3): report only if it is installed with API version 1, never depend on it.
+local function alertsApi()
+    local api = _G.PaTiAlertsAPI
+    if type(api) == "table" and api.version == 1 and type(api.Sync) == "function" then return api end
+    return nil
+end
+
+-- Members with a dispellable debuff (as shown on the frames). Test mode sends nothing; pcall so a problem in
+-- PaTiAlerts never breaks PaTiHeal.
+local function reportAlerts()
+    local api = alertsApi()
+    if not api then return end
+    local members = {}
+    if not testMode then
+        for _, row in ipairs(rows) do
+            members[#members + 1] = { unit = row.unit, name = row.alertName, dispels = row.dispelCount }
+        end
+    end
+    pcall(api.Sync, "PaTiHeal", Logic.DispelAlerts(members, L.ALERT_DISPELLABLE, isSecret))
 end
 
 -- HoTs & shields ------------------------------------------------------------------------------------
@@ -269,11 +292,15 @@ end)
 
 -- Row contents only; visibility is handled by updateLayout / the unit watch.
 local function refresh()
-    if not DB or DB.collapsed then return end
+    if not DB then return end
+    -- Collapsed: nothing to paint, unless PaTiAlerts shows the dispel state instead (rows stay hidden).
+    if DB.collapsed and not alertsApi() then return end
     for _, row in ipairs(rows) do
         local data = unitData(row.unit)
-        if data then paintRow(row, data); paintDispels(row, data.state); paintHoTs(row, data.state) end
+        if data then paintRow(row, data); paintDispels(row, data.state); paintHoTs(row, data.state)
+        else row.dispelCount = 0 end
     end
+    reportAlerts()
 end
 
 -- Profile entries changed (login, spells learned, settings, test mode): rebuild and re-place; callers repaint.
@@ -471,7 +498,7 @@ events:SetScript("OnEvent", function(_, event, unit)
         or event == "UNIT_CONNECTION" or event == "UNIT_FLAGS" then
         -- Unit events repaint only that unit's frame (and ignore target, nameplates, raid units).
         local row = rowByUnit[unit]
-        if row and not DB.collapsed and not testMode then
+        if row and (not DB.collapsed or alertsApi()) and not testMode then
             local data = unitData(unit)
             if data and event ~= "UNIT_AURA" then paintRow(row, data) end
             -- Debuffs and HoTs only change with auras or the offline/dead state: no aura scan on the
@@ -479,6 +506,7 @@ events:SetScript("OnEvent", function(_, event, unit)
             if event ~= "UNIT_HEALTH" and event ~= "UNIT_POWER_UPDATE" then
                 paintDispels(row, data and data.state)
                 paintHoTs(row, data and data.state)
+                reportAlerts()
             end
         end
         return

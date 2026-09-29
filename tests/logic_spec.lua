@@ -190,3 +190,22 @@ describe("Scale setting", function()
         assert.same({ LEFT = 331 }, db.bindings)
     end)
 end)
+
+describe("Logic.DispelAlerts (for the optional PaTiAlerts)", function()
+    local SECRET = setmetatable({}, { __eq = function() error("secret compared") end })
+    local function isSecret(value) return rawequal(value, SECRET) end
+
+    it("sends one INFO alert per member with a dispellable debuff, none for the others", function()
+        local alerts = load().DispelAlerts({ { unit = "party1", name = "Tank", dispels = 1 },
+            { unit = "party2", name = "Mage", dispels = 0 }, { unit = "party3", name = "Priest" } }, "can be dispelled", isSecret)
+        assert.same({ { id = "dispel:party1", priority = "INFO", kind = "DISPELLABLE", name = "Tank",
+            detail = "can be dispelled" } }, alerts)
+    end)
+
+    it("passes a secret name for display only and falls back to the unit without a name", function()
+        local alerts = load().DispelAlerts({ { unit = "party1", name = SECRET, dispels = 2 }, { unit = "party2", dispels = 1 } },
+            "x", isSecret)
+        assert.is_true(rawequal(SECRET, alerts[1].name))
+        assert.equal("party2", alerts[2].text)
+    end)
+end)

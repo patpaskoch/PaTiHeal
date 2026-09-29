@@ -17,7 +17,8 @@ exactly the spell you assigned to that click — it never picks a target or a sp
 - Dispellable debuffs as small icons coloured by type (display only)
 - Click dispel: put your dispel spell (e.g. Cleanse Spirit, Dispel Magic) on any click combination. Nothing is preset
 - ••• menu: Settings, Lock, Collapse, Test Mode, Hide. Languages: English, Deutsch (others fall back to English)
-- Works on its own; PaTiAuras is not needed
+- Works on its own; PaTiAuras is not needed. With **PaTiAlerts** installed (optional), members with a dispellable
+  debuff also appear there
 
 ## Installation
 1. Download the release zip (`PaTiHeal-<version>.zip`).

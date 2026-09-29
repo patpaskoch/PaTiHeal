@@ -119,6 +119,21 @@ function Logic.Flag(value, isSecret)
     return value == true or value == 1
 end
 
+-- Alerts for PaTiAlerts (optional), deliberately small: one INFO alert per party member with a debuff you can
+-- dispel (the same debuffs the frame shows). A state, not a decision: nothing says whom to heal or dispel first.
+-- members: { { unit, name, dispels } }; name may be secret (display only, `name` field), unit is a plain token.
+function Logic.DispelAlerts(members, detail, isSecret)
+    local list = {}
+    for _, member in ipairs(members) do
+        if type(member.dispels) == "number" and member.dispels > 0 and type(member.unit) == "string" then
+            local alert = { id = "dispel:" .. member.unit, priority = "INFO", kind = "DISPELLABLE", detail = detail }
+            if isSecret(member.name) or member.name ~= nil then alert.name = member.name else alert.text = member.unit end
+            list[#list + 1] = alert
+        end
+    end
+    return list
+end
+
 -- "48%" for plain numbers. nil when a value is secret or unusable: the caller then hands the raw health
 -- value to the widget (allowed for secret values) instead of calculating with it.
 function Logic.HealthPercent(health, maximum, isSecret)

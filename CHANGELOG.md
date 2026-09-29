@@ -5,6 +5,8 @@ History before this file: `git log`.
 
 ## [Unreleased]
 ### Added
+- Optional PaTiAlerts report: party members with a debuff you can dispel (note), only while the dispel display is on.
+  A state, not a decision. Nothing changes without PaTiAlerts; while it is installed, a collapsed window keeps scanning.
 - AddOns list icon from the PaTiSuite icon set (`Media/icon.tga`, `## IconTexture`); platform images in `assets/`.
 - MIT license (`LICENSE`, not part of the release zip).
 - Scale setting (80–150 %); changed in combat it is applied after combat (the window holds secure rows).
