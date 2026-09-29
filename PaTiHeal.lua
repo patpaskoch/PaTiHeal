@@ -363,6 +363,18 @@ window:SetMenu(function()
     }
 end)
 
+-- The window holds secure rows: moving it is combat-locked like hide/collapse.
+local function resetPosition()
+    if combatBlocked() then return end
+    DB.point, DB.relativePoint, DB.x, DB.y = nil, nil, nil, nil
+    window:Attach(DB, 330, 0)
+end
+
+local function addonVersion()
+    local getMetadata = (C_AddOns and C_AddOns.GetAddOnMetadata) or GetAddOnMetadata
+    return getMetadata and getMetadata("PaTiHeal", "Version") or "?"
+end
+
 local function printSpells()
     local names = {}
     for _, id in ipairs(knownSpells()) do names[#names + 1] = (spellName(id) or id) .. " (" .. id .. ")" end
@@ -402,6 +414,7 @@ local function printAuraCheck()
 end
 
 local COMMANDS = {
+    [""] = function() setShown(not window:IsShown()) end,
     settings = openSettings,
     test = toggleTestMode,
     show = function() setShown(true) end,
@@ -410,6 +423,8 @@ local COMMANDS = {
     unlock = function() window:SetLocked(false) end,
     spells = printSpells,
     auras = printAuraCheck,
+    reset = resetPosition,
+    version = function() say("VERSION", addonVersion()) end,
     debug = printDebug,
 }
 
