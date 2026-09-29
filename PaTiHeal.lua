@@ -315,10 +315,19 @@ local function applyBindings()
     end
 end
 
+-- The window holds secure rows: SetScale only out of combat, otherwise after PLAYER_REGEN_ENABLED.
+local scalePending = false
+local function applyScale()
+    if not DB then return end
+    if InCombatLockdown() then scalePending = true; return end
+    scalePending = false
+    window:SetScale(DB.scale)
+end
+
 -- Settings modal: Settings.lua ---------------------------------------------------------------
 
 Settings.Init({ db = function() return DB end, window = window, applyBindings = applyBindings, refresh = refresh,
-    knownSpells = knownSpells, say = say, hotsChanged = function() rebuildHoTs(); refresh() end })
+    knownSpells = knownSpells, say = say, hotsChanged = function() rebuildHoTs(); refresh() end, applyScale = applyScale })
 local openSettings = Settings.Open
 
 -- Actions (menu and slash commands) --------------------------------------------------------------
@@ -451,6 +460,7 @@ events:SetScript("OnEvent", function(_, event, unit)
         DB = PaTiHealDB
         UI.SetLanguage(DB.language)
         window:Attach(DB, 330, 0)
+        applyScale() -- /reload in combat: after combat
         Spells.Rescan()
         updateLayout()
         applyBindings()
@@ -464,12 +474,16 @@ events:SetScript("OnEvent", function(_, event, unit)
         if row and not DB.collapsed and not testMode then
             local data = unitData(unit)
             if data and event ~= "UNIT_AURA" then paintRow(row, data) end
-            paintDispels(row, data and data.state)
-            -- HoTs only change with auras or the offline/dead state, not on the health/power hot path.
-            if event ~= "UNIT_HEALTH" and event ~= "UNIT_POWER_UPDATE" then paintHoTs(row, data and data.state) end
+            -- Debuffs and HoTs only change with auras or the offline/dead state: no aura scan on the
+            -- health/power hot path (FOLLOW_UPS F20).
+            if event ~= "UNIT_HEALTH" and event ~= "UNIT_POWER_UPDATE" then
+                paintDispels(row, data and data.state)
+                paintHoTs(row, data and data.state)
+            end
         end
         return
     elseif event == "PLAYER_REGEN_ENABLED" then
+        if scalePending then applyScale() end
         updateLayout()
         applyBindings()
     elseif event == "GROUP_ROSTER_UPDATE" then

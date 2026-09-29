@@ -6,7 +6,7 @@ local UI, L, Logic, Spells, HoTs = ns.UI, ns.UI.L, ns.Logic, ns.Spells, ns.HoTs
 local Settings = {}
 ns.Settings = Settings
 
-local DB, window, applyBindings, refresh, knownSpells, say, hotsChanged
+local DB, window, applyBindings, refresh, knownSpells, say, hotsChanged, applyScale
 local spellName, spellIcon = Spells.Name, Spells.Icon
 
 -- app = { db = function() return PaTiHealDB end, window, applyBindings, refresh, knownSpells, say, hotsChanged }
@@ -122,6 +122,19 @@ local function buildSettings()
 
     modal:AddSection("GENERAL")
     modal:AddRow("LANGUAGE", UI.CreateLanguageDropdown(modal, DB, 200))
+    local scales = {}
+    for _, scale in ipairs(Logic.SCALES) do
+        scales[#scales + 1] = { value = scale, text = function() return ("%d %%"):format(scale * 100 + 0.5) end }
+    end
+    modal:AddRow("SCALE", UI.CreateDropdown(modal, 200, {
+        items = function() return scales end,
+        get = function() return DB.scale end,
+        set = function(scale)
+            DB.scale = scale
+            if InCombatLockdown() then say("SCALE_AFTER_COMBAT") end
+            applyScale()
+        end,
+    }))
     modal:AddControls(UI.CreateCheckbox(modal, "LOCK_WINDOW", {
         get = function() return window:IsLocked() end,
         set = function(locked) window:SetLocked(locked) end,
@@ -133,6 +146,7 @@ local function buildSettings()
         Logic.RestoreDefaults(DB)
         UI.SetLanguage(DB.language)
         window:SetLocked(DB.locked)
+        applyScale()
         applyBindings()
         hotsChanged()
     end)
@@ -142,7 +156,7 @@ function Settings.Open()
     DB = app.db()
     if not DB then return end
     window, applyBindings, refresh, knownSpells, say = app.window, app.applyBindings, app.refresh, app.knownSpells, app.say
-    hotsChanged = app.hotsChanged
+    hotsChanged, applyScale = app.hotsChanged, app.applyScale
     if not modal then buildSettings() end
     modal:Show()
 end

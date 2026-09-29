@@ -46,6 +46,7 @@ function Logic.ClickAttributes(names)
 end
 
 Logic.SCHEMA = 2
+Logic.SCALES = { 0.8, 0.9, 1, 1.1, 1.25, 1.5 } -- same choices as the other PaTi addons
 
 -- 0.6.0 stored one binding as clickButton + clickModifier + clickSpellID.
 local LEGACY_BINDING = {
@@ -78,6 +79,7 @@ function Logic.Migrate(db)
     if db.collapsed == nil then db.collapsed = false end
     if db.language == nil then db.language = "auto" end
     if db.showDispels == nil then db.showDispels = true end
+    if db.scale == nil then db.scale = 1 end
     -- HoTs & shields (no schema step: only new keys with defaults, nothing renamed).
     if db.hots == nil then db.hots = {} end -- key -> false hides that aura
     if db.hotPosition ~= "RIGHT" and db.hotPosition ~= "BELOW" then db.hotPosition = "RIGHT" end
@@ -90,6 +92,7 @@ end
 -- there are no default bindings, so wiping them would only lose the player's setup (clear one with "None").
 function Logic.RestoreDefaults(db)
     db.showDispels = true
+    db.scale = 1
     db.hots = {}
     db.hotPosition = "RIGHT"
     db.showHotTimers = true
