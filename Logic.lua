@@ -81,7 +81,6 @@ function Logic.Migrate(db)
     if db.showDispels == nil then db.showDispels = true end
     if db.scale == nil then db.scale = 1 end
     if db.opacity == nil then db.opacity = 0.75 end -- panel body opacity (PaTiShared window)
-    if db.snapWindows == nil then db.snapWindows = true end -- snap to other PaTi windows when dragged
     -- HoTs & shields (no schema step: only new keys with defaults, nothing renamed).
     if db.hots == nil then db.hots = {} end -- key -> false hides that aura
     if db.hotPosition ~= "RIGHT" and db.hotPosition ~= "BELOW" then db.hotPosition = "RIGHT" end
@@ -96,7 +95,6 @@ function Logic.RestoreDefaults(db)
     db.showDispels = true
     db.scale = 1
     db.opacity = 0.75
-    db.snapWindows = true
     db.hots = {}
     db.hotPosition = "RIGHT"
     db.showHotTimers = true
