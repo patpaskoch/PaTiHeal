@@ -5,6 +5,9 @@ History before this file: `git log`.
 
 ## [Unreleased]
 ### Added
+- Window settings (PaTiShared): panel opacity 30–100 % (default 75 %, the header stays opaque) and snapping to other
+  PaTi windows while dragging (on by default; never in combat). The window registers itself for the optional
+  PaTiSuite control panel, which shows/hides it with this addon's own rules.
 - Optional PaTiAlerts report: party members with a debuff you can dispel (note), only while the dispel display is on.
   A state, not a decision. Nothing changes without PaTiAlerts; while it is installed, a collapsed window keeps scanning.
 - AddOns list icon from the PaTiSuite icon set (`Media/icon.tga`, `## IconTexture`); platform images in `assets/`.

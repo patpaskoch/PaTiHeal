@@ -36,6 +36,7 @@ exactly the spell you assigned to that click — it never picks a target or a sp
 - **HoTs & shields:** each aura on/off, timers, charges, position (right of or below the health bar)
 - **General:** language, scale (applied after combat if changed in combat), window lock, dispellable debuffs on/off
 - *Restore Defaults* keeps your click bindings and the window position.
+- **Window:** panel opacity (30–100 %) and snapping to other PaTi windows while dragging
 
 ## Commands
 `/ph` or `/patiheal` — alone: show/hide · `settings` · `test` · `show` · `hide` · `lock` · `unlock` · `reset` (position) ·

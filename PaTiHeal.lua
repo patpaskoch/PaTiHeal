@@ -380,11 +380,18 @@ local function toggleCollapsed()
     refresh()
 end
 
-local function setShown(shown)
-    if combatBlocked() then return end
+local function setShown(shown, quiet)
+    if InCombatLockdown() then -- secure rows: the window cannot be shown/hidden in combat
+        if not quiet then say("COMBAT_LOCKED") end
+        return false
+    end
     window:SetShown(shown)
-    if not shown then say("HIDDEN_HINT") end
+    if not shown and not quiet then say("HIDDEN_HINT") end
+    return true
 end
+
+-- Optional PaTiSuite control panel: the same rules as the commands, without chat lines (false = not possible now).
+window.suiteSetShown = function(shown) return setShown(shown, true) end
 
 window:SetMenu(function()
     if not DB then return {} end

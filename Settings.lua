@@ -142,8 +142,10 @@ local function buildSettings()
         get = function() return DB.showDispels end,
         set = function(show) DB.showDispels = show; refresh() end,
     }))
+    UI.AddWindowSettings(modal, window) -- panel opacity + snapping (PaTiShared)
     modal:Finish(function()
         Logic.RestoreDefaults(DB)
+        window:ApplyOpacity()
         UI.SetLanguage(DB.language)
         window:SetLocked(DB.locked)
         applyScale()
