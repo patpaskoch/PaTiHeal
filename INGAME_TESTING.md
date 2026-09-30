@@ -89,6 +89,9 @@ Jeweils: Zauber landet auf der angeklickten Einheit, das eigene Ziel ändert sic
 - [ ] PT-HEAL-069 Rangwahl: gewählter Rang wird gezaubert (nicht immer der höchste)
 - [ ] PT-HEAL-070 Belegung umstellen (z. B. Strg+Links → Shift+Links): alte Kombination zaubert nichts mehr
 - [ ] PT-HEAL-071 Belegung im Kampf geändert → gilt nach dem Kampf
+- [x] PT-HEAL-072 Linksklick auf den eigenen Spielerframe führt den konfigurierten Heal aus
+  - ✅ VERIFIED 2026-09-30
+  - Nur Linksklick auf den eigenen Frame bestätigt (nicht party1–4, keine anderen Kombinationen).
 
 ## HoTs / Shields
 
