@@ -20,6 +20,26 @@ exactly the spell you assigned to that click — it never picks a target or a sp
 - Works on its own; PaTiAuras is not needed. With **PaTiAlerts** installed (optional), members with a dispellable
   debuff also appear there
 
+## PaTiSuite
+
+This addon is part of the **PaTiSuite** — a collection of small addons for World of Warcraft: Forever.
+Each one is installed on its own and works on its own; none of them is needed by another.
+
+- [PaTiSuite](https://github.com/patpaskoch/PaTiSuite) – optional control panel to show and hide the PaTi windows
+- **PaTiHeal** – healer party frames and click casting *(this addon)*
+- [PaTiAuras](https://github.com/patpaskoch/PaTiAuras) – buff, aura and proc watcher
+- [PaTiTank](https://github.com/patpaskoch/PaTiTank) – tank HUD and aggro monitor
+- [PaTiGroup](https://github.com/patpaskoch/PaTiGroup) – raid markers, ready check and pull timer
+- [PaTiQuest](https://github.com/patpaskoch/PaTiQuest) – selected quest and its objectives
+- [PaTiDungeon](https://github.com/patpaskoch/PaTiDungeon) – instance, group and combat status
+- [PaTiAlerts](https://github.com/patpaskoch/PaTiAlerts) – one window for open problems
+
+### Goes well with (optional)
+
+- [PaTiAuras](https://github.com/patpaskoch/PaTiAuras) – extra buff and aura watch next to your party frames
+- [PaTiAlerts](https://github.com/patpaskoch/PaTiAlerts) – shows party members with a dispellable debuff in one central window
+- [PaTiSuite](https://github.com/patpaskoch/PaTiSuite) – control panel to show and hide all PaTi windows
+
 ## Installation
 1. Download the release zip (`PaTiHeal-<version>.zip`).
 2. Unpack it and copy the folder `PaTiHeal` into `World of Warcraft/<client>/Interface/AddOns/`.
@@ -49,6 +69,10 @@ Click-casting changes made in combat apply after combat.
 - HoT/shield and dispel spell IDs are not yet confirmed in the Forever client — `/ph auras` shows what it knows.
 - Not yet tested in game: rank choice, dispel icons, HoTs & shields, click dispel.
 - Party only (no raid frames).
+
+## Development
+
+Architecture, tests and engineering rules of the suite: [PaTiAdmin](https://github.com/patpaskoch/PaTiAdmin). PaTiAdmin is not a WoW addon — players do not install it. The shared UI code (PaTiShared) is already embedded in this addon's `Shared/` folder; there is nothing extra to install.
 
 ## License
 MIT — see [LICENSE](LICENSE). Copyright (c) 2026 Patrick Koch.
