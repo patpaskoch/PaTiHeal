@@ -70,7 +70,7 @@ local function unitData(unit)
     end
     if not UnitExists(unit) then return nil end
     -- The heal target may be an NPC: no class colour, no "offline" (an NPC is never connected like a player).
-    local npc = unit == "target" and Logic.Flag(UnitIsPlayer(unit), isSecret) ~= true
+    local npc = unit == "target" and Logic.Flag(UnitIsPlayer(unit), isSecret) == false -- unreadable: treated as a player
     local _, classFile = UnitClass(unit)
     -- Secret check before every nil test / comparison: Logic.ValueOr and Logic.Flag (unreadable flag = no state).
     local data = { name = Logic.ValueOr(UnitName(unit), unit, isSecret), classFile = not npc and classFile or nil,
@@ -376,7 +376,7 @@ local function updateLayout()
     else -- no secure state driver in this client: out-of-combat updates only (PLAYER_TARGET_CHANGED)
         shown = mode == "show" or (mode == "auto" and Logic.Flag(UnitExists("target"), isSecret) == true
             and Logic.Flag(UnitCanAssist("player", "target"), isSecret) == true
-            and Logic.Flag(UnitIsDeadOrGhost("target"), isSecret) == false)
+            and Logic.Flag(UnitIsDead("target"), isSecret) == false) -- like [nodead] of the driver
     end
     targetRow:SetShown(shown)
     rows[1]:ClearAllPoints()
