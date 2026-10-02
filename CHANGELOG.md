@@ -52,6 +52,7 @@ History before this file: `git log`.
 - The saved click binding of 0.6.0 is converted automatically (SavedVariables schema 2).
 - A binding whose spell is currently unknown is kept and applied again when the spell is available (0.6.0 deleted it).
 ### Fixed
+- Hardening: a broken SavedVariables save (not a table, a broken schema or scale) no longer breaks the login; only the broken value is replaced, every valid setting (also `false`) stays, and the migration is idempotent (tests/robustness_spec.lua).
 - The window kept the height of five frames when solo or in a small group (owner 2026-10-02): it is now only as
   tall as the members that are there (up to the last one; a gap stays rather than cutting a frame off). Changed out
   of combat only, like the rows: a member joining in combat appears at once and the window grows after combat.

@@ -58,7 +58,8 @@ local LEGACY_BINDING = {
 
 -- Brings any saved table (nil, 0.6.0 or current) to the current schema. Keeps position and lock.
 function Logic.Migrate(db)
-    db = db or {}
+    if type(db) ~= "table" then db = {} end -- nil or a broken save (string, number …): start fresh
+    if type(db.schema) ~= "number" then db.schema = nil end -- broken schema: run every step (they keep values)
     if (db.schema or 0) < 1 then
         db.bindings = db.bindings or {}
         if db.clickSpellID then
@@ -73,16 +74,25 @@ function Logic.Migrate(db)
         db.bindingRanks = db.bindingRanks or {}
         db.schema = 2
     end
-    if db.bindings == nil then db.bindings = {} end
-    if db.bindingRanks == nil then db.bindingRanks = {} end
+    -- Only broken entries are dropped: a binding is a spell ID, a rank a number (else the click would cast nothing
+    -- or fail); every valid binding of the player stays.
+    if type(db.bindings) ~= "table" then db.bindings = {} end
+    if type(db.bindingRanks) ~= "table" then db.bindingRanks = {} end
+    for key, id in pairs(db.bindings) do
+        if type(id) ~= "number" then db.bindings[key] = nil end
+    end
+    for key, rank in pairs(db.bindingRanks) do
+        if type(rank) ~= "number" then db.bindingRanks[key] = nil end
+    end
     if db.locked == nil then db.locked = false end
     if db.collapsed == nil then db.collapsed = false end
     if db.language == nil then db.language = "auto" end
     if db.showDispels == nil then db.showDispels = true end
-    if db.scale == nil then db.scale = 1 end
+    -- A broken scale would make SetScale fail on login: only a sane number is kept.
+    if type(db.scale) ~= "number" or db.scale < 0.5 or db.scale > 2 then db.scale = 1 end
     if db.opacity == nil then db.opacity = 0.75 end -- panel body opacity (PaTiShared window)
     -- HoTs & shields (no schema step: only new keys with defaults, nothing renamed).
-    if db.hots == nil then db.hots = {} end -- key -> false hides that aura
+    if type(db.hots) ~= "table" then db.hots = {} end -- key -> false hides that aura
     if db.hotPosition ~= "RIGHT" and db.hotPosition ~= "BELOW" then db.hotPosition = "RIGHT" end
     if db.showHotTimers == nil then db.showHotTimers = true end
     if db.showHotCharges == nil then db.showHotCharges = true end
