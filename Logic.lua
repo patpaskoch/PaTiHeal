@@ -154,3 +154,34 @@ function Logic.RowCount(present, total)
     end
     return count
 end
+
+-- Heal target (owner wish 2026-10-02) -----------------------------------------------------------------------
+
+-- What the target row's secure driver does: "show" (test mode: the example target), "hide" (collapsed) or "auto"
+-- (WoW decides: a friendly, living target — TargetFrame.CONDITION).
+function Logic.TargetMode(testMode, collapsed)
+    if collapsed then return "hide" end
+    if testMode then return "show" end
+    return "auto"
+end
+
+-- Geometry of the window, all in px from the window's top. size = { top, row, gap, targetGap, bottom, header, rowX }.
+-- The target row sits at the top; the player row (and the party rows chained below it) moves down by one row plus
+-- targetGap while the target row is shown. rowCount = Logic.RowCount (party rows to make room for).
+-- Returns { rowX, targetTop, playerTop, playerTopShifted, height, heightShifted }; collapsed: header only.
+function Logic.HealLayout(size, rowCount, collapsed)
+    local step = size.row + size.gap + size.targetGap
+    local rowsHeight = size.top + rowCount * (size.row + size.gap) + size.bottom
+    local layout = { rowX = size.rowX, targetTop = size.top, playerTop = size.top, playerTopShifted = size.top + step,
+        height = rowsHeight, heightShifted = rowsHeight + step }
+    if collapsed then layout.height, layout.heightShifted = size.header, size.header end
+    return layout
+end
+
+-- Level text of the target: "42", "??" for a boss or unknown level (WoW reports -1 or 0), nil when unreadable
+-- (secret) — then no number is shown at all instead of a guess.
+function Logic.LevelText(level, isSecret)
+    if isSecret(level) or type(level) ~= "number" then return nil end
+    if level <= 0 then return "??" end
+    return tostring(math.floor(level))
+end

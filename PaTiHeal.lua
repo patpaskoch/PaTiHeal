@@ -1,6 +1,7 @@
 -- PaTiHeal: manual party frames. A click casts exactly the spell the player assigned to that click.
 local _, ns = ...
 local UI, L, Logic, Spells, Dispels, HoTs, Settings = ns.UI, ns.UI.L, ns.Logic, ns.Spells, ns.Dispels, ns.HoTs, ns.Settings
+local TargetFrame = ns.TargetFrame
 
 local DB
 local rows = {}
@@ -55,22 +56,27 @@ local TEST_UNITS = {
     party2 = { nameKey = "TEST_MEMBER", class = "MAGE", health = 100, mana = 90 },
     party3 = { nameKey = "TEST_MEMBER", class = "PRIEST", health = 15, mana = 60 },
     party4 = { nameKey = "TEST_MEMBER", class = "HUNTER", health = 0, mana = 0, state = "OFFLINE" },
+    target = { nameKey = "TEST_TARGET", health = 68, mana = 0, level = 42 }, -- a wounded friendly NPC
 }
 
--- One unit as a plain table: name, classFile, health, healthMax, mana, manaMax, state, isTank.
+-- One unit as a plain table: name, classFile, health, healthMax, mana, manaMax, state, isTank, level (target only).
 -- Health values can be secret values: only Logic.HealthPercent (which checks) or widgets touch them.
 local function unitData(unit)
     if testMode then
         local fake = TEST_UNITS[unit]
         return { name = L[fake.nameKey], classFile = fake.class, health = fake.health, healthMax = 100,
-            mana = fake.mana, manaMax = 100, state = fake.state, isTank = fake.isTank }
+            mana = fake.mana, manaMax = 100, state = fake.state, isTank = fake.isTank,
+            level = Logic.LevelText(fake.level, isSecret) }
     end
     if not UnitExists(unit) then return nil end
+    -- The heal target may be an NPC: no class colour, no "offline" (an NPC is never connected like a player).
+    local npc = unit == "target" and Logic.Flag(UnitIsPlayer(unit), isSecret) ~= true
     local _, classFile = UnitClass(unit)
     -- Secret check before every nil test / comparison: Logic.ValueOr and Logic.Flag (unreadable flag = no state).
-    local data = { name = Logic.ValueOr(UnitName(unit), unit, isSecret), classFile = classFile,
+    local data = { name = Logic.ValueOr(UnitName(unit), unit, isSecret), classFile = not npc and classFile or nil,
         health = 0, healthMax = 1, mana = 0, manaMax = 1 }
-    if Logic.Flag(UnitIsConnected(unit), isSecret) == false then data.state = "OFFLINE"; return data end
+    if unit == "target" then data.level = Logic.LevelText(UnitLevel(unit), isSecret) end
+    if not npc and Logic.Flag(UnitIsConnected(unit), isSecret) == false then data.state = "OFFLINE"; return data end
     if Logic.Flag(UnitIsDeadOrGhost(unit), isSecret) then data.state = "DEAD"; return data end
     data.health = Logic.ValueOr(UnitHealth(unit), 0, isSecret)
     data.healthMax = Logic.ValueOr(UnitHealthMax(unit), 1, isSecret)
@@ -87,10 +93,12 @@ end
 -- Window and rows -------------------------------------------------------------------------------
 
 local WIDTH, ROW_WIDTH, ROW_HEIGHT, ROW_GAP = 270, 242, 39, 4
-local ROWS_TOP = UI.Sizes.HeaderHeight + UI.Spacing.SM
--- Height for n unit rows (rows keep fixed slots: player, party1–4).
-local function heightFor(rowCount) return ROWS_TOP + rowCount * (ROW_HEIGHT + ROW_GAP) + UI.Spacing.MD end
-local FULL_HEIGHT = heightFor(5)
+-- Window geometry (Logic.HealLayout): rows keep fixed slots (player, party1–4); the heal target row sits above the
+-- player row, TARGET_GAP apart, only while it is shown.
+local TARGET_GAP = UI.Spacing.SM
+local SIZE = { top = UI.Sizes.HeaderHeight + UI.Spacing.SM, row = ROW_HEIGHT, gap = ROW_GAP, targetGap = TARGET_GAP,
+    bottom = UI.Spacing.MD, header = UI.Sizes.HeaderHeight, rowX = (WIDTH - ROW_WIDTH) / 2 }
+local FULL_HEIGHT = Logic.HealLayout(SIZE, 5, false).height
 
 local DISPEL_ICON = 13 -- fits between the health bar and the bottom edge of a row; judge the size in game
 local HOT_ICON_RIGHT, HOT_ICON_BELOW = 20, 13 -- HoT icons: as tall as the health bar, or as the dispel icons
@@ -103,11 +111,10 @@ local function setBar(bar, value, maximum)
     bar:SetValue(value)
 end
 
-local function makeRow(index, unit)
-    local row = CreateFrame("Button", "PaTiHealUnit" .. index, window, "SecureUnitButtonTemplate")
+local function makeRow(frameName, unit)
+    local row = CreateFrame("Button", frameName, window, "SecureUnitButtonTemplate")
     row.unit = unit
     row:SetSize(ROW_WIDTH, ROW_HEIGHT)
-    row:SetPoint("TOPLEFT", (WIDTH - ROW_WIDTH) / 2, -ROWS_TOP - (index - 1) * (ROW_HEIGHT + ROW_GAP))
     row:RegisterForClicks("AnyUp")
     row:SetAttribute("unit", unit)
     local background = row:CreateTexture(nil, "BACKGROUND")
@@ -168,7 +175,37 @@ local function makeRow(index, unit)
     row:SetScript("OnLeave", function() GameTooltip:Hide() end)
     return row
 end
-for index, unit in ipairs({ "player", "party1", "party2", "party3", "party4" }) do rows[index] = makeRow(index, unit) end
+for index, unit in ipairs({ "player", "party1", "party2", "party3", "party4" }) do
+    rows[index] = makeRow("PaTiHealUnit" .. index, unit)
+    -- Party rows hang below the row above them: when the player row moves (heal target shown), they follow.
+    if index > 1 then rows[index]:SetPoint("TOPLEFT", rows[index - 1], "BOTTOMLEFT", 0, -ROW_GAP) end
+end
+rows[1]:SetPoint("TOPLEFT", window, "TOPLEFT", SIZE.rowX, -SIZE.top) -- moved by updateLayout / the target driver
+
+-- Heal target row (owner wish 2026-10-02): a fixed SecureUnitButtonTemplate with unit = "target" — the same click
+-- bindings as every row (applyBindings), never another unit. Shown only for a friendly, living target
+-- (TargetFrame.lua). A small "Target" tag and the level tell it apart from the player row below it.
+local TARGET_TAG = 34
+local targetRow = makeRow("PaTiHealTarget", "target")
+targetRow:SetPoint("TOPLEFT", window, "TOPLEFT", SIZE.rowX, -SIZE.top)
+targetRow:Hide()
+targetRow.level = targetRow.health:CreateFontString(nil, "OVERLAY", UI.Fonts.Muted)
+targetRow.level:SetPoint("RIGHT", targetRow.status, "LEFT", -UI.Spacing.SM, 0)
+targetRow.name:SetPoint("RIGHT", targetRow.level, "LEFT", -UI.Spacing.SM, 0)
+local targetTag = targetRow:CreateFontString(nil, "OVERLAY", UI.Fonts.Muted)
+targetTag:SetPoint("BOTTOMLEFT", 4, 2)
+targetTag:SetWidth(TARGET_TAG - 4)
+targetTag:SetJustifyH("LEFT")
+targetTag:SetWordWrap(false)
+UI.BindText(targetTag, "TARGET_TAG")
+targetRow.mana:ClearAllPoints()
+targetRow.mana:SetPoint("BOTTOMLEFT", TARGET_TAG, 3)
+targetRow.manaInset = TARGET_TAG - 3
+local targetDriver = TargetFrame.Create(window, targetRow, rows[1]) -- nil: client without the secure state driver
+
+-- Every row that is painted and click-cast: the heal target first, then you and the party.
+local paintRows = { targetRow }
+for _, row in ipairs(rows) do paintRows[#paintRows + 1] = row end
 
 -- Name in class colour (class details stay in the unit tooltip), health in percent on the right.
 local function paintRow(row, data)
@@ -177,6 +214,7 @@ local function paintRow(row, data)
     local color = RAID_CLASS_COLORS and data.classFile and not isSecret(data.classFile) and RAID_CLASS_COLORS[data.classFile]
     if color then row.name:SetTextColor(color.r, color.g, color.b) else row.name:SetTextColor(UI.Color("Text")) end
     row.tankMark:SetShown(data.isTank == true)
+    if row.level then row.level:SetText(data.level and L.TARGET_LEVEL:format(data.level) or "") end
     setBar(row.health, data.health, data.healthMax)
     setBar(row.mana, data.mana, data.manaMax)
     if data.state then
@@ -237,7 +275,7 @@ local function layoutHoTs(row)
     local size = below and HOT_ICON_BELOW or HOT_ICON_RIGHT
     local space = slots > 0 and slots * (size + UI.Spacing.XS) + UI.Spacing.XS or 0
     row.health:SetWidth(ROW_WIDTH - 6 - (below and 0 or space))
-    row.mana:SetWidth(ROW_WIDTH - 6 - DISPEL_SPACE - (below and space or 0))
+    row.mana:SetWidth(ROW_WIDTH - 6 - DISPEL_SPACE - (below and space or 0) - (row.manaInset or 0))
     for slot, icon in ipairs(row.hotIcons) do
         icon:SetSize(size, size)
         icon:ClearAllPoints()
@@ -281,7 +319,7 @@ hotTicker:SetScript("OnUpdate", function(self, elapsed)
     if elapsedSinceTick < 0.5 then return end
     elapsedSinceTick = 0
     local now, running = GetTime(), false
-    for _, row in ipairs(rows) do
+    for _, row in ipairs(paintRows) do
         for _, icon in ipairs(row.hotIcons) do
             if icon.item and icon.expires and icon:IsShown() then
                 icon.auraText:SetText(hotText(icon, now) or "")
@@ -297,7 +335,7 @@ local function refresh()
     if not DB then return end
     -- Collapsed: nothing to paint, unless PaTiAlerts shows the dispel state instead (rows stay hidden).
     if DB.collapsed and not alertsApi() then return end
-    for _, row in ipairs(rows) do
+    for _, row in ipairs(paintRows) do
         local data = unitData(row.unit)
         if data then paintRow(row, data); paintDispels(row, data.state); paintHoTs(row, data.state)
         else row.dispelCount = 0 end
@@ -309,7 +347,7 @@ end
 local function rebuildHoTs()
     if not DB then return end
     hotEntries = HoTs.Entries(HoTs.Profile(testMode), DB, Spells.Name)
-    for _, row in ipairs(rows) do layoutHoTs(row) end
+    for _, row in ipairs(paintRows) do layoutHoTs(row) end
 end
 
 -- Secure changes: only out of combat; PLAYER_REGEN_ENABLED calls this again.
@@ -329,7 +367,21 @@ local function updateLayout()
     -- joining in combat appears (RegisterUnitWatch) and the window grows after combat (PLAYER_REGEN_ENABLED).
     local present = {}
     for index, row in ipairs(rows) do present[index] = testMode or Logic.Flag(UnitExists(row.unit), isSecret) end
-    window:SetHeight(DB.collapsed and UI.Sizes.HeaderHeight or heightFor(Logic.RowCount(present, #rows)))
+    local layout = Logic.HealLayout(SIZE, Logic.RowCount(present, #rows), DB.collapsed)
+    -- Heal target: the secure driver decides in combat; here (out of combat) the same result is applied directly.
+    local mode = Logic.TargetMode(testMode, DB.collapsed)
+    local shown
+    if targetDriver then
+        shown = TargetFrame.Configure(targetDriver, layout, mode)
+    else -- no secure state driver in this client: out-of-combat updates only (PLAYER_TARGET_CHANGED)
+        shown = mode == "show" or (mode == "auto" and Logic.Flag(UnitExists("target"), isSecret) == true
+            and Logic.Flag(UnitCanAssist("player", "target"), isSecret) == true
+            and Logic.Flag(UnitIsDeadOrGhost("target"), isSecret) == false)
+    end
+    targetRow:SetShown(shown)
+    rows[1]:ClearAllPoints()
+    rows[1]:SetPoint("TOPLEFT", window, "TOPLEFT", layout.rowX, -(shown and layout.playerTopShifted or layout.playerTop))
+    window:SetHeight(shown and layout.heightShifted or layout.height)
     window:SetTestMode(testMode)
 end
 
@@ -342,7 +394,7 @@ local function applyBindings()
     local names = Logic.SpellNames(DB.bindings, DB.bindingRanks, castName)
     local attributes = Logic.ClickAttributes(names)
     local anyBinding = next(names) ~= nil
-    for _, row in ipairs(rows) do
+    for _, row in ipairs(paintRows) do
         for _, attribute in ipairs(attributes) do row:SetAttribute(attribute.name, attribute.value) end
         row:SetEnabled(not testMode and anyBinding)
     end
@@ -435,6 +487,11 @@ local function printDebug()
     print(("|cff68caffPaTiHeal Debug:|r PaTiHeal %s · PaTiShared UI %s · %s · test=%s"):format(
         tostring(getMetadata and getMetadata("PaTiHeal", "Version")), tostring(UI.VERSION),
         UI.GetLanguage(), tostring(testMode)))
+    -- Heal target: is the secure state driver there (else out-of-combat fallback), and what does it say now?
+    print(("  heal target: RegisterStateDriver %s · driver %s · state %s · mode %s · row shown %s"):format(
+        RegisterStateDriver and "yes" or "no", targetDriver and "yes" or "no (fallback)",
+        tostring(targetDriver and targetDriver:GetAttribute("state-" .. TargetFrame.STATE)),
+        tostring(targetDriver and targetDriver:GetAttribute("mode")), tostring(targetRow:IsShown())))
     local row = rows[1]
     for _, binding in ipairs(Logic.BINDINGS) do
         local prefix = binding.modifier
@@ -488,11 +545,11 @@ end
 
 local events = CreateFrame("Frame")
 for _, event in ipairs({ "PLAYER_LOGIN", "PLAYER_ENTERING_WORLD", "GROUP_ROSTER_UPDATE", "UNIT_HEALTH", "UNIT_POWER_UPDATE",
-    "UNIT_CONNECTION", "UNIT_FLAGS", "UNIT_AURA", "PLAYER_REGEN_ENABLED", "SPELLS_CHANGED" }) do
+    "UNIT_CONNECTION", "UNIT_FLAGS", "UNIT_AURA", "PLAYER_REGEN_ENABLED", "SPELLS_CHANGED", "PLAYER_TARGET_CHANGED" }) do
     events:RegisterEvent(event)
 end
 local rowByUnit = {}
-for _, row in ipairs(rows) do rowByUnit[row.unit] = row end
+for _, row in ipairs(paintRows) do rowByUnit[row.unit] = row end
 
 events:SetScript("OnEvent", function(_, event, unit)
     if event == "PLAYER_LOGIN" then
@@ -509,7 +566,7 @@ events:SetScript("OnEvent", function(_, event, unit)
         return
     elseif event == "UNIT_AURA" or event == "UNIT_HEALTH" or event == "UNIT_POWER_UPDATE"
         or event == "UNIT_CONNECTION" or event == "UNIT_FLAGS" then
-        -- Unit events repaint only that unit's frame (and ignore target, nameplates, raid units).
+        -- Unit events repaint only that unit's frame (you, party, heal target; nameplates and raid units are ignored).
         local row = rowByUnit[unit]
         if row and (not DB.collapsed or alertsApi()) and not testMode then
             local data = unitData(unit)
@@ -519,8 +576,18 @@ events:SetScript("OnEvent", function(_, event, unit)
             if event ~= "UNIT_HEALTH" and event ~= "UNIT_POWER_UPDATE" then
                 paintDispels(row, data and data.state)
                 paintHoTs(row, data and data.state)
-                reportAlerts()
+                if row ~= targetRow then reportAlerts() end -- the heal target never sends PaTiAlerts alerts
             end
+        end
+        return
+    elseif event == "PLAYER_TARGET_CHANGED" then
+        -- Painting is plain (fine in combat); showing/moving is the secure driver's job. Without a driver: out of combat.
+        if not targetDriver then updateLayout() end
+        local data = not testMode and unitData("target")
+        if data and not DB.collapsed then
+            paintRow(targetRow, data)
+            paintDispels(targetRow, data.state)
+            paintHoTs(targetRow, data.state)
         end
         return
     elseif event == "PLAYER_REGEN_ENABLED" then

@@ -108,6 +108,7 @@ HoTs.TEST = {
     party1 = { EARTH_SHIELD = { count = 5 }, RIPTIDE = { remaining = 8 }, POWER_WORD_SHIELD = { remaining = 22 },
         RENEW = { remaining = 11 }, PRAYER_OF_MENDING = { count = 4 } },
     party3 = { RIPTIDE = { remaining = 3 }, RENEW = { remaining = 6 } },
+    target = { RIPTIDE = { remaining = 9 }, RENEW = { remaining = 9 } }, -- the heal target row (test mode)
 }
 
 function HoTs.TestAuras(unit, entries, now)

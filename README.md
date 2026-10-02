@@ -10,6 +10,10 @@ exactly the spell you assigned to that click — it never picks a target or a sp
 ## Features
 - Party frames for you and party1–4: name in class colour, health in percent, mana, offline/dead state;
   the tank gets an accent stripe
+- **Heal target:** a frame for your current target directly above your own — for a friendly player or NPC that
+  is alive (name, level, health, mana, your HoTs, dispellable debuffs). Same click bindings as every frame; it
+  appears and disappears with your target, also in combat (WoW's secure state driver; not yet confirmed in the
+  Forever client). Without a friendly target the window stays as compact as before
 - Click casting for nine combinations (left, right, middle, Shift/Ctrl/Alt + left/right), each with a rank choice
 - Your HoTs and shields on the frames, with charges and remaining time — Shaman: Earth Shield, Riptide;
   Priest: Renew, Power Word: Shield, Prayer of Mending. Only your own; each can be switched off;

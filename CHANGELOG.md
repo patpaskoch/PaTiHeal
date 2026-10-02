@@ -5,6 +5,15 @@ History before this file: `git log`.
 
 ## [Unreleased]
 ### Added
+- **Heal target frame** (owner wish 2026-10-02): a fixed secure frame for your current target directly above your own
+  frame (`PaTiHealTarget`, SecureUnitButtonTemplate, unit = "target"): name, level ("??" for boss/unknown, nothing
+  when unreadable), health, mana, your HoTs/shields and dispellable debuffs, a small "Target" tag. The same click
+  bindings as every frame (one click = exactly the assigned spell). Shown only for a friendly, living target
+  (player or NPC); visibility, the shift of your frame and the window height come from WoW's secure state driver
+  (`TargetFrame.lua`, `[@target,help,nodead]`), so they also follow target changes in combat. Without that driver
+  (not yet confirmed in the Forever client) the frame updates only out of combat. No target: the window stays as
+  compact as before; the height still follows the group (party rows now hang below your frame). Test mode shows a
+  wounded NPC. The heal target never sends PaTiAlerts alerts. `/ph debug` reports the driver.
 - Window settings (PaTiShared): panel opacity 30–100 % (default 75 %, the header stays opaque). The window registers
   itself for the optional PaTiSuite control panel, which shows/hides it with this addon's own rules. (Snapping to
   other PaTi windows was tried and removed again: it did not work in the client.)

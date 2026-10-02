@@ -126,6 +126,32 @@ Jeweils: erscheint nur bei eigenem Cast, Timer, Aufladungen (falls vorhanden), v
 - [ ] PT-HEAL-093 Klick-Reinigen: Dispel-Zauber auf einer Kombination entfernt den Debuff am angeklickten Mitglied
 - [ ] PT-HEAL-094 Mit PaTiAlerts: Mitglied mit bannbarem Debuff erscheint dort (Hinweis), nach dem Bannen weg
 
+## Heal-Ziel (Target-Balken)
+
+Neu 2026-10-02: ein fester Secure-Balken für dein aktuelles Ziel direkt über deinem eigenen Balken. Sichtbarkeit im Kampf
+über WoWs Secure State Driver (noch nicht im Forever-Client bestätigt, `/ph debug` zeigt „driver yes/no“).
+
+- [ ] PT-HEAL-130 `/ph debug`: Zeile „heal target: RegisterStateDriver … driver …“ (Ausgabe melden)
+- [ ] PT-HEAL-131 Freundlicher NPC als Ziel: Ziel-Balken erscheint über deinem Balken mit „Ziel“, Name, St. (Level),
+  Leben in %; Fenster genau eine Zeile höher, nichts abgeschnitten
+- [ ] PT-HEAL-132 Fremder freundlicher Spieler als Ziel: Balken erscheint, Name in Klassenfarbe, Mana falls vorhanden
+- [ ] PT-HEAL-133 Gruppenmitglied (oder du selbst) als Ziel: Balken erscheint zusätzlich, beide Balken zeigen dasselbe
+- [ ] PT-HEAL-134 Gegner als Ziel: kein Ziel-Balken; kein Ziel: kein Ziel-Balken, Fenster so kompakt wie vorher
+- [ ] PT-HEAL-135 Totes freundliches Ziel: kein Ziel-Balken
+- [ ] PT-HEAL-136 Ziel wechseln (freundlich → Gegner → freundlich) außerhalb des Kampfes: Balken und Höhe folgen sofort
+- [ ] PT-HEAL-137 Ziel wechseln im Kampf: Balken erscheint/verschwindet, dein Balken und die Gruppe rücken mit, die
+  Fensterhöhe passt; kein Lua-Fehler, kein `ADDON_ACTION_BLOCKED`
+- [ ] PT-HEAL-138 Linksklick auf den Ziel-Balken wirkt genau den Zauber der Linksklick-Belegung auf das Ziel
+- [ ] PT-HEAL-139 Shift-/Strg-/Alt-Klicks auf dem Ziel-Balken: jeweils genau der belegte Zauber
+- [ ] PT-HEAL-140 Eigener HoT/Schild auf dem Ziel (z. B. Springflut / Erneuerung) erscheint mit Restzeit
+- [ ] PT-HEAL-141 Bannbarer Debuff auf dem Ziel erscheint als Icon (falls testbar)
+- [ ] PT-HEAL-142 Level: normale Zahl; Boss/unbekannt „??“
+- [ ] PT-HEAL-143 `/reload` mit freundlichem Ziel: Balken sofort richtig; Test Mode zeigt „Verwundeter Soldat · St. 42“
+- [ ] PT-HEAL-144 Gruppengröße 1 / 3 / 5 jeweils mit und ohne Ziel: Höhe stimmt, kein Rahmen abgeschnitten
+- [ ] PT-HEAL-145 Einklappen: nur Header, auch mit Ziel; Ausklappen: alles wieder da
+- [ ] PT-HEAL-146 `taint.log` ohne PaTiHeal-Eintrag nach Zielwechseln im Kampf
+- [ ] PT-HEAL-147 Ziel-Balken erzeugt keine PaTiAlerts-Meldung (bannbarer Debuff am NPC-Ziel)
+
 ## Unabhängigkeit
 
 - [ ] PT-HEAL-100 Ohne PaTiAlerts und ohne PaTiAuras: unverändert, kein Lua-Fehler

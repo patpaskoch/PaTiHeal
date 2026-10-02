@@ -241,3 +241,52 @@ describe("Logic.RowCount (window height follows the group)", function()
         assert.equal(1, M.RowCount({}, 0))
     end)
 end)
+
+describe("Heal target row (Logic.TargetMode / HealLayout / LevelText)", function()
+    local SIZE = { top = 26, row = 39, gap = 4, targetGap = 4, bottom = 8, header = 22, rowX = 14 }
+
+    it("mode: WoW decides normally; test mode shows the example; collapsed hides it", function()
+        local M = load()
+        assert.equal("auto", M.TargetMode(false, false))
+        assert.equal("show", M.TargetMode(true, false))
+        assert.equal("hide", M.TargetMode(false, true))
+        assert.equal("hide", M.TargetMode(true, true))
+    end)
+
+    it("solo without target stays as compact as before: the same height as one row", function()
+        local layout = load().HealLayout(SIZE, 1, false)
+        assert.equal(26, layout.playerTop)
+        assert.equal(26 + 43 + 8, layout.height)
+    end)
+
+    it("a shown heal target adds exactly one row (plus its small gap) above you; the party follows", function()
+        local M = load()
+        local solo, party = M.HealLayout(SIZE, 1, false), M.HealLayout(SIZE, 5, false)
+        assert.equal(26, solo.targetTop)
+        assert.equal(26 + 47, solo.playerTopShifted)
+        assert.equal(solo.height + 47, solo.heightShifted)
+        assert.equal(party.height + 47, party.heightShifted)
+        assert.equal(14, party.rowX)
+    end)
+
+    it("the group size still decides the height (dynamic height kept)", function()
+        local M = load()
+        assert.equal(43 * 2, M.HealLayout(SIZE, 3, false).height - M.HealLayout(SIZE, 1, false).height)
+    end)
+
+    it("collapsed: only the header, with or without target", function()
+        local layout = load().HealLayout(SIZE, 5, true)
+        assert.same({ 22, 22 }, { layout.height, layout.heightShifted })
+    end)
+
+    it("level text: number, ?? for boss/unknown, nothing for a secret value (never guessed)", function()
+        local M = load()
+        local secret = {}
+        local function isSecret(value) return value == secret end
+        assert.equal("42", M.LevelText(42, isSecret))
+        assert.equal("??", M.LevelText(-1, isSecret))
+        assert.equal("??", M.LevelText(0, isSecret))
+        assert.is_nil(M.LevelText(secret, isSecret))
+        assert.is_nil(M.LevelText(nil, isSecret))
+    end)
+end)
