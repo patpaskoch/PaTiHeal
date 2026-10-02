@@ -24,7 +24,9 @@ Fresh-Install-Test (PT-HEAL-001) werden sie ohnehin mitgeprüft.
 
 - [ ] PT-HEAL-001 Fresh Install aus dem Release-ZIP: genau ein Ordner `PaTiHeal/`, Addon lädt allein
 - [ ] PT-HEAL-002 PaTiHeal erscheint in der AddOn-Liste mit Beschreibung
-- [ ] PT-HEAL-003 Icon in der AddOn-Liste korrekt, keine weiße oder fehlende Textur
+- [x] PT-HEAL-003 Icon in der AddOn-Liste korrekt, keine weiße oder fehlende Textur
+  - ✅ VERIFIED 2026-10-02
+  - Owner: die Icons erscheinen im Spiel in der AddOn-Liste korrekt.
 - [x] PT-HEAL-004 Login ohne Lua-Fehler
   - ✅ VERIFIED 2026-09-28
 - [ ] PT-HEAL-005 `/reload` ohne Lua-Fehler
