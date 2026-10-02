@@ -30,10 +30,12 @@ This addon is part of the **PaTiSuite** — a collection of small addons for Wor
 Each one is installed on its own and works on its own; none of them is needed by another.
 
 - [PaTiSuite](https://github.com/patpaskoch/PaTiSuite) – optional control panel to show and hide the PaTi windows
-- **PaTiHeal** – healer party frames and click casting *(this addon)*
-- [PaTiAuras](https://github.com/patpaskoch/PaTiAuras) – buff, aura and proc watcher
+- **PaTiHeal** – healing: party frames, heal target, click casting, HoTs, dispels *(this addon)*
+- [PaTiAuras](https://github.com/patpaskoch/PaTiAuras) – buffs, procs, tracking, group buffs and weapon imbues
 - [PaTiTank](https://github.com/patpaskoch/PaTiTank) – tank HUD and aggro monitor
-- [PaTiGroup](https://github.com/patpaskoch/PaTiGroup) – raid markers, ready check and pull timer
+- [PaTiRota](https://github.com/patpaskoch/PaTiRota) – your own skill priority with cooldowns and fixed cast buttons
+- [PaTiGroup](https://github.com/patpaskoch/PaTiGroup) – party awareness: tank, healer, roles and the tank's target
+- [PaTiLead](https://github.com/patpaskoch/PaTiLead) – lead the group: raid markers, ready check and pull timer
 - [PaTiQuest](https://github.com/patpaskoch/PaTiQuest) – selected quest and its objectives
 - [PaTiDungeon](https://github.com/patpaskoch/PaTiDungeon) – instance, group and combat status
 - [PaTiSocial](https://github.com/patpaskoch/PaTiSocial) – "Party Social": quick emote and message buttons
