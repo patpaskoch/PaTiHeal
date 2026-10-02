@@ -70,6 +70,16 @@ Fresh-Install-Test (PT-HEAL-001) werden sie ohnehin mitgeprüft.
 - [ ] PT-HEAL-054 Mitglied tritt bei / verlässt die Gruppe (auch im Kampf: Rahmen stimmen spätestens nach dem Kampf)
 - [ ] PT-HEAL-055 Offline-Mitglied wird als offline angezeigt
 - [ ] PT-HEAL-056 Totes Mitglied wird als tot angezeigt
+- [ ] PT-HEAL-057 Solo: Fenster nur so hoch wie der eigene Rahmen, kein Leerraum darunter
+  - ❌ FAIL 2026-10-02
+  - Solo nur der eigene Balken, das Fenster blieb aber so hoch wie für fünf Rahmen.
+  - 🔧 FIX IMPLEMENTED 2026-10-02
+  - Höhe folgt den vorhandenen Gruppenmitgliedern (`Logic.RowCount`), außerhalb des Kampfes.
+  - MANUAL RETEST REQUIRED
+- [ ] PT-HEAL-058 Gruppe mit 2, 3 und 5: Fenster wächst und schrumpft mit, kein Rahmen abgeschnitten
+- [ ] PT-HEAL-059 Beitritt/Verlassen im Kampf: Rahmen erscheint/verschwindet, die Höhe passt sich nach dem Kampf
+  an; kein Lua-Fehler, kein ADDON_ACTION_BLOCKED
+- [ ] PT-HEAL-079 Test Mode zeigt weiterhin alle fünf Beispielrahmen in voller Höhe; Einklappen = nur Header
 
 ## Click Healing
 

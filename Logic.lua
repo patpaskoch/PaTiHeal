@@ -143,3 +143,14 @@ function Logic.HealthPercent(health, maximum, isSecret)
     if type(health) ~= "number" or type(maximum) ~= "number" or maximum <= 0 then return nil end
     return ("%d%%"):format(math.floor(health / maximum * 100 + 0.5))
 end
+
+-- How many unit rows the window must be tall for: up to the last row whose unit is there, at least 1 (you). Rows
+-- keep fixed slots (player, party1–4), so a gap before that row stays visible instead of a frame being cut off.
+-- present[i] = true | false | nil for rows 1..total; nil = unreadable (secret): counts as present, never cut off.
+function Logic.RowCount(present, total)
+    local count = 1
+    for index = 1, total do
+        if present[index] ~= false then count = index end
+    end
+    return count
+end

@@ -88,7 +88,9 @@ end
 
 local WIDTH, ROW_WIDTH, ROW_HEIGHT, ROW_GAP = 270, 242, 39, 4
 local ROWS_TOP = UI.Sizes.HeaderHeight + UI.Spacing.SM
-local FULL_HEIGHT = ROWS_TOP + 5 * (ROW_HEIGHT + ROW_GAP) + UI.Spacing.MD
+-- Height for n unit rows (rows keep fixed slots: player, party1–4).
+local function heightFor(rowCount) return ROWS_TOP + rowCount * (ROW_HEIGHT + ROW_GAP) + UI.Spacing.MD end
+local FULL_HEIGHT = heightFor(5)
 
 local DISPEL_ICON = 13 -- fits between the health bar and the bottom edge of a row; judge the size in game
 local HOT_ICON_RIGHT, HOT_ICON_BELOW = 20, 13 -- HoT icons: as tall as the health bar, or as the dispel icons
@@ -323,7 +325,11 @@ local function updateLayout()
             row:SetShown(not DB.collapsed and (testMode or UnitExists(row.unit)))
         end
     end
-    window:SetHeight(DB.collapsed and UI.Sizes.HeaderHeight or FULL_HEIGHT)
+    -- Only as tall as the members that are there (solo: just you). Out of combat only, like the rows: a member
+    -- joining in combat appears (RegisterUnitWatch) and the window grows after combat (PLAYER_REGEN_ENABLED).
+    local present = {}
+    for index, row in ipairs(rows) do present[index] = testMode or Logic.Flag(UnitExists(row.unit), isSecret) end
+    window:SetHeight(DB.collapsed and UI.Sizes.HeaderHeight or heightFor(Logic.RowCount(present, #rows)))
     window:SetTestMode(testMode)
 end
 

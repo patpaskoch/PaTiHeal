@@ -43,6 +43,9 @@ History before this file: `git log`.
 - The saved click binding of 0.6.0 is converted automatically (SavedVariables schema 2).
 - A binding whose spell is currently unknown is kept and applied again when the spell is available (0.6.0 deleted it).
 ### Fixed
+- The window kept the height of five frames when solo or in a small group (owner 2026-10-02): it is now only as
+  tall as the members that are there (up to the last one; a gap stays rather than cutting a frame off). Changed out
+  of combat only, like the rows: a member joining in combat appears at once and the window grows after combat.
 - Dispellable debuffs are no longer re-read on every health/power event of a party member (only on aura,
   connection and flag changes).
 - Secret values: name, health, mana, power type and the offline/dead flags are now checked for secrecy before any
@@ -55,5 +58,6 @@ History before this file: `git log`.
   2061 entry labelled Greater Heal (2061 is Flash Heal; Greater Heal returns once its ID is confirmed in this client).
 - Gear, chevron and close buttons in the header (replaced by the ••• menu).
 ### Known Issues
+- The automatic window height (2026-10-02) is not tested in game yet (PT-HEAL-057–059, 079).
 - Owner-tested in game before ranks/dispels: bindings, migration, settings, language. Ranks, dispel icons, HoTs &
   shields and click dispel not yet tested in game; the HELPFUL|PLAYER filter is assumed to work in this client.

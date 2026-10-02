@@ -16,7 +16,8 @@ Addon facts: `../../PaTiAdmin/docs/ARCHITECTURE.md` · open issues: `../../PaTiA
   of combat, pending until PLAYER_REGEN_ENABLED). 0.6.0 keys clickSpellID/clickButton/clickModifier are migrated by `Logic.Migrate`.
   Any shape change: bump `Logic.SCHEMA`, add a migration step and a test.
 - Secure / combat-sensitive: `PaTiHealUnit1..5` (SecureUnitButtonTemplate). Attributes only via `applyBindings()`,
-  which writes the complete list from `Logic.ClickAttributes` out of combat. Row visibility: `RegisterUnitWatch`
+  which writes the complete list from `Logic.ClickAttributes` out of combat. Row visibility: `RegisterUnitWatch`;
+  window height = rows up to the last present member (`Logic.RowCount`)
   (`updateLayout()`, out of combat). Collapse/Hide/Test Mode are disabled in combat.
 - Healer auras (own HoTs/shields on members, dispellable debuffs) are part of PaTiHeal. General aura/buff/proc watching
   lives in PaTiAuras. The two never depend on each other; duplicated spell data is accepted on purpose.
