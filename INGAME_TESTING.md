@@ -29,7 +29,9 @@ Fresh-Install-Test (PT-HEAL-001) werden sie ohnehin mitgeprüft.
   - Owner: die Icons erscheinen im Spiel in der AddOn-Liste korrekt.
 - [x] PT-HEAL-004 Login ohne Lua-Fehler
   - ✅ VERIFIED 2026-09-28
-- [ ] PT-HEAL-005 `/reload` ohne Lua-Fehler
+- [x] PT-HEAL-005 `/reload` ohne Lua-Fehler
+  - ✅ VERIFIED 2026-10-03
+  - Owner: nach `/reload` kommt keine Lua-Fehlermeldung mehr (auch nicht der frühere Heal-Ziel-Fehler).
 
 ## Fenster
 
