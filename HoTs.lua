@@ -100,6 +100,7 @@ end
 -- Your auras on `unit`, normalized. Never errors (a failed read shows no icons rather than wrong ones).
 function HoTs.Read(unit)
     local ok, auras = pcall(read, unit)
+    if not ok then HoTs.lastError = tostring(auras):sub(1, 120) end -- shown by /ph debug, nothing else
     return ok and auras or {}
 end
 

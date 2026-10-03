@@ -243,6 +243,8 @@ local function paintDispels(row, state)
     row.dispelCount = #debuffs
 end
 
+local alertsError -- last error PaTiAlerts raised in Sync (diagnostics only)
+
 -- PaTiAlerts is optional (AGENTS.md §3): report only if it is installed with API version 1, never depend on it.
 local function alertsApi()
     local api = _G.PaTiAlertsAPI
@@ -261,7 +263,8 @@ local function reportAlerts()
             members[#members + 1] = { unit = row.unit, name = row.alertName, dispels = row.dispelCount }
         end
     end
-    pcall(api.Sync, "PaTiHeal", Logic.DispelAlerts(members, L.ALERT_DISPELLABLE, isSecret))
+    local ok, err = pcall(api.Sync, "PaTiHeal", Logic.DispelAlerts(members, L.ALERT_DISPELLABLE, isSecret))
+    if not ok then alertsError = tostring(err):sub(1, 120) end -- shown by /ph debug, PaTiHeal keeps running
 end
 
 -- HoTs & shields ------------------------------------------------------------------------------------
@@ -487,6 +490,12 @@ local function printDebug()
     print(("|cff68caffPaTiHeal Debug:|r PaTiHeal %s · PaTiShared UI %s · %s · test=%s"):format(
         tostring(getMetadata and getMetadata("PaTiHeal", "Version")), tostring(UI.VERSION),
         UI.GetLanguage(), tostring(testMode)))
+    local version, build, _, interface = GetBuildInfo()
+    print(("  WoW %s (build %s, interface %s) · locale %s · combat %s · aura API %s"):format(tostring(version),
+        tostring(build), tostring(interface), GetLocale(), InCombatLockdown() and "yes" or "no",
+        (C_UnitAuras and C_UnitAuras.GetAuraDataByIndex) and "C_UnitAuras" or (UnitAura and "UnitAura" or "none")))
+    print(("  last caught errors: HoTs %s · dispels %s · PaTiAlerts %s"):format(HoTs.lastError or "none",
+        Dispels.lastError or "none", alertsError or "none"))
     -- Heal target: is the secure state driver there (else out-of-combat fallback), and what does it say now?
     print(("  heal target: RegisterStateDriver %s · driver %s · state %s · mode %s · row shown %s"):format(
         RegisterStateDriver and "yes" or "no", targetDriver and "yes" or "no (fallback)",

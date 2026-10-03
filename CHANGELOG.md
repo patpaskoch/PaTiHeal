@@ -38,6 +38,7 @@ History before this file: `git log`.
 - `/ph auras` lists what the client reports for the profile's spell IDs.
 - English UI texts; German translation. Chinese and Korean fall back to English except for shared menu texts.
 ### Changed
+- Diagnostics (hardening 2026-10-02): errors that are caught so the addon keeps running are no longer silent — the debug command shows the last caught error per source (no chat spam, nothing saved).
 - AddOns list description in English with a German translation (`## Notes-deDE`); README rewritten for players
   (features, installation, first steps, commands, known limitations).
 - `/ph` alone shows/hides the window; new `/ph reset` (position, blocked in combat) and `/ph version`.

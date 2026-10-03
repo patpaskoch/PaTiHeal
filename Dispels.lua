@@ -39,6 +39,7 @@ end
 -- Up to Dispels.MAX dispellable debuffs of `unit` as { name, icon, dispelType }. Never errors.
 function Dispels.Read(unit)
     local ok, list = pcall(read, unit)
+    if not ok then Dispels.lastError = tostring(list):sub(1, 120) end -- shown by /ph debug, nothing else
     return ok and list or {}
 end
 
