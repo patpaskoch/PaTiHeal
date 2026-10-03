@@ -180,7 +180,6 @@ for index, unit in ipairs({ "player", "party1", "party2", "party3", "party4" }) 
     -- Party rows hang below the row above them: when the player row moves (heal target shown), they follow.
     if index > 1 then rows[index]:SetPoint("TOPLEFT", rows[index - 1], "BOTTOMLEFT", 0, -ROW_GAP) end
 end
-rows[1]:SetPoint("TOPLEFT", window, "TOPLEFT", SIZE.rowX, -SIZE.top) -- moved by updateLayout / the target driver
 
 -- Heal target row (owner wish 2026-10-02): a fixed SecureUnitButtonTemplate with unit = "target" — the same click
 -- bindings as every row (applyBindings), never another unit. Shown only for a friendly, living target
@@ -201,7 +200,10 @@ UI.BindText(targetTag, "TARGET_TAG")
 targetRow.mana:ClearAllPoints()
 targetRow.mana:SetPoint("BOTTOMLEFT", TARGET_TAG, 3)
 targetRow.manaInset = TARGET_TAG - 3
-local targetDriver = TargetFrame.Create(window, targetRow, rows[1]) -- nil: client without the secure state driver
+-- The player row hangs on the target row (its top while that is hidden): only secure rows anchor each other, so the
+-- restricted snippet may move it in combat (TargetFrame.lua). updateLayout / the driver switch the anchor.
+rows[1]:SetPoint("TOPLEFT", targetRow, "TOPLEFT", 0, 0)
+local targetDriver = TargetFrame.Create(targetRow, rows[1]) -- nil: client without the secure state driver
 
 -- Every row that is painted and click-cast: the heal target first, then you and the party.
 local paintRows = { targetRow }
@@ -371,19 +373,18 @@ local function updateLayout()
     local present = {}
     for index, row in ipairs(rows) do present[index] = testMode or Logic.Flag(UnitExists(row.unit), isSecret) end
     local layout = Logic.HealLayout(SIZE, Logic.RowCount(present, #rows), DB.collapsed)
-    -- Heal target: the secure driver decides in combat; here (out of combat) the same result is applied directly.
+    -- Heal target: the secure driver decides in combat (rows only); here (out of combat) the same result is applied
+    -- directly, plus the window height — the snippet cannot resize the plain window (owner-observed 2026-10-03).
     local mode = Logic.TargetMode(testMode, DB.collapsed)
-    local shown
-    if targetDriver then
-        shown = TargetFrame.Configure(targetDriver, layout, mode)
-    else -- no secure state driver in this client: out-of-combat updates only (PLAYER_TARGET_CHANGED)
-        shown = mode == "show" or (mode == "auto" and Logic.Flag(UnitExists("target"), isSecret) == true
-            and Logic.Flag(UnitCanAssist("player", "target"), isSecret) == true
-            and Logic.Flag(UnitIsDead("target"), isSecret) == false) -- like [nodead] of the driver
-    end
+    if targetDriver then TargetFrame.Configure(targetDriver, TARGET_GAP, mode) end
+    local shown = TargetFrame.Shown(mode, isSecret, Logic.Flag)
     targetRow:SetShown(shown)
     rows[1]:ClearAllPoints()
-    rows[1]:SetPoint("TOPLEFT", window, "TOPLEFT", layout.rowX, -(shown and layout.playerTopShifted or layout.playerTop))
+    if shown then
+        rows[1]:SetPoint("TOPLEFT", targetRow, "BOTTOMLEFT", 0, -TARGET_GAP)
+    else
+        rows[1]:SetPoint("TOPLEFT", targetRow, "TOPLEFT", 0, 0)
+    end
     window:SetHeight(shown and layout.heightShifted or layout.height)
     window:SetTestMode(testMode)
 end
@@ -591,7 +592,7 @@ events:SetScript("OnEvent", function(_, event, unit)
         return
     elseif event == "PLAYER_TARGET_CHANGED" then
         -- Painting is plain (fine in combat); showing/moving is the secure driver's job. Without a driver: out of combat.
-        if not targetDriver then updateLayout() end
+        updateLayout() -- out of combat: target row, anchors and window height (returns at once in combat)
         local data = not testMode and unitData("target")
         if data and not DB.collapsed then
             paintRow(targetRow, data)

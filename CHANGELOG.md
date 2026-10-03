@@ -53,6 +53,12 @@ History before this file: `git log`.
 - The saved click binding of 0.6.0 is converted automatically (SavedVariables schema 2).
 - A binding whose spell is currently unknown is kept and applied again when the spell is available (0.6.0 deleted it).
 ### Fixed
+- Heal target: Lua error "RestrictedFrames.lua:478: Invalid relative frame handle" (owner, Forever client) when the
+  secure driver registered or a friendly target was selected. The restricted snippet anchored your row to the PaTiHeal
+  window and resized it — the window is no protected frame. Now your row hangs on the target row (its top while
+  hidden, below it while shown) and the snippet only shows/hides and anchors the two secure rows. The window height
+  follows out of combat (target change, end of combat); in combat the bottom row can stick out or a gap remain until
+  combat ends. The out-of-combat layout uses the driver's own condition (`SecureCmdOptionParse`).
 - Hardening: a broken SavedVariables save (not a table, a broken schema or scale) no longer breaks the login; only the broken value is replaced, every valid setting (also `false`) stays, and the migration is idempotent (tests/robustness_spec.lua).
 - The window kept the height of five frames when solo or in a small group (owner 2026-10-02): it is now only as
   tall as the members that are there (up to the last one; a gap stays rather than cutting a frame off). Changed out

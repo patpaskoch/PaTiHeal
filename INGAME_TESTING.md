@@ -134,13 +134,21 @@ Neu 2026-10-02: ein fester Secure-Balken für dein aktuelles Ziel direkt über d
 - [ ] PT-HEAL-130 `/ph debug`: Zeile „heal target: RegisterStateDriver … driver …“ (Ausgabe melden)
 - [ ] PT-HEAL-131 Freundlicher NPC als Ziel: Ziel-Balken erscheint über deinem Balken mit „Ziel“, Name, St. (Level),
   Leben in %; Fenster genau eine Zeile höher, nichts abgeschnitten
+  - ❌ FAIL 2026-10-03
+  - Owner: Lua-Fehler „RestrictedFrames.lua:478: Invalid relative frame handle“ beim Registrieren des Treibers und
+    beim Anvisieren eines freundlichen Ziels (state-healtarget = show).
+  - 🔧 FIX IMPLEMENTED 2026-10-03
+  - Der Secure-Snippet verankert die Spielerzeile jetzt am Ziel-Balken statt am (ungeschützten) Fenster und ändert
+    die Fensterhöhe nicht mehr; die Höhe folgt außerhalb des Kampfes.
+  - MANUAL RETEST REQUIRED
 - [ ] PT-HEAL-132 Fremder freundlicher Spieler als Ziel: Balken erscheint, Name in Klassenfarbe, Mana falls vorhanden
 - [ ] PT-HEAL-133 Gruppenmitglied (oder du selbst) als Ziel: Balken erscheint zusätzlich, beide Balken zeigen dasselbe
 - [ ] PT-HEAL-134 Gegner als Ziel: kein Ziel-Balken; kein Ziel: kein Ziel-Balken, Fenster so kompakt wie vorher
 - [ ] PT-HEAL-135 Totes freundliches Ziel: kein Ziel-Balken
 - [ ] PT-HEAL-136 Ziel wechseln (freundlich → Gegner → freundlich) außerhalb des Kampfes: Balken und Höhe folgen sofort
-- [ ] PT-HEAL-137 Ziel wechseln im Kampf: Balken erscheint/verschwindet, dein Balken und die Gruppe rücken mit, die
-  Fensterhöhe passt; kein Lua-Fehler, kein `ADDON_ACTION_BLOCKED`
+- [ ] PT-HEAL-137 Ziel wechseln im Kampf: Balken erscheint/verschwindet, dein Balken und die Gruppe rücken mit (die
+  Fensterhöhe folgt erst nach dem Kampf — bis dahin darf die unterste Zeile überstehen bzw. Leerraum bleiben); kein
+  Lua-Fehler, kein `ADDON_ACTION_BLOCKED`
 - [ ] PT-HEAL-138 Linksklick auf den Ziel-Balken wirkt genau den Zauber der Linksklick-Belegung auf das Ziel
 - [ ] PT-HEAL-139 Shift-/Strg-/Alt-Klicks auf dem Ziel-Balken: jeweils genau der belegte Zauber
 - [ ] PT-HEAL-140 Eigener HoT/Schild auf dem Ziel (z. B. Springflut / Erneuerung) erscheint mit Restzeit

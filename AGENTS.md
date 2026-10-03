@@ -17,9 +17,11 @@ Addon facts: `../../PaTiAdmin/docs/ARCHITECTURE.md` · open issues: `../../PaTiA
   Any shape change: bump `Logic.SCHEMA`, add a migration step and a test.
 - Heal target: `PaTiHealTarget` (SecureUnitButtonTemplate, unit = "target", same attributes as every row) above the
   player row; `TargetFrame.lua` = SecureHandlerStateTemplate `PaTiHealTargetDriver` with
-  `RegisterStateDriver("[@target,help,nodead] show; hide")` — its restricted snippet shows/hides the row, moves
-  `PaTiHealUnit1` (party rows are anchored below it) and sets the window height, also in combat. Geometry
-  `Logic.HealLayout`, mode `Logic.TargetMode`. Without the driver: out-of-combat updates only. Never sends alerts.
+  `RegisterStateDriver("[@target,help,nodead] show; hide")` — its restricted snippet only shows/hides the target row
+  and anchors `PaTiHealUnit1` to it (top while hidden, below while shown; party rows hang below), also in combat.
+  Never reference the PaTiHeal window from the snippet: it is no protected frame ("Invalid relative frame handle",
+  owner 2026-10-03). The window height follows out of combat (`Logic.HealLayout`, `TargetFrame.Shown` =
+  `SecureCmdOptionParse` of the same condition). Mode `Logic.TargetMode`. Without the driver: out of combat only.
 - Secure / combat-sensitive: `PaTiHealUnit1..5` (SecureUnitButtonTemplate). Attributes only via `applyBindings()`,
   which writes the complete list from `Logic.ClickAttributes` out of combat. Row visibility: `RegisterUnitWatch`;
   window height = rows up to the last present member (`Logic.RowCount`)
