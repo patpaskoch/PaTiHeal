@@ -121,7 +121,7 @@ local function makeRow(frameName, unit)
     row:SetAttribute("unit", unit)
     local background = row:CreateTexture(nil, "BACKGROUND")
     background:SetAllPoints()
-    background:SetColorTexture(UI.Color("Panel"))
+    UI.Paint(background, "SetColorTexture", "Panel")
     local health = CreateFrame("StatusBar", nil, row)
     health:SetPoint("TOPLEFT", 3, -3)
     health:SetSize(ROW_WIDTH - 6, 20)
@@ -138,14 +138,14 @@ local function makeRow(frameName, unit)
     tankMark:SetPoint("TOPLEFT")
     tankMark:SetPoint("BOTTOMLEFT")
     tankMark:SetWidth(TANK_MARK)
-    tankMark:SetColorTexture(UI.Color("Accent"))
+    UI.Paint(tankMark, "SetColorTexture", "Accent")
     tankMark:Hide()
     row.tankMark = tankMark
     local mana = CreateFrame("StatusBar", nil, row)
     mana:SetPoint("BOTTOMLEFT", 3, 3)
     mana:SetSize(ROW_WIDTH - 6 - Dispels.MAX * (DISPEL_ICON + UI.Spacing.XS) - UI.Spacing.SM, 10)
     mana:SetStatusBarTexture(UI.WHITE)
-    mana:SetStatusBarColor(UI.Color("Mana"))
+    UI.Paint(mana, "SetStatusBarColor", "Mana")
     row.health, row.mana, row.name, row.status = health, mana, name, status
     -- Dispellable debuffs: small plain icons (not secure), bottom right next to the mana bar.
     row.dispelIcons = {}
@@ -199,7 +199,7 @@ targetTag:SetWidth(TARGET_TAG - 4)
 targetTag:SetJustifyH("LEFT")
 targetTag:SetWordWrap(false)
 UI.BindText(targetTag, function() return string.upper(L.TARGET_TAG) end) -- a section mark, not a value
-targetTag:SetTextColor(UI.Color("Accent"))
+UI.Paint(targetTag, "SetTextColor", "Accent")
 targetRow.mana:ClearAllPoints()
 targetRow.mana:SetPoint("BOTTOMLEFT", TARGET_TAG, 3)
 targetRow.manaInset = TARGET_TAG - 3
@@ -211,13 +211,13 @@ do
     local panel = targetRow:CreateTexture(nil, "BACKGROUND", nil, -8) -- below the row's own background
     panel:SetPoint("TOPLEFT", -pad, pad)
     panel:SetPoint("BOTTOMRIGHT", pad, -pad)
-    panel:SetColorTexture(UI.Color("PanelHover"))
+    UI.Paint(panel, "SetColorTexture", "PanelHover")
     local function edge(point1, point2, horizontal)
         local line = targetRow:CreateTexture(nil, "BACKGROUND", nil, -7)
         line:SetPoint(point1, panel, point1)
         line:SetPoint(point2, panel, point2)
         if horizontal then line:SetHeight(UI.Sizes.Border) else line:SetWidth(UI.Sizes.Border) end
-        line:SetColorTexture(UI.Color("BorderStrong"))
+        UI.Paint(line, "SetColorTexture", "BorderStrong")
     end
     edge("TOPLEFT", "TOPRIGHT", true)
     edge("BOTTOMLEFT", "BOTTOMRIGHT", true)
@@ -226,7 +226,7 @@ do
     stripe:SetPoint("TOPLEFT", panel, "TOPLEFT")
     stripe:SetPoint("BOTTOMLEFT", panel, "BOTTOMLEFT")
     stripe:SetWidth(2)
-    stripe:SetColorTexture(UI.Color("Accent"))
+    UI.Paint(stripe, "SetColorTexture", "Accent")
 end
 -- The player row hangs on the target row (its top while that is hidden): only secure rows anchor each other, so the
 -- restricted snippet may move it in combat (TargetFrame.lua). updateLayout / the driver switch the anchor.
@@ -642,5 +642,6 @@ events:SetScript("OnEvent", function(_, event, unit)
     refresh()
 end)
 UI.OnLanguageChanged(refresh)
+UI.OnThemeChanged(refresh) -- state colours follow the theme (static ones repaint themselves, UI.Paint)
 
 say("LOADED")

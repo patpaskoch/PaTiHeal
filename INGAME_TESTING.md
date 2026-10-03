@@ -166,6 +166,8 @@ Neu 2026-10-02: ein fester Secure-Balken für dein aktuelles Ziel direkt über d
 - [ ] PT-HEAL-150 Test Mode: „Verwundeter Soldat · St. 42“ steht im abgesetzten Ziel-Bereich; Fenster nicht abgeschnitten
 - [ ] PT-HEAL-151 Zielwechsel außerhalb und im Kampf mit der neuen Darstellung: Fläche kommt und geht mit dem Balken, kein
   Lua-Fehler, kein `ADDON_ACTION_BLOCKED`, Klickheilen auf das Ziel unverändert
+- [ ] PT-HEAL-152 Ziel-Bereich in allen drei Themes: Default subtil, WoForever warm mit Bronze-/Goldrahmen, Dracula dunkel
+  mit Lila-Akzent; Abstand und Größe in allen Themes gleich
 
 ## Unabhängigkeit
 

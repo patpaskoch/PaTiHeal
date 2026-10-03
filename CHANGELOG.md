@@ -5,6 +5,7 @@ History before this file: `git log`.
 
 ## [Unreleased]
 ### Added
+- Themes (owner wish 2026-10-03): Settings → Window → Theme — Default (the PaTi look as before), WoForever (warm brown, gold/bronze) or Dracula (dark, purple/pink/cyan accents). Colours only; layout, secure buttons and behaviour are unchanged. Saved per character in this addon (`theme`, unknown values → Default); Restore Defaults returns to Default. PaTiSuite can switch all PaTi windows at once.
 - **Heal target frame** (owner wish 2026-10-02): a fixed secure frame for your current target directly above your own
   frame (`PaTiHealTarget`, SecureUnitButtonTemplate, unit = "target"): name, level ("??" for boss/unknown, nothing
   when unreadable), health, mana, your HoTs/shields and dispellable debuffs, a small "Target" tag. The same click

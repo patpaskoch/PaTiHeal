@@ -91,6 +91,8 @@ function Logic.Migrate(db)
     -- A broken scale would make SetScale fail on login: only a sane number is kept.
     if type(db.scale) ~= "number" or db.scale < 0.5 or db.scale > 2 then db.scale = 1 end
     if db.opacity == nil then db.opacity = 0.75 end -- panel body opacity (PaTiShared window)
+    -- Theme: one of the three PaTiShared themes; a typo or an old value falls back to the default look.
+    if db.theme ~= "default" and db.theme ~= "woforever" and db.theme ~= "dracula" then db.theme = "default" end
     -- HoTs & shields (no schema step: only new keys with defaults, nothing renamed).
     if type(db.hots) ~= "table" then db.hots = {} end -- key -> false hides that aura
     if db.hotPosition ~= "RIGHT" and db.hotPosition ~= "BELOW" then db.hotPosition = "RIGHT" end
@@ -103,6 +105,7 @@ end
 -- there are no default bindings, so wiping them would only lose the player's setup (clear one with "None").
 function Logic.RestoreDefaults(db)
     db.showDispels = true
+    db.theme = "default"
     db.scale = 1
     db.opacity = 0.75
     db.hots = {}

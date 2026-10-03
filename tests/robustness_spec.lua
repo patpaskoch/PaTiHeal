@@ -36,6 +36,7 @@ describe("PaTiHeal Migrate robustness", function()
             assert.equal("number", type(db.scale))
             assert.truthy(db.scale >= 0.5 and db.scale <= 2, "scale out of range: " .. tostring(db.scale))
             assert.equal("number", type(db.schema))
+            assert.truthy(db.theme == "default" or db.theme == "woforever" or db.theme == "dracula", "theme")
         end)
     end
 
@@ -68,5 +69,22 @@ describe("PaTiHeal click bindings in a broken save", function()
         local db = load().Migrate({ schema = 2, bindings = "LEFT=331", bindingRanks = 5 })
         assert.same({}, db.bindings)
         assert.same({}, db.bindingRanks)
+    end)
+end)
+
+describe("Theme setting (db.theme)", function()
+    it("new saves get the default theme; a saved theme stays; unknown values fall back to default", function()
+        local M = load()
+        assert.equal("default", migrate(M, nil).theme)
+        assert.equal("dracula", migrate(M, { schema = M.SCHEMA, theme = "dracula" }).theme)
+        assert.equal("woforever", migrate(M, { schema = M.SCHEMA, theme = "woforever" }).theme)
+        for _, bad in ipairs({ "Dracula", "neon", 3, true, {} }) do
+            assert.equal("default", migrate(M, { schema = M.SCHEMA, theme = bad }).theme)
+        end
+    end)
+
+    it("Restore Defaults goes back to the default theme", function()
+        local M = load()
+        assert.equal("default", M.RestoreDefaults(migrate(M, { schema = M.SCHEMA, theme = "dracula" })).theme)
     end)
 end)

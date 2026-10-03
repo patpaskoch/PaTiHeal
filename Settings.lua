@@ -86,7 +86,7 @@ end
 local function buildSettings()
     modal = UI.CreateModal("PaTiHealSettings", function() return "PaTiHeal " .. L.SETTINGS end, 440)
     modal:AddSection("CLICK_CASTING")
-    modal:AddRow("COLUMN_CLICK", columnHeaders()):SetTextColor(UI.Color("TextMuted"))
+    UI.Paint(modal:AddRow("COLUMN_CLICK", columnHeaders()), "SetTextColor", "TextMuted")
     for _, binding in ipairs(Logic.BINDINGS) do modal:AddRow(binding.key, bindingControls(binding.key)) end
     -- Click dispel is an ordinary binding: the dispel spells are in the spell list, no combination is preset.
     modal:AddNote("CLICK_DISPEL_TITLE", nil, "CLICK_DISPEL_TEXT", 2)
@@ -145,6 +145,7 @@ local function buildSettings()
     UI.AddWindowSettings(modal, window) -- panel opacity + snapping (PaTiShared)
     modal:Finish(function()
         Logic.RestoreDefaults(DB)
+        window:ApplyTheme() -- Restore Defaults: theme back to default
         window:ApplyOpacity()
         UI.SetLanguage(DB.language)
         window:SetLocked(DB.locked)
