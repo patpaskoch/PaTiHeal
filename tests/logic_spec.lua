@@ -290,3 +290,30 @@ describe("Heal target row (Logic.TargetMode / HealLayout / LevelText)", function
         assert.is_nil(M.LevelText(nil, isSecret))
     end)
 end)
+
+describe("Heal target set apart from the group: 12 px target gap (owner wish 2026-10-03)", function()
+    -- The real geometry: header 22, top 26, rows 39 + 4 gap, target gap 12, bottom 8.
+    local SIZE = { top = 26, row = 39, gap = 4, targetGap = 12, bottom = 8, header = 22, rowX = 14 }
+    local ROW, TARGET_STEP = 39 + 4, 39 + 4 + 12
+
+    for _, members in ipairs({ 1, 3, 5 }) do
+        it(members .. " member(s): without target exactly the rows, with target exactly one row + the target gap", function()
+            local layout = load().HealLayout(SIZE, members, false)
+            assert.equal(26 + members * ROW + 8, layout.height)
+            assert.equal(layout.height + TARGET_STEP, layout.heightShifted)
+            assert.equal(26 + TARGET_STEP, layout.playerTopShifted)
+        end)
+    end
+
+    it("no target: no extra space at all (the player row starts where it always did)", function()
+        local layout = load().HealLayout(SIZE, 1, false)
+        assert.equal(26, layout.playerTop)
+        assert.equal(26 + ROW + 8, layout.height)
+    end)
+
+    it("test mode shows the example target (mode show); collapsed shows only the header", function()
+        local M = load()
+        assert.equal("show", M.TargetMode(true, false))
+        assert.same({ 22, 22 }, { M.HealLayout(SIZE, 5, true).height, M.HealLayout(SIZE, 5, true).heightShifted })
+    end)
+end)

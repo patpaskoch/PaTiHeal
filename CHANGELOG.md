@@ -38,6 +38,10 @@ History before this file: `git log`.
 - `/ph auras` lists what the client reports for the profile's spell IDs.
 - English UI texts; German translation. Chinese and Korean fall back to English except for shared menu texts.
 ### Changed
+- Heal target set apart from your group (owner wish 2026-10-03, visual only): its own subtle panel (other shade,
+  outline, thin accent stripe), the "TARGET" mark in the accent colour and 12 px instead of 4 px to your own frame.
+  Plain textures of the target frame itself — no new frame, no attribute, nothing new in the secure driver (only the
+  value of its existing gap). Without a friendly target nothing of it remains and your frame moves up as before.
 - Diagnostics (hardening 2026-10-02): errors that are caught so the addon keeps running are no longer silent — the debug command shows the last caught error per source (no chat spam, nothing saved).
 - AddOns list description in English with a German translation (`## Notes-deDE`); README rewritten for players
   (features, installation, first steps, commands, known limitations).

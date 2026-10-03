@@ -94,8 +94,10 @@ end
 
 local WIDTH, ROW_WIDTH, ROW_HEIGHT, ROW_GAP = 270, 242, 39, 4
 -- Window geometry (Logic.HealLayout): rows keep fixed slots (player, party1–4); the heal target row sits above the
--- player row, TARGET_GAP apart, only while it is shown.
-local TARGET_GAP = UI.Spacing.SM
+-- player row, TARGET_GAP apart, only while it is shown. The larger gap (12 px instead of the 4 px between party rows)
+-- and the target panel (below) set "my heal target" visibly apart from "my group" (owner wish 2026-10-03).
+local TARGET_GAP = UI.Spacing.LG
+local TARGET_PANEL_PAD = 3 -- the decorative panel reaches this far around the target row (inside TARGET_GAP)
 local SIZE = { top = UI.Sizes.HeaderHeight + UI.Spacing.SM, row = ROW_HEIGHT, gap = ROW_GAP, targetGap = TARGET_GAP,
     bottom = UI.Spacing.MD, header = UI.Sizes.HeaderHeight, rowX = (WIDTH - ROW_WIDTH) / 2 }
 local FULL_HEIGHT = Logic.HealLayout(SIZE, 5, false).height
@@ -183,7 +185,7 @@ end
 
 -- Heal target row (owner wish 2026-10-02): a fixed SecureUnitButtonTemplate with unit = "target" — the same click
 -- bindings as every row (applyBindings), never another unit. Shown only for a friendly, living target
--- (TargetFrame.lua). A small "Target" tag and the level tell it apart from the player row below it.
+-- (TargetFrame.lua). Its own panel, the "TARGET" mark, the level and a larger gap set it apart from your group.
 local TARGET_TAG = 34
 local targetRow = makeRow("PaTiHealTarget", "target")
 targetRow:SetPoint("TOPLEFT", window, "TOPLEFT", SIZE.rowX, -SIZE.top)
@@ -196,10 +198,36 @@ targetTag:SetPoint("BOTTOMLEFT", 4, 2)
 targetTag:SetWidth(TARGET_TAG - 4)
 targetTag:SetJustifyH("LEFT")
 targetTag:SetWordWrap(false)
-UI.BindText(targetTag, "TARGET_TAG")
+UI.BindText(targetTag, function() return string.upper(L.TARGET_TAG) end) -- a section mark, not a value
+targetTag:SetTextColor(UI.Color("Accent"))
 targetRow.mana:ClearAllPoints()
 targetRow.mana:SetPoint("BOTTOMLEFT", TARGET_TAG, 3)
 targetRow.manaInset = TARGET_TAG - 3
+-- Target panel: plain textures of the secure row itself (no new frame, no new parent, no attribute) — they show,
+-- hide and move with the row, also in combat, so nothing extra happens in the secure layout. Colours are PaTiShared
+-- tokens only: a different panel shade, a stronger outline and a thin accent stripe on the left.
+do
+    local pad = TARGET_PANEL_PAD
+    local panel = targetRow:CreateTexture(nil, "BACKGROUND", nil, -8) -- below the row's own background
+    panel:SetPoint("TOPLEFT", -pad, pad)
+    panel:SetPoint("BOTTOMRIGHT", pad, -pad)
+    panel:SetColorTexture(UI.Color("PanelHover"))
+    local function edge(point1, point2, horizontal)
+        local line = targetRow:CreateTexture(nil, "BACKGROUND", nil, -7)
+        line:SetPoint(point1, panel, point1)
+        line:SetPoint(point2, panel, point2)
+        if horizontal then line:SetHeight(UI.Sizes.Border) else line:SetWidth(UI.Sizes.Border) end
+        line:SetColorTexture(UI.Color("BorderStrong"))
+    end
+    edge("TOPLEFT", "TOPRIGHT", true)
+    edge("BOTTOMLEFT", "BOTTOMRIGHT", true)
+    edge("TOPRIGHT", "BOTTOMRIGHT", false)
+    local stripe = targetRow:CreateTexture(nil, "BACKGROUND", nil, -6)
+    stripe:SetPoint("TOPLEFT", panel, "TOPLEFT")
+    stripe:SetPoint("BOTTOMLEFT", panel, "BOTTOMLEFT")
+    stripe:SetWidth(2)
+    stripe:SetColorTexture(UI.Color("Accent"))
+end
 -- The player row hangs on the target row (its top while that is hidden): only secure rows anchor each other, so the
 -- restricted snippet may move it in combat (TargetFrame.lua). updateLayout / the driver switch the anchor.
 rows[1]:SetPoint("TOPLEFT", targetRow, "TOPLEFT", 0, 0)
