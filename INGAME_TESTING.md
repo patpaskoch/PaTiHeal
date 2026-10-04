@@ -147,9 +147,13 @@ Neu 2026-10-02: ein fester Secure-Balken für dein aktuelles Ziel direkt über d
   - Owner: freundliches Ziel → der Ziel-Balken erscheint mit eigener Fläche über dem eigenen Balken.
 - [ ] PT-HEAL-132 Fremder freundlicher Spieler als Ziel: Balken erscheint, Name in Klassenfarbe, Mana falls vorhanden
 - [ ] PT-HEAL-133 Gruppenmitglied (oder du selbst) als Ziel: Balken erscheint zusätzlich, beide Balken zeigen dasselbe
-- [ ] PT-HEAL-134 Gegner als Ziel: kein Ziel-Balken; kein Ziel: kein Ziel-Balken, Fenster so kompakt wie vorher
+- [x] PT-HEAL-134 Gegner als Ziel: kein Ziel-Balken; kein Ziel: kein Ziel-Balken, Fenster so kompakt wie vorher
+  - ✅ VERIFIED 2026-10-04
+  - Owner: bei einem Gegner als Ziel erscheint kein Ziel-Balken.
 - [ ] PT-HEAL-135 Totes freundliches Ziel: kein Ziel-Balken
-- [ ] PT-HEAL-136 Ziel wechseln (freundlich → Gegner → freundlich) außerhalb des Kampfes: Balken und Höhe folgen sofort
+- [x] PT-HEAL-136 Ziel wechseln (freundlich → Gegner → freundlich) außerhalb des Kampfes: Balken und Höhe folgen sofort
+  - ✅ VERIFIED 2026-10-04
+  - Owner: das Wechseln (freundlich / Gegner / kein Ziel) außerhalb des Kampfes funktioniert.
 - [ ] PT-HEAL-137 Ziel wechseln im Kampf: Balken erscheint/verschwindet, dein Balken und die Gruppe rücken mit (die
   Fensterhöhe folgt erst nach dem Kampf — bis dahin darf die unterste Zeile überstehen bzw. Leerraum bleiben); kein
   Lua-Fehler, kein `ADDON_ACTION_BLOCKED`
