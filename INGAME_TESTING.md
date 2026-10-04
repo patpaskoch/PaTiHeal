@@ -158,7 +158,9 @@ Neu 2026-10-02: ein fester Secure-Balken für dein aktuelles Ziel direkt über d
   Fensterhöhe folgt erst nach dem Kampf — bis dahin darf die unterste Zeile überstehen bzw. Leerraum bleiben); kein
   Lua-Fehler, kein `ADDON_ACTION_BLOCKED`
   - Owner 2026-10-03: Zielwechsel im Kampf ohne Fehler (Teilbeobachtung; Mitrücken und Höhe nach dem Kampf noch offen).
-- [ ] PT-HEAL-138 Linksklick auf den Ziel-Balken wirkt genau den Zauber der Linksklick-Belegung auf das Ziel
+- [x] PT-HEAL-138 Linksklick auf den Ziel-Balken wirkt genau den Zauber der Linksklick-Belegung auf das Ziel
+  - ✅ VERIFIED 2026-10-04
+  - Owner: Linksklick auf den Ziel-Balken wirkt den Zauber der Linksklick-Belegung auf das freundliche Ziel.
 - [ ] PT-HEAL-139 Shift-/Strg-/Alt-Klicks auf dem Ziel-Balken: jeweils genau der belegte Zauber
 - [ ] PT-HEAL-140 Eigener HoT/Schild auf dem Ziel (z. B. Springflut / Erneuerung) erscheint mit Restzeit
 - [ ] PT-HEAL-141 Bannbarer Debuff auf dem Ziel erscheint als Icon (falls testbar)
