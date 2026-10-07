@@ -40,7 +40,7 @@ History before this file: `git log`.
 - English UI texts; German translation. Chinese and Korean fall back to English except for shared menu texts.
 ### Changed
 - Click-casting rows use PaTiShared's spell field (owner 2026-10-07: same as PaTiRota/PaTiAuras): type a spell name
-  or ID + Enter, drag a spell from the spellbook, or pick it from the arrow button (your heal spells); rank as before.
+  or ID + Enter, drag a spell from the spellbook, or pick it from the small arrow inside the name field (your heal spells); rank as before.
 - Heal target set apart from your group (owner wish 2026-10-03, visual only): its own subtle panel (other shade,
   outline, thin accent stripe), the "TARGET" mark in the accent colour and 12 px instead of 4 px to your own frame.
   Plain textures of the target frame itself — no new frame, no attribute, nothing new in the secure driver (only the

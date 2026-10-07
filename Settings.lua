@@ -64,7 +64,7 @@ end
 local function columnHeaders()
     local holder = CreateFrame("Frame", nil, modal)
     local sizes = UI.SPELL_FIELD
-    local width = ICON + UI.Spacing.SM + EDIT_WIDTH + UI.Spacing.XS + sizes.PICK + UI.Spacing.SM + sizes.RANK
+    local width = ICON + UI.Spacing.SM + EDIT_WIDTH + sizes.PICK + UI.Spacing.SM + sizes.RANK
     holder:SetSize(width, 14)
     for _, column in ipairs({ { "COLUMN_SPELL", ICON + UI.Spacing.SM }, { "COLUMN_RANK", width - sizes.RANK } }) do
         local title = holder:CreateFontString(nil, "OVERLAY", UI.Fonts.Muted)
