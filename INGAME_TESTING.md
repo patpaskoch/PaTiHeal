@@ -107,6 +107,12 @@ Jeweils: Zauber landet auf der angeklickten Einheit, das eigene Ziel ändert sic
   - ✅ VERIFIED 2026-09-30
   - Nur Linksklick auf den eigenen Frame bestätigt (nicht party1–4, keine anderen Kombinationen).
 
+- [ ] PT-HEAL-153 Einstellungen → Klick-Heilung: jede Zeile hat Icon, Namensfeld, Pfeil-Knopf und Rang; Zauber eintippen + Enter,
+  aus dem Zauberbuch ziehen oder über den Pfeil-Knopf auswählen; leeren + Enter entfernt die Belegung; Rang nur bei
+  mehreren Rängen aktiv; der Klick auf einen Gruppenbalken wirkt danach genau diesen Zauber (außerhalb des Kampfs)
+  - 🔧 FIX IMPLEMENTED 2026-10-07 (Owner-Wunsch: gleiche Zauber-Eingabe wie in PaTiRota/PaTiAuras)
+  - MANUAL RETEST REQUIRED
+
 ## HoTs / Shields
 
 Jeweils: erscheint nur bei eigenem Cast, Timer, Aufladungen (falls vorhanden), verschwindet, Position rechts/unten.

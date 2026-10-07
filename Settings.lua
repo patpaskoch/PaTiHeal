@@ -15,69 +15,60 @@ function Settings.Init(callbacks) app = callbacks end
 
 local modal
 
-local function spellItems(current)
-    local items, listed = { { value = 0, text = "NO_SPELL" } }, {}
-    local ids = knownSpells()
-    if current and current ~= 0 then ids[#ids + 1] = current end -- keep an assigned spell visible after a respec
-    for _, id in ipairs(ids) do
-        if not listed[id] then
-            listed[id] = true
-            local name = spellName(id) or tostring(id)
-            items[#items + 1] = { value = id, text = function() return name end, icon = spellIcon(id) }
-        end
-    end
-    return items
-end
+local EDIT_WIDTH, ICON = 128, 18
 
--- Rank choices for the spell bound to `key`: highest known (default) plus every known numbered rank.
-local function rankItems(key)
-    local items = { { value = 0, text = "RANK_HIGHEST" } }
-    local id = DB.bindings[key]
-    for _, entry in ipairs(id and Spells.Ranks(id) or {}) do
-        local subtext = entry.subtext
-        items[#items + 1] = { value = entry.rank, text = function() return subtext end }
-    end
-    return items
-end
-
-local SPELL_WIDTH, RANK_WIDTH = 168, 84
-
--- One settings row: [spell ▾] [rank ▾]. The rank dropdown is only active if the spell has several ranks.
+-- One binding row: [icon][spell name or ID ……][▾][rank ▾] — PaTiShared's spell field (owner 2026-10-07:
+-- type, drag from the spellbook or pick, as in PaTiRota and PaTiAuras). The rank is active only for several ranks.
 local function bindingControls(key)
     local holder = CreateFrame("Frame", nil, modal)
-    holder:SetSize(SPELL_WIDTH + UI.Spacing.SM + RANK_WIDTH, UI.Sizes.ButtonHeight)
     local changed = function()
         if InCombatLockdown() then say("APPLY_AFTER_COMBAT") end
         applyBindings()
     end
-    local rank = UI.CreateDropdown(holder, RANK_WIDTH, {
-        items = function() return rankItems(key) end,
-        get = function() return DB.bindingRanks[key] or 0 end,
-        set = function(value) DB.bindingRanks[key] = value ~= 0 and value or nil; changed() end,
-        enabled = function() return DB.bindings[key] ~= nil and #Spells.Ranks(DB.bindings[key]) > 1 end,
-    })
-    rank:SetPoint("RIGHT")
-    local spell = UI.CreateDropdown(holder, SPELL_WIDTH, {
-        items = function() return spellItems(DB.bindings[key]) end,
+    local icon = holder:CreateTexture(nil, "ARTWORK")
+    icon:SetSize(ICON, ICON)
+    icon:SetPoint("LEFT")
+    local field = UI.CreateSpellField(holder, {
+        width = EDIT_WIDTH,
         get = function() return DB.bindings[key] or 0 end,
         set = function(id)
             DB.bindings[key] = id ~= 0 and id or nil
-            DB.bindingRanks[key] = nil -- a new spell starts at its highest rank
-            rank:Refresh()
+            icon:SetTexture(id ~= 0 and spellIcon(id) or nil)
+            changed()
+        end,
+        choices = function() return knownSpells() end,
+        name = spellName,
+        icon = spellIcon,
+        resolve = Spells.Resolve,
+        fromCursor = Spells.FromCursor,
+        notFound = function(text) say("SPELL_NOT_FOUND", text) end,
+        ranks = Spells.Ranks,
+        getRank = function() return DB.bindingRanks[key] or 0 end,
+        setRank = function(value)
+            if (DB.bindingRanks[key] or 0) == value then return end
+            DB.bindingRanks[key] = value ~= 0 and value or nil
             changed()
         end,
     })
-    spell:SetPoint("LEFT")
+    field:SetPoint("LEFT", icon, "RIGHT", UI.Spacing.SM, 0)
+    holder:SetSize(ICON + UI.Spacing.SM + field:GetWidth(), UI.Sizes.ButtonHeight)
+    holder:SetScript("OnShow", function()
+        local id = DB.bindings[key]
+        icon:SetTexture(id and spellIcon(id) or nil)
+        field:Refresh()
+    end)
     return holder
 end
 
 -- Column titles above the binding rows: Click | Spell | Rank (aligned with bindingControls).
 local function columnHeaders()
     local holder = CreateFrame("Frame", nil, modal)
-    holder:SetSize(SPELL_WIDTH + UI.Spacing.SM + RANK_WIDTH, 14)
-    for _, column in ipairs({ { "COLUMN_SPELL", 0 }, { "COLUMN_RANK", SPELL_WIDTH + UI.Spacing.SM } }) do
+    local sizes = UI.SPELL_FIELD
+    local width = ICON + UI.Spacing.SM + EDIT_WIDTH + UI.Spacing.XS + sizes.PICK + UI.Spacing.SM + sizes.RANK
+    holder:SetSize(width, 14)
+    for _, column in ipairs({ { "COLUMN_SPELL", ICON + UI.Spacing.SM }, { "COLUMN_RANK", width - sizes.RANK } }) do
         local title = holder:CreateFontString(nil, "OVERLAY", UI.Fonts.Muted)
-        title:SetPoint("LEFT", column[2] + UI.Spacing.MD, 0)
+        title:SetPoint("LEFT", column[2] + UI.Spacing.SM, 0)
         UI.BindText(title, column[1])
     end
     return holder
