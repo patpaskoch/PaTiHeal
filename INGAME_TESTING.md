@@ -117,6 +117,9 @@ Jeweils: Zauber landet auf der angeklickten Einheit, das eigene Ziel ändert sic
 - [x] PT-HEAL-072 Linksklick auf den eigenen Spielerframe führt den konfigurierten Heal aus
   - ✅ VERIFIED 2026-09-30
   - Nur Linksklick auf den eigenen Frame bestätigt (nicht party1–4, keine anderen Kombinationen).
+- [x] PT-HEAL-161 In der Instanz im Kampf: Klick auf einen Gruppenrahmen (party1–4) heilt genau den angeklickten Spieler
+  - Owner 2026-10-14: in der Instanz mit Klick-Heilung Gruppenmitglieder geheilt
+  - ✅ VERIFIED 2026-10-14
 
 - [ ] PT-HEAL-153 Einstellungen → Klick-Heilung: jede Zeile hat Icon, Namensfeld, Pfeil-Knopf und Rang; Zauber eintippen + Enter,
   aus dem Zauberbuch ziehen oder über den Pfeil-Knopf auswählen; leeren + Enter entfernt die Belegung; Rang nur bei
@@ -216,8 +219,10 @@ Neu 2026-10-02: ein fester Secure-Balken für dein aktuelles Ziel direkt über d
 
 ## Combat / Sicherheit
 
-- [ ] PT-HEAL-110 Kein Lua-Fehler im Kampf
-- [ ] PT-HEAL-111 Keine `ADDON_ACTION_BLOCKED` / `ADDON_ACTION_FORBIDDEN`
+- [x] PT-HEAL-110 Kein Lua-Fehler im Kampf
+  - ✅ VERIFIED 2026-10-14 (Owner: Instanz mit Klick-Heilung)
+- [x] PT-HEAL-111 Keine `ADDON_ACTION_BLOCKED` / `ADDON_ACTION_FORBIDDEN`
+  - ✅ VERIFIED 2026-10-14 (Owner: Instanz mit Klick-Heilung)
 - [ ] PT-HEAL-112 `taint.log` (`/console taintLog 1`) ohne PaTiHeal-Eintrag
 - [ ] PT-HEAL-113 Im Kampf gesperrt mit Hinweis: Ausblenden, Collapse, Test Mode, Position zurücksetzen
   (Menüeinträge ausgegraut)
