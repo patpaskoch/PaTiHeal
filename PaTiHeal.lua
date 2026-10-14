@@ -126,6 +126,23 @@ local function makeRow(frameName, unit)
     health:SetPoint("TOPLEFT", 3, -3)
     health:SetSize(ROW_WIDTH - 6, 20)
     health:SetStatusBarTexture(UI.WHITE)
+    -- Owner 2026-10-14: on the dark row you could not see where full health ends. The bar gets its own lighter track
+    -- (the missing part) and a thin outline, so "full — stop healing" shows at a glance. Plain textures of the plain
+    -- health bar: they follow its width (layoutHoTs) and need nothing secure.
+    local track = health:CreateTexture(nil, "BACKGROUND")
+    track:SetAllPoints()
+    UI.Paint(track, "SetColorTexture", "PanelHover")
+    local function edge(point1, point2, horizontal)
+        local line = health:CreateTexture(nil, "OVERLAY", nil, -1) -- above the fill, below the texts
+        line:SetPoint(point1, health, point1)
+        line:SetPoint(point2, health, point2)
+        if horizontal then line:SetHeight(UI.Sizes.Border) else line:SetWidth(UI.Sizes.Border) end
+        UI.Paint(line, "SetColorTexture", "BorderStrong")
+    end
+    edge("TOPLEFT", "TOPRIGHT", true)
+    edge("BOTTOMLEFT", "BOTTOMRIGHT", true)
+    edge("TOPLEFT", "BOTTOMLEFT", false)
+    edge("TOPRIGHT", "BOTTOMRIGHT", false)
     local status = health:CreateFontString(nil, "OVERLAY", UI.Fonts.Text)
     status:SetPoint("RIGHT", -6, 0)
     local name = health:CreateFontString(nil, "OVERLAY", UI.Fonts.Text)
