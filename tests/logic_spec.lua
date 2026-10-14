@@ -317,3 +317,18 @@ describe("Heal target set apart from the group: 12 px target gap (owner wish 202
         assert.same({ 22, 22 }, { M.HealLayout(SIZE, 5, true).height, M.HealLayout(SIZE, 5, true).heightShifted })
     end)
 end)
+
+describe("Logic.RowUnits (tank on top, owner 2026-10-14)", function()
+    local function tanks(set) return function(unit) return set[unit] == true end end
+
+    it("puts the tank above you, the others keep their party order", function()
+        local Logic = wow.loadAddonFile("Logic.lua", {}).Logic
+        assert.same({ "party2", "player", "party1", "party3", "party4" }, Logic.RowUnits(tanks({ party2 = true })))
+    end)
+
+    it("keeps you first without a tank, and when you are the tank", function()
+        local Logic = wow.loadAddonFile("Logic.lua", {}).Logic
+        assert.same(Logic.ROW_UNITS, Logic.RowUnits(tanks({})))
+        assert.same(Logic.ROW_UNITS, Logic.RowUnits(tanks({ player = true })))
+    end)
+end)

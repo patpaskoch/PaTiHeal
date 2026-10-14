@@ -198,3 +198,16 @@ function Logic.LevelText(level, isSecret)
     if level <= 0 then return "??" end
     return tostring(math.floor(level))
 end
+
+-- Party rows in order (owner 2026-10-14): in a group the tank first, above you, then you, then the others in party
+-- order. isTank(unit) → true only for a role WoW assigned (never guessed). Returns the five unit tokens; the row frames
+-- stay the same, only their unit changes (out of combat).
+Logic.ROW_UNITS = { "player", "party1", "party2", "party3", "party4" }
+function Logic.RowUnits(isTank)
+    local order, rest = {}, {}
+    for _, unit in ipairs(Logic.ROW_UNITS) do
+        if unit ~= "player" and isTank(unit) then order[#order + 1] = unit else rest[#rest + 1] = unit end
+    end
+    for _, unit in ipairs(rest) do order[#order + 1] = unit end
+    return order
+end

@@ -8,7 +8,8 @@ exactly the spell you assigned to that click — it never picks a target or a sp
 > Status: in development, not yet released. Parts are tested in game (see Known limitations).
 
 ## Features
-- Party frames for you and party1–4: name in class colour, health in percent, mana, offline/dead state;
+- Party frames for you and party1–4 — in a group the tank (role from WoW) on top, then you, then the others;
+  name in class colour, health in percent, mana, offline/dead state;
   the tank gets an accent stripe
 - **Heal target:** a frame for your current target directly above your own — for a friendly player or NPC that
   is alive (name, level, health, mana, your HoTs, dispellable debuffs). Same click bindings as every frame; it

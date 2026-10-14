@@ -254,6 +254,28 @@ local targetDriver = TargetFrame.Create(targetRow, rows[1]) -- nil: client witho
 local paintRows = { targetRow }
 for _, row in ipairs(rows) do paintRows[#paintRows + 1] = row end
 
+-- Which row shows which unit (owner 2026-10-14: the tank on top). The secure row frames and their anchors stay; only
+-- the "unit" attribute moves, out of combat (applyRowOrder in updateLayout). Unit events find their row here.
+local rowByUnit = {}
+local function isAssignedTank(unit)
+    if testMode then return TEST_UNITS[unit] and TEST_UNITS[unit].isTank == true end
+    if not Logic.Flag(UnitExists(unit), isSecret) then return false end
+    local role = UnitGroupRolesAssigned and UnitGroupRolesAssigned(unit)
+    return not isSecret(role) and role == "TANK"
+end
+local function applyRowOrder()
+    for index, unit in ipairs(Logic.RowUnits(isAssignedTank)) do
+        local row = rows[index]
+        if row.unit ~= unit then
+            row.unit = unit
+            row:SetAttribute("unit", unit)
+        end
+    end
+    rowByUnit = { target = targetRow }
+    for _, row in ipairs(rows) do rowByUnit[row.unit] = row end
+end
+for _, row in ipairs(paintRows) do rowByUnit[row.unit] = row end -- start: the rows as created
+
 -- Name in class colour (class details stay in the unit tooltip), health in percent on the right.
 local function paintRow(row, data)
     row.name:SetText(data.name)
@@ -404,6 +426,7 @@ end
 -- RegisterUnitWatch shows/hides rows with their unit, also in combat (FOLLOW_UPS F2).
 local function updateLayout()
     if not DB or InCombatLockdown() then return end
+    applyRowOrder() -- tank on top; the roles change out of combat (roster, role check)
     local watch = RegisterUnitWatch ~= nil
     for _, row in ipairs(rows) do
         if watch and not DB.collapsed and not testMode then
@@ -603,8 +626,7 @@ for _, event in ipairs({ "PLAYER_LOGIN", "PLAYER_ENTERING_WORLD", "GROUP_ROSTER_
     "UNIT_CONNECTION", "UNIT_FLAGS", "UNIT_AURA", "PLAYER_REGEN_ENABLED", "SPELLS_CHANGED", "PLAYER_TARGET_CHANGED" }) do
     events:RegisterEvent(event)
 end
-local rowByUnit = {}
-for _, row in ipairs(paintRows) do rowByUnit[row.unit] = row end
+pcall(events.RegisterEvent, events, "PLAYER_ROLES_ASSIGNED") -- role check: the tank row moves up (may not exist)
 
 events:SetScript("OnEvent", function(_, event, unit)
     if event == "PLAYER_LOGIN" then
@@ -649,7 +671,7 @@ events:SetScript("OnEvent", function(_, event, unit)
         if scalePending then applyScale() end
         updateLayout()
         applyBindings()
-    elseif event == "GROUP_ROSTER_UPDATE" then
+    elseif event == "GROUP_ROSTER_UPDATE" or event == "PLAYER_ROLES_ASSIGNED" then
         updateLayout()
     elseif event == "SPELLS_CHANGED" then
         Spells.Rescan() -- new ranks become selectable
