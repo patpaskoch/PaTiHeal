@@ -113,6 +113,26 @@ local function setBar(bar, value, maximum)
     bar:SetValue(value)
 end
 
+-- Owner 2026-10-14: on the dark row you could not see where a full bar ends. Health and mana bars get their own
+-- lighter track (the missing part) and a thin outline, so "full" shows at a glance. Plain textures of the plain
+-- status bar: they follow its width (layoutHoTs) and need nothing secure.
+local function outlineBar(bar)
+    local track = bar:CreateTexture(nil, "BACKGROUND")
+    track:SetAllPoints()
+    UI.Paint(track, "SetColorTexture", "PanelHover")
+    local function edge(point1, point2, horizontal)
+        local line = bar:CreateTexture(nil, "OVERLAY", nil, -1) -- above the fill, below the texts
+        line:SetPoint(point1, bar, point1)
+        line:SetPoint(point2, bar, point2)
+        if horizontal then line:SetHeight(UI.Sizes.Border) else line:SetWidth(UI.Sizes.Border) end
+        UI.Paint(line, "SetColorTexture", "BorderStrong")
+    end
+    edge("TOPLEFT", "TOPRIGHT", true)
+    edge("BOTTOMLEFT", "BOTTOMRIGHT", true)
+    edge("TOPLEFT", "BOTTOMLEFT", false)
+    edge("TOPRIGHT", "BOTTOMRIGHT", false)
+end
+
 local function makeRow(frameName, unit)
     local row = CreateFrame("Button", frameName, window, "SecureUnitButtonTemplate")
     row.unit = unit
@@ -126,23 +146,7 @@ local function makeRow(frameName, unit)
     health:SetPoint("TOPLEFT", 3, -3)
     health:SetSize(ROW_WIDTH - 6, 20)
     health:SetStatusBarTexture(UI.WHITE)
-    -- Owner 2026-10-14: on the dark row you could not see where full health ends. The bar gets its own lighter track
-    -- (the missing part) and a thin outline, so "full — stop healing" shows at a glance. Plain textures of the plain
-    -- health bar: they follow its width (layoutHoTs) and need nothing secure.
-    local track = health:CreateTexture(nil, "BACKGROUND")
-    track:SetAllPoints()
-    UI.Paint(track, "SetColorTexture", "PanelHover")
-    local function edge(point1, point2, horizontal)
-        local line = health:CreateTexture(nil, "OVERLAY", nil, -1) -- above the fill, below the texts
-        line:SetPoint(point1, health, point1)
-        line:SetPoint(point2, health, point2)
-        if horizontal then line:SetHeight(UI.Sizes.Border) else line:SetWidth(UI.Sizes.Border) end
-        UI.Paint(line, "SetColorTexture", "BorderStrong")
-    end
-    edge("TOPLEFT", "TOPRIGHT", true)
-    edge("BOTTOMLEFT", "BOTTOMRIGHT", true)
-    edge("TOPLEFT", "BOTTOMLEFT", false)
-    edge("TOPRIGHT", "BOTTOMRIGHT", false)
+    outlineBar(health)
     local status = health:CreateFontString(nil, "OVERLAY", UI.Fonts.Text)
     status:SetPoint("RIGHT", -6, 0)
     local name = health:CreateFontString(nil, "OVERLAY", UI.Fonts.Text)
@@ -163,6 +167,7 @@ local function makeRow(frameName, unit)
     mana:SetSize(ROW_WIDTH - 6 - Dispels.MAX * (DISPEL_ICON + UI.Spacing.XS) - UI.Spacing.SM, 10)
     mana:SetStatusBarTexture(UI.WHITE)
     UI.Paint(mana, "SetStatusBarColor", "Mana")
+    outlineBar(mana)
     row.health, row.mana, row.name, row.status = health, mana, name, status
     -- Dispellable debuffs: small plain icons (not secure), bottom right next to the mana bar.
     row.dispelIcons = {}

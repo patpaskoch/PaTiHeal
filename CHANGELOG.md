@@ -41,8 +41,8 @@ History before this file: `git log`.
 ### Changed
 - In a group the tank's row moves to the top, above yours, then the others (owner 2026-10-14). Only a role WoW
   assigned counts (no guessing); the order changes out of combat (roster or role check), the rows' clicks stay.
-- Health bars get a lighter background for the missing part and a thin outline (owner 2026-10-14): you see at a
-  glance where full health ends and when to stop healing. Colours from the theme (PanelHover, BorderStrong).
+- Health and mana bars get a lighter background for the missing part and a thin outline (owner 2026-10-14): you see
+  at a glance where a full bar ends and when to stop healing. Colours from the theme (PanelHover, BorderStrong).
 - Click-casting rows use PaTiShared's spell field (owner 2026-10-07: same as PaTiRota/PaTiAuras): type a spell name
   or ID + Enter, drag a spell from the spellbook, or pick it from the small arrow inside the name field (your heal spells); rank as before.
 - Heal target set apart from your group (owner wish 2026-10-03, visual only): its own subtle panel (other shade,

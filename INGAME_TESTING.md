@@ -84,10 +84,11 @@ Fresh-Install-Test (PT-HEAL-001) werden sie ohnehin mitgeprüft.
 - [ ] PT-HEAL-059 Beitritt/Verlassen im Kampf: Rahmen erscheint/verschwindet, die Höhe passt sich nach dem Kampf
   an; kein Lua-Fehler, kein ADDON_ACTION_BLOCKED
 - [ ] PT-HEAL-079 Test Mode zeigt weiterhin alle fünf Beispielrahmen in voller Höhe; Einklappen = nur Header
-- [ ] PT-HEAL-154 Lebensbalken mit hellerem Hintergrund und dünnem Rahmen: auch bei fast vollem Leben sieht man, wo
-  „voll“ ist (in allen drei Themes, auch beim Heal-Ziel)
+- [ ] PT-HEAL-154 Lebens- und Manabalken mit hellerem Hintergrund und dünnem Rahmen: auch bei fast vollem Leben/Mana
+  sieht man, wo „voll“ ist (in allen drei Themes, auch beim Heal-Ziel)
   - Owner 2026-10-14: im schwarzen Balken nicht erkennbar, wann das Leben voll ist → Rahmen + heller Hintergrund
   - 🔧 FIX IMPLEMENTED 2026-10-14
+  - Owner 2026-10-14: Rahmen auch für Mana → 🔧 FIX IMPLEMENTED 2026-10-14
   - MANUAL RETEST REQUIRED
 - [ ] PT-HEAL-155 In der Gruppe mit zugewiesenem Tank: Tank-Rahmen ganz oben, darunter du, dann die anderen; Klick-Heilung
   heilt auf jedem Rahmen genau den angezeigten Spieler; ohne Rollen bleibt die Reihenfolge (du oben); `/ph test`: Tank oben
