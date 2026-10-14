@@ -21,6 +21,9 @@ exactly the spell you assigned to that click — it never picks a target or a sp
   right of the health bar or below it
 - Dispellable debuffs as small icons coloured by type (display only)
 - Click dispel: put your dispel spell (e.g. Cleanse Spirit, Dispel Magic) on any click combination. Nothing is preset
+- **Mana button** in the header: one click tells your group "Mana 23% – I need to drink soon" (party or raid chat).
+  It lights up below a threshold you choose (default 30 %) but never sends by itself. Key binding: a macro with
+  `/click PaTiHealManaButton`
 - ••• menu: Settings, Lock, Collapse, Test Mode, Hide. Languages: English, Deutsch (others fall back to English)
 - Works on its own; PaTiAuras is not needed. With **PaTiAlerts** installed (optional), members with a dispellable
   debuff also appear there
@@ -62,6 +65,7 @@ Each one is installed on its own and works on its own; none of them is needed by
 `/ph settings` or ••• → Settings:
 - **Click casting:** a spell and rank per click combination; dispel spells are in the same list (click dispel)
 - **HoTs & shields:** each aura on/off, timers, charges, position (right of or below the health bar)
+- **Mana call:** Mana button on/off; when it lights up (never, below 20/30/40/50 % mana)
 - **General:** language, scale (applied after combat if changed in combat), window lock, dispellable debuffs on/off
 - *Restore Defaults* keeps your click bindings and the window position.
 - **Window:** panel opacity (30–100 %)
@@ -77,6 +81,8 @@ Click-casting changes made in combat apply after combat.
 - HoT/shield and dispel spell IDs are not yet confirmed in the Forever client — `/ph auras` shows what it knows.
 - Not yet tested in game: rank choice, dispel icons, HoTs & shields, click dispel.
 - Party only (no raid frames).
+- The mana message text is fixed per language (not editable yet). Whether WoW Forever lets addons send chat from a
+  click in combat and whether your own mana is readable in combat is not confirmed yet.
 
 ## Development
 

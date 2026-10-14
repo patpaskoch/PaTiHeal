@@ -6,10 +6,11 @@ local UI, L, Logic, Spells, HoTs = ns.UI, ns.UI.L, ns.Logic, ns.Spells, ns.HoTs
 local Settings = {}
 ns.Settings = Settings
 
-local DB, window, applyBindings, refresh, knownSpells, say, hotsChanged, applyScale
+local DB, window, applyBindings, refresh, knownSpells, say, hotsChanged, applyScale, manaChanged
 local spellName, spellIcon = Spells.Name, Spells.Icon
 
--- app = { db = function() return PaTiHealDB end, window, applyBindings, refresh, knownSpells, say, hotsChanged }
+-- app = { db = function() return PaTiHealDB end, window, applyBindings, refresh, knownSpells, say, hotsChanged,
+--   applyScale, manaChanged }
 local app
 function Settings.Init(callbacks) app = callbacks end
 
@@ -111,6 +112,24 @@ local function buildSettings()
         set = function(position) DB.hotPosition = position; hotsChanged() end,
     }))
 
+    -- Mana call (owner 2026-10-14): show the header button, and when it lights up.
+    modal:AddSection("MANA_CALL")
+    local steps = {}
+    for _, step in ipairs(Logic.MANA_WARN_STEPS) do
+        steps[#steps + 1] = { value = step, text = step == 0 and "MANA_WARN_OFF"
+            or function() return L.MANA_WARN_BELOW:format(step) end }
+    end
+    modal:AddControls(UI.CreateCheckbox(modal, "SHOW_MANA_BUTTON", {
+        get = function() return DB.showManaButton end,
+        set = function(show) DB.showManaButton = show; manaChanged() end,
+    }))
+    modal:AddRow("MANA_WARN", UI.CreateDropdown(modal, 200, {
+        items = function() return steps end,
+        get = function() return DB.manaWarn end,
+        set = function(step) DB.manaWarn = step; manaChanged() end,
+    }))
+    modal:AddNote("MANA_CALL_NOTE_TITLE", nil, "MANA_CALL_NOTE", 2)
+
     modal:AddSection("GENERAL")
     modal:AddRow("LANGUAGE", UI.CreateLanguageDropdown(modal, DB, 200))
     local scales = {}
@@ -143,6 +162,7 @@ local function buildSettings()
         applyScale()
         applyBindings()
         hotsChanged()
+        manaChanged()
     end)
 end
 
@@ -150,7 +170,7 @@ function Settings.Open()
     DB = app.db()
     if not DB then return end
     window, applyBindings, refresh, knownSpells, say = app.window, app.applyBindings, app.refresh, app.knownSpells, app.say
-    hotsChanged, applyScale = app.hotsChanged, app.applyScale
+    hotsChanged, applyScale, manaChanged = app.hotsChanged, app.applyScale, app.manaChanged
     if not modal then buildSettings() end
     modal:Show()
 end

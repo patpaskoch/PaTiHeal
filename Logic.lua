@@ -98,6 +98,9 @@ function Logic.Migrate(db)
     if db.hotPosition ~= "RIGHT" and db.hotPosition ~= "BELOW" then db.hotPosition = "RIGHT" end
     if db.showHotTimers == nil then db.showHotTimers = true end
     if db.showHotCharges == nil then db.showHotCharges = true end
+    -- Mana call (no schema step: new keys only). A broken threshold falls back to the default.
+    if db.showManaButton == nil then db.showManaButton = true end
+    if type(db.manaWarn) ~= "number" or db.manaWarn < 0 or db.manaWarn > 100 then db.manaWarn = 30 end
     return db
 end
 
@@ -112,6 +115,8 @@ function Logic.RestoreDefaults(db)
     db.hotPosition = "RIGHT"
     db.showHotTimers = true
     db.showHotCharges = true
+    db.showManaButton = true
+    db.manaWarn = 30
     db.locked = false
     db.language = "auto"
     return db
@@ -210,4 +215,32 @@ function Logic.RowUnits(isTank)
     end
     for _, unit in ipairs(rest) do order[#order + 1] = unit end
     return order
+end
+
+-- Mana call (owner 2026-10-14): one click tells the group "low on mana" -------------------------------------------
+
+Logic.MANA_WARN_STEPS = { 0, 20, 30, 40, 50 } -- percent below which the button lights up; 0 = never
+Logic.MANA_CALL_COOLDOWN = 5 -- seconds: a second click sooner sends nothing (no double message)
+
+-- Your mana in whole percent; nil when unreadable (secret) or you have no mana (warrior, rogue).
+function Logic.ManaPercent(mana, maximum, isSecret)
+    if isSecret(mana) or isSecret(maximum) then return nil end
+    if type(mana) ~= "number" or type(maximum) ~= "number" or maximum <= 0 then return nil end
+    return math.floor(mana / maximum * 100 + 0.5)
+end
+
+-- Lights the button: only a readable percent below a switched-on threshold (never a guess).
+function Logic.ManaLow(percent, warnAt)
+    return type(percent) == "number" and type(warnAt) == "number" and warnAt > 0 and percent < warnAt
+end
+
+-- Chat channel of the mana call: RAID in a raid, PARTY in a group, nil alone (never SAY instead).
+function Logic.ManaChannel(state)
+    if state.inRaid then return "RAID" end
+    if state.inGroup then return "PARTY" end
+    return nil
+end
+
+function Logic.ManaCallReady(now, lastSent)
+    return lastSent == nil or now - lastSent >= Logic.MANA_CALL_COOLDOWN
 end

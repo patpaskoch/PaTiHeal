@@ -5,6 +5,11 @@ History before this file: `git log`.
 
 ## [Unreleased]
 ### Added
+- **Mana button** (owner 2026-10-14): a small "Mana" button in the header. One click sends one line to your group
+  ("Mana 23% – I need to drink soon"; raid chat in a raid, never alone or in /say), at most once per 5 seconds. It
+  lights up below a threshold you choose in Settings → Mana Call (never, 20–50 %, default 30 %); it never sends by
+  itself. Can be hidden; hidden automatically without mana. Macro: `/click PaTiHealManaButton`. Test mode only prints
+  the message.
 - Themes (owner wish 2026-10-03): Settings → Window → Theme — Default (the PaTi look as before), WoForever (warm brown, gold/bronze) or Dracula (dark, purple/pink/cyan accents). Colours only; layout, secure buttons and behaviour are unchanged. Saved per character in this addon (`theme`, unknown values → Default); Restore Defaults returns to Default. PaTiSuite can switch all PaTi windows at once.
 - **Heal target frame** (owner wish 2026-10-02): a fixed secure frame for your current target directly above your own
   frame (`PaTiHealTarget`, SecureUnitButtonTemplate, unit = "target"): name, level ("??" for boss/unknown, nothing

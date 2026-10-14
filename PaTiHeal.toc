@@ -18,4 +18,5 @@ Profiles\Priest.lua
 HoTs.lua
 TargetFrame.lua
 Settings.lua
+ManaCall.lua
 PaTiHeal.lua

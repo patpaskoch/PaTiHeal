@@ -197,6 +197,19 @@ Neu 2026-10-02: ein fester Secure-Balken für dein aktuelles Ziel direkt über d
 - [ ] PT-HEAL-152 Ziel-Bereich in allen drei Themes: Default subtil, WoForever warm mit Bronze-/Goldrahmen, Dracula dunkel
   mit Lila-Akzent; Abstand und Größe in allen Themes gleich
 
+## Mana-Knopf
+
+- [ ] PT-HEAL-156 Knopf „Mana“ im Fensterkopf links neben •••; Tooltip zeigt Erklärung, dein Mana in % und das Makro;
+  bei einer Klasse ohne Mana (Krieger, Schurke) kein Knopf; Einstellungen → Mana-Meldung → aus: Knopf weg
+- [ ] PT-HEAL-157 In der Gruppe: ein Klick = genau eine Zeile im Gruppenchat („Mana 23 % – muss gleich trinken“);
+  zweiter Klick innerhalb von 5 Sekunden sendet nichts; allein: Hinweis „keine Gruppe“, nichts gesendet
+- [ ] PT-HEAL-158 Im Kampf klicken: Nachricht kommt an, kein Lua-Fehler, kein `ADDON_ACTION_BLOCKED`; Prozentzahl
+  steht drin (fehlt sie, ist dein Mana im Kampf nicht lesbar → bitte melden)
+- [ ] PT-HEAL-159 Unter der eingestellten Schwelle (Standard 30 %) leuchtet der Knopf orange, darüber nicht; „Nie“:
+  leuchtet nie; er sendet nie von selbst
+- [ ] PT-HEAL-160 Makro `/click PaTiHealManaButton` auf einer Taste: sendet wie der Klick; `/ph test`: Knopf leuchtet,
+  Klick schreibt nur in deinen Chat („Testmodus, nichts gesendet“)
+
 ## Unabhängigkeit
 
 - [ ] PT-HEAL-100 Ohne PaTiAlerts und ohne PaTiAuras: unverändert, kein Lua-Fehler

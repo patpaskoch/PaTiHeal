@@ -1,7 +1,7 @@
 -- PaTiHeal: manual party frames. A click casts exactly the spell the player assigned to that click.
 local _, ns = ...
 local UI, L, Logic, Spells, Dispels, HoTs, Settings = ns.UI, ns.UI.L, ns.Logic, ns.Spells, ns.Dispels, ns.HoTs, ns.Settings
-local TargetFrame = ns.TargetFrame
+local TargetFrame, ManaCall = ns.TargetFrame, ns.ManaCall
 
 local DB
 local rows = {}
@@ -51,7 +51,7 @@ local function knownSpells()
 end
 
 local TEST_UNITS = {
-    player = { nameKey = "TEST_HEALER", class = "SHAMAN", health = 82, mana = 72 },
+    player = { nameKey = "TEST_HEALER", class = "SHAMAN", health = 82, mana = 25 }, -- low: the mana button lights up
     party1 = { nameKey = "TEST_TANK", class = "WARRIOR", health = 48, mana = 20, isTank = true },
     party2 = { nameKey = "TEST_MEMBER", class = "MAGE", health = 100, mana = 90 },
     party3 = { nameKey = "TEST_MEMBER", class = "PRIEST", health = 15, mana = 60 },
@@ -410,6 +410,7 @@ end)
 -- Row contents only; visibility is handled by updateLayout / the unit watch.
 local function refresh()
     if not DB then return end
+    ManaCall.Update() -- the header button, also while collapsed
     -- Collapsed: nothing to paint, unless PaTiAlerts shows the dispel state instead (rows stay hidden).
     if DB.collapsed and not alertsApi() then return end
     for _, row in ipairs(paintRows) do
@@ -489,8 +490,10 @@ end
 -- Settings modal: Settings.lua ---------------------------------------------------------------
 
 Settings.Init({ db = function() return DB end, window = window, applyBindings = applyBindings, refresh = refresh,
-    knownSpells = knownSpells, say = say, hotsChanged = function() rebuildHoTs(); refresh() end, applyScale = applyScale })
+    knownSpells = knownSpells, say = say, hotsChanged = function() rebuildHoTs(); refresh() end, applyScale = applyScale,
+    manaChanged = ManaCall.Update })
 local openSettings = Settings.Open
+ManaCall.Init({ db = function() return DB end, testMode = function() return testMode end, say = say, window = window })
 
 -- Actions (menu and slash commands) --------------------------------------------------------------
 
@@ -570,6 +573,7 @@ local function printDebug()
         (C_UnitAuras and C_UnitAuras.GetAuraDataByIndex) and "C_UnitAuras" or (UnitAura and "UnitAura" or "none")))
     print(("  last caught errors: HoTs %s · dispels %s · PaTiAlerts %s"):format(HoTs.lastError or "none",
         Dispels.lastError or "none", alertsError or "none"))
+    print("  " .. ManaCall.Describe())
     -- Heal target: is the secure state driver there (else out-of-combat fallback), and what does it say now?
     print(("  heal target: RegisterStateDriver %s · driver %s · state %s · mode %s · row shown %s"):format(
         RegisterStateDriver and "yes" or "no", targetDriver and "yes" or "no (fallback)",
@@ -648,6 +652,7 @@ events:SetScript("OnEvent", function(_, event, unit)
         return
     elseif event == "UNIT_AURA" or event == "UNIT_HEALTH" or event == "UNIT_POWER_UPDATE"
         or event == "UNIT_CONNECTION" or event == "UNIT_FLAGS" then
+        if unit == "player" and event == "UNIT_POWER_UPDATE" then ManaCall.Update() end -- the header mana button
         -- Unit events repaint only that unit's frame (you, party, heal target; nameplates and raid units are ignored).
         local row = rowByUnit[unit]
         if row and (not DB.collapsed or alertsApi()) and not testMode then
