@@ -89,6 +89,8 @@ Fresh-Install-Test (PT-HEAL-001) werden sie ohnehin mitgeprüft.
   - Owner 2026-10-14: im schwarzen Balken nicht erkennbar, wann das Leben voll ist → Rahmen + heller Hintergrund
   - 🔧 FIX IMPLEMENTED 2026-10-14
   - Owner 2026-10-14: Rahmen auch für Mana → 🔧 FIX IMPLEMENTED 2026-10-14
+  - Owner 2026-10-16: zu viele, zu kräftige Rahmen → dezenter (helle Rahmenfarbe, halb durchsichtiger Hintergrund)
+  - 🔧 FIX IMPLEMENTED 2026-10-16
   - MANUAL RETEST REQUIRED
 - [ ] PT-HEAL-155 In der Gruppe mit zugewiesenem Tank: Tank-Rahmen ganz oben, darunter du, dann die anderen; Klick-Heilung
   heilt auf jedem Rahmen genau den angezeigten Spieler; ohne Rollen bleibt die Reihenfolge (du oben); `/ph test`: Tank oben

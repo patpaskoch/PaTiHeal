@@ -116,16 +116,18 @@ end
 -- Owner 2026-10-14: on the dark row you could not see where a full bar ends. Health and mana bars get their own
 -- lighter track (the missing part) and a thin outline, so "full" shows at a glance. Plain textures of the plain
 -- status bar: they follow its width (layoutHoTs) and need nothing secure.
+-- Owner 2026-10-16: too many strong frames → the subtle border colour and a half-transparent track.
+local TRACK_ALPHA = 0.5
 local function outlineBar(bar)
     local track = bar:CreateTexture(nil, "BACKGROUND")
     track:SetAllPoints()
-    UI.Paint(track, "SetColorTexture", "PanelHover")
+    UI.Paint(track, "SetColorTexture", "PanelHover", TRACK_ALPHA)
     local function edge(point1, point2, horizontal)
         local line = bar:CreateTexture(nil, "OVERLAY", nil, -1) -- above the fill, below the texts
         line:SetPoint(point1, bar, point1)
         line:SetPoint(point2, bar, point2)
         if horizontal then line:SetHeight(UI.Sizes.Border) else line:SetWidth(UI.Sizes.Border) end
-        UI.Paint(line, "SetColorTexture", "BorderStrong")
+        UI.Paint(line, "SetColorTexture", "Border")
     end
     edge("TOPLEFT", "TOPRIGHT", true)
     edge("BOTTOMLEFT", "BOTTOMRIGHT", true)
