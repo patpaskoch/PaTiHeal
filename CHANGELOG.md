@@ -5,6 +5,11 @@ History before this file: `git log`.
 
 ## [Unreleased]
 ### Added
+- Click dispel on the debuff icons (owner 2026-10-16): a click on a frame's debuff icons dispels that player — left
+  click your main dispel (the known one that removes the most types), right click a second one that removes other
+  types (priest: Dispel Magic / Abolish or Cure Disease). One secure button per frame, set up out of combat; in combat
+  the icon area stays clickable even without an icon. Hidden when you know no dispel, with dispels switched off and
+  in test mode.
 - **Mana button** (owner 2026-10-14): a small "Mana" button in the header. One click sends one line to your group
   ("Mana 23% – I need to drink soon"; raid chat in a raid, never alone or in /say), at most once per 5 seconds. It
   lights up below a threshold you choose in Settings → Mana Call (never, 20–50 %, default 30 %); it never sends by

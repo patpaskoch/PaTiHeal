@@ -244,3 +244,33 @@ end
 function Logic.ManaCallReady(now, lastSent)
     return lastSent == nil or now - lastSent >= Logic.MANA_CALL_COOLDOWN
 end
+
+-- Click dispel on the debuff icons (owner 2026-10-16) -------------------------------------------------------------
+
+-- Which dispel a click on a frame's debuff icons casts. The spell of a secure button may change only out of combat, so
+-- it cannot follow the debuff type: left click = the known dispel that removes the most types (ties: profile order),
+-- right click = the known one that adds the most types the left one does not remove (ties: the later entry — the
+-- better version is listed after the basic one, e.g. Abolish after Cure Disease). dispels: profile.dispels.
+-- Returns { left = spellID | nil, right = spellID | nil }.
+function Logic.DispelClicks(dispels, isKnown)
+    local known = {}
+    for _, dispel in ipairs(dispels or {}) do
+        if isKnown(dispel.spellID) then known[#known + 1] = dispel end
+    end
+    local left
+    for _, dispel in ipairs(known) do
+        if not left or #dispel.types > #left.types then left = dispel end
+    end
+    if not left then return {} end
+    local covered = {}
+    for _, kind in ipairs(left.types) do covered[kind] = true end
+    local right, best = nil, 0
+    for _, dispel in ipairs(known) do
+        local added = 0
+        for _, kind in ipairs(dispel.types) do
+            if not covered[kind] then added = added + 1 end
+        end
+        if dispel ~= left and added > 0 and added >= best then right, best = dispel, added end
+    end
+    return { left = left.spellID, right = right and right.spellID }
+end

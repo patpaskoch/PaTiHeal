@@ -135,6 +135,37 @@ local function outlineBar(bar)
     edge("TOPRIGHT", "BOTTOMRIGHT", false)
 end
 
+-- Click dispel on the debuff icons (owner 2026-10-16: "why Alt-click when I click the icon anyway?"). One secure
+-- button per frame over the icon area, created now (out of combat) and set up in applyBindings: left/right click cast
+-- the dispels of Logic.DispelClicks on the frame's unit ("useparent-unit": it follows the row when the order changes).
+-- Its spells and visibility change only out of combat; in combat the area stays clickable also without an icon (WoW
+-- then answers "nothing to dispel"). One click = one cast, nothing by itself.
+local dispelClick = {} -- { left = { cast, name }, right = { cast, name } } (applyBindings)
+local function dispelTooltip(row)
+    local lines = {}
+    for _, icon in ipairs(row.dispelIcons) do
+        if icon:IsShown() and icon.tooltipLines then lines[#lines + 1] = icon.tooltipLines[1] end
+    end
+    if #lines == 0 then lines[1] = L.DISPEL_NONE end
+    if dispelClick.left then lines[#lines + 1] = L.DISPEL_CLICK_LEFT:format(dispelClick.left.name) end
+    if dispelClick.right then lines[#lines + 1] = L.DISPEL_CLICK_RIGHT:format(dispelClick.right.name) end
+    return lines
+end
+local function makeDispelButton(row)
+    local button = CreateFrame("Button", nil, row, "SecureActionButtonTemplate")
+    button:SetPoint("BOTTOMRIGHT", -2, 1)
+    button:SetSize(Dispels.MAX * (DISPEL_ICON + UI.Spacing.XS), DISPEL_ICON + 2)
+    button:SetFrameLevel(row:GetFrameLevel() + 5) -- above the icons
+    button:RegisterForClicks("AnyUp")
+    button:SetAttribute("useparent-unit", true)
+    local highlight = button:CreateTexture(nil, "HIGHLIGHT")
+    highlight:SetAllPoints()
+    UI.Paint(highlight, "SetColorTexture", "Accent", 0.15)
+    UI.SetTooltip(button, function() return dispelTooltip(row) end)
+    button:Hide()
+    return button
+end
+
 local function makeRow(frameName, unit)
     local row = CreateFrame("Button", frameName, window, "SecureUnitButtonTemplate")
     row.unit = unit
@@ -181,6 +212,7 @@ local function makeRow(frameName, unit)
         icon:Hide()
         row.dispelIcons[slot] = icon
     end
+    row.dispelButton = makeDispelButton(row)
     row:SetHighlightTexture("Interface\\Buttons\\ButtonHilight-Square", "ADD")
     -- Your HoTs/shields: plain icons (not secure); placed by layoutHoTs (right of the health bar or bottom line).
     row.hotIcons = {}
@@ -469,6 +501,26 @@ local function castName(id, rank)
     return Spells.IsKnown(id) and Spells.CastName(id, rank) or nil
 end
 
+-- Click dispel on the icons: which spells, and whether the click area is there (out of combat only).
+local function applyDispelClicks()
+    local profile = HoTs.Profile(false)
+    local clicks = Logic.DispelClicks(profile and profile.dispels, Spells.IsKnown)
+    dispelClick = {}
+    for _, side in ipairs({ "left", "right" }) do
+        local cast = clicks[side] and castName(clicks[side])
+        if cast then dispelClick[side] = { cast = cast, name = spellName(clicks[side]) or cast } end
+    end
+    local shown = dispelClick.left ~= nil and DB.showDispels and not testMode
+    for _, row in ipairs(paintRows) do
+        local button = row.dispelButton
+        button:SetAttribute("type1", dispelClick.left and "spell" or nil)
+        button:SetAttribute("spell1", dispelClick.left and dispelClick.left.cast or nil)
+        button:SetAttribute("type2", dispelClick.right and "spell" or nil)
+        button:SetAttribute("spell2", dispelClick.right and dispelClick.right.cast or nil)
+        button:SetShown(shown)
+    end
+end
+
 local function applyBindings()
     if not DB or InCombatLockdown() then return end
     local names = Logic.SpellNames(DB.bindings, DB.bindingRanks, castName)
@@ -478,6 +530,7 @@ local function applyBindings()
         for _, attribute in ipairs(attributes) do row:SetAttribute(attribute.name, attribute.value) end
         row:SetEnabled(not testMode and anyBinding)
     end
+    applyDispelClicks()
 end
 
 -- The window holds secure rows: SetScale only out of combat, otherwise after PLAYER_REGEN_ENABLED.

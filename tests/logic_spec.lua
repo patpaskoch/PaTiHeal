@@ -385,3 +385,34 @@ describe("Mana call (owner 2026-10-14)", function()
         assert.is_true(Logic.ManaCallReady(100 + Logic.MANA_CALL_COOLDOWN, 100))
     end)
 end)
+
+describe("Logic.DispelClicks (click the debuff icons, owner 2026-10-16)", function()
+    local PRIEST = { { spellID = 527, types = { "Magic" } }, { spellID = 528, types = { "Disease" } },
+        { spellID = 552, types = { "Disease" } } }
+    local SHAMAN = { { spellID = 526, types = { "Poison", "Disease" } }, { spellID = 2870, types = { "Disease" } },
+        { spellID = 51886, types = { "Poison", "Disease", "Curse" } } }
+    local function knows(...)
+        local set = {}
+        for _, id in ipairs({ ... }) do set[id] = true end
+        return function(id) return set[id] == true end
+    end
+
+    it("priest: Dispel Magic left, the better disease cure right", function()
+        local Logic = load()
+        assert.same({ left = 527, right = 552 }, Logic.DispelClicks(PRIEST, knows(527, 528, 552)))
+        assert.same({ left = 527, right = 528 }, Logic.DispelClicks(PRIEST, knows(527, 528)))
+        assert.same({ left = 528 }, Logic.DispelClicks(PRIEST, knows(528)))
+    end)
+
+    it("shaman: the widest dispel left, nothing right when it adds no type", function()
+        local Logic = load()
+        assert.same({ left = 51886 }, Logic.DispelClicks(SHAMAN, knows(526, 2870, 51886)))
+        assert.same({ left = 526 }, Logic.DispelClicks(SHAMAN, knows(526, 2870)))
+    end)
+
+    it("no known dispel or no profile: no click", function()
+        local Logic = load()
+        assert.same({}, Logic.DispelClicks(PRIEST, knows()))
+        assert.same({}, Logic.DispelClicks(nil, knows(527)))
+    end)
+end)

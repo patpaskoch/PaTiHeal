@@ -150,7 +150,7 @@ local function buildSettings()
         set = function(locked) window:SetLocked(locked) end,
     }), UI.CreateCheckbox(modal, "SHOW_DISPELS", {
         get = function() return DB.showDispels end,
-        set = function(show) DB.showDispels = show; refresh() end,
+        set = function(show) DB.showDispels = show; applyBindings(); refresh() end, -- also the click area
     }))
     UI.AddWindowSettings(modal, window) -- panel opacity + snapping (PaTiShared)
     modal:Finish(function()

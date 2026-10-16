@@ -20,7 +20,9 @@ exactly the spell you assigned to that click — it never picks a target or a sp
   Priest: Renew, Power Word: Shield, Prayer of Mending. Only your own; each can be switched off;
   right of the health bar or below it
 - Dispellable debuffs as small icons coloured by type (display only)
-- Click dispel: put your dispel spell (e.g. Cleanse Spirit, Dispel Magic) on any click combination. Nothing is preset
+- Click dispel: click the debuff icons on a frame — left click casts your main dispel (e.g. Cleanse Spirit, Dispel
+  Magic), right click a second one if your class has it (e.g. Abolish Disease); the tooltip names both. You can also
+  still put a dispel spell on any click combination of the whole frame
 - **Mana button** in the header: one click tells your group "Mana 23% – I need to drink soon" (party or raid chat).
   It lights up below a threshold you choose (default 30 %) but never sends by itself. Key binding: a macro with
   `/click PaTiHealManaButton`

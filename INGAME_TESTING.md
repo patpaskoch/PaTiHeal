@@ -149,6 +149,17 @@ Jeweils: erscheint nur bei eigenem Cast, Timer, Aufladungen (falls vorhanden), v
 - [ ] PT-HEAL-092 Schalter „bannbare Debuffs“ aus → keine Icons
 - [ ] PT-HEAL-093 Klick-Reinigen: Dispel-Zauber auf einer Kombination entfernt den Debuff am angeklickten Mitglied
 - [ ] PT-HEAL-094 Mit PaTiAlerts: Mitglied mit bannbarem Debuff erscheint dort (Hinweis), nach dem Bannen weg
+- [ ] PT-HEAL-162 Klick auf das Debuff-Icon eines Mitglieds: Linksklick wirkt deinen Haupt-Reinigungszauber genau auf
+  diesen Spieler, Debuff weg; Tooltip zeigt Debuff-Namen und „Linksklick: …“ (Priester zusätzlich „Rechtsklick: …“)
+  - Owner 2026-10-16: Wunsch, direkt aufs Icon zu klicken statt Alt-Klick
+  - 🔧 FIX IMPLEMENTED 2026-10-16
+  - MANUAL RETEST REQUIRED
+- [ ] PT-HEAL-163 Im Kampf: Icon-Klick reinigt, kein Lua-Fehler, kein `ADDON_ACTION_BLOCKED`; nach Tank-oben-Umsortierung
+  trifft der Klick den Spieler, auf dessen Rahmen das Icon ist; ohne Icon: WoW meldet nur „nichts zu bannen“
+  - MANUAL RETEST REQUIRED
+- [ ] PT-HEAL-164 Ohne bekannten Reinigungszauber, mit „Bannbare Debuffs anzeigen“ aus oder im Testmodus: Icon-Bereich nicht
+  klickbar (Klick heilt wie sonst auf dem Rahmen bzw. zeigt den Icon-Tooltip)
+  - MANUAL RETEST REQUIRED
 
 ## Heal-Ziel (Target-Balken)
 
