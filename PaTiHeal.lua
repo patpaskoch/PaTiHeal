@@ -191,10 +191,10 @@ local function makeRow(frameName, unit)
         icon:Hide()
         row.hotIcons[slot] = icon
     end
-    row:SetScript("OnEnter", function(self)
-        if not testMode and UnitExists(unit) then
+    row:SetScript("OnEnter", function(self) -- self.unit: the rows change units (tank on top)
+        if not testMode and UnitExists(self.unit) then
             GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-            GameTooltip:SetUnit(unit)
+            GameTooltip:SetUnit(self.unit)
             GameTooltip:Show()
         end
     end)

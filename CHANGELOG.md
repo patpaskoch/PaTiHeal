@@ -70,6 +70,8 @@ History before this file: `git log`.
 - The saved click binding of 0.6.0 is converted automatically (SavedVariables schema 2).
 - A binding whose spell is currently unknown is kept and applied again when the spell is available (0.6.0 deleted it).
 ### Fixed
+- The unit tooltip of a frame showed the player who sat there before the rows were re-ordered (tank on top, owner
+  2026-10-14); it now always shows the player on that frame.
 - Heal target: Lua error "RestrictedFrames.lua:478: Invalid relative frame handle" (owner, Forever client) when the
   secure driver registered or a friendly target was selected. The restricted snippet anchored your row to the PaTiHeal
   window and resized it — the window is no protected frame. Now your row hangs on the target row (its top while
