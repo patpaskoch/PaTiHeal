@@ -48,6 +48,12 @@ Fresh-Install-Test (PT-HEAL-001) werden sie ohnehin mitgeprüft.
 - [ ] PT-HEAL-019 Keine Einrast-Einstellung mehr, Fenster frei verschiebbar
 - [ ] PT-HEAL-020 `/ph reset` setzt die Position zurück
 - [ ] PT-HEAL-021 `/ph spells` listet bekannte Heilzauber mit ID; `/ph auras` listet HoT-, Schild- und Dispel-Zauber
+- [ ] PT-HEAL-165 Einstellungen passen auf den Bildschirm: Titel und Knöpfe unten immer sichtbar, Inhalt mit dem Mausrad
+  scrollbar (dünner Balken rechts), öffnet oben; „Befehle“ eingeklappt, Klick auf „BEFEHLE +“ klappt auf/zu;
+  Dropdowns und Zauberfelder funktionieren auch nach dem Scrollen (gilt für die Einstellungen aller PaTi-Addons)
+  - Owner 2026-10-16: Einstellungen zu groß, oben und unten abgeschnitten → scrollbar, Befehle eingeklappt
+  - 🔧 FIX IMPLEMENTED 2026-10-16
+  - MANUAL RETEST REQUIRED
 
 ## SavedVariables
 
