@@ -52,10 +52,12 @@ Fresh-Install-Test (PT-HEAL-001) werden sie ohnehin mitgeprüft.
   scrollbar (dünner Balken rechts), öffnet oben; „Befehle“ eingeklappt, Klick auf „BEFEHLE +“ klappt auf/zu;
   Dropdowns und Zauberfelder funktionieren auch nach dem Scrollen (gilt für die Einstellungen aller PaTi-Addons)
   - Owner 2026-10-16: Einstellungen zu groß, oben und unten abgeschnitten → scrollbar, Befehle eingeklappt
-- [ ] PT-HEAL-166 Außerhalb des Kampfes: Linksklick auf ein totes Gruppenmitglied wirkt die Wiederbelebung (Priester:
+- [x] PT-HEAL-166 Außerhalb des Kampfes: Linksklick auf ein totes Gruppenmitglied wirkt die Wiederbelebung (Priester:
   Auferstehung, Schamane: Geist der Ahnen) auf genau diesen Spieler; Tooltip zeigt „Linksklick: … (tot, außerhalb des
   Kampfes)“; Shift-/Rechtsklick usw. wirken weiter ihre Zauber
   - Owner 2026-10-17: Klick auf einen Toten soll den Rez wirken
+  - ✅ VERIFIED 2026-10-17
+  - Owner: „das rezzen von toten … funktioniert wie ne eins“
 - [ ] PT-HEAL-167 Spieler stirbt im Kampf: nach dem Kampf wirkt der Linksklick die Wiederbelebung ohne `/reload`;
   wiederbelebt → Linksklick heilt wieder; als Geist (freigelassen) ebenso; kein Lua-Fehler, kein „Aktion blockiert“
 - [ ] PT-HEAL-168 Tank oben (Reihenfolge geändert) und ein anderer Toter: der Rez trifft den Spieler, den man anklickt
@@ -230,14 +232,19 @@ Neu 2026-10-02: ein fester Secure-Balken für dein aktuelles Ziel direkt über d
 
 - [ ] PT-HEAL-156 Knopf „Mana“ im Fensterkopf links neben •••; Tooltip zeigt Erklärung, dein Mana in % und das Makro;
   bei einer Klasse ohne Mana (Krieger, Schurke) kein Knopf; Einstellungen → Mana-Meldung → aus: Knopf weg
-- [ ] PT-HEAL-157 In der Gruppe: ein Klick = genau eine Zeile im Gruppenchat („Mana 23 % – muss gleich trinken“);
+- [x] PT-HEAL-157 In der Gruppe: ein Klick = genau eine Zeile im Gruppenchat („Mana 23 % – muss gleich trinken“);
   zweiter Klick innerhalb von 5 Sekunden sendet nichts; allein: Hinweis „keine Gruppe“, nichts gesendet
+  - ✅ VERIFIED 2026-10-17
+  - Owner: Mana-Knopf funktioniert; der Text soll internationaler werden (siehe PT-HEAL-169)
 - [ ] PT-HEAL-158 Im Kampf klicken: Nachricht kommt an, kein Lua-Fehler, kein `ADDON_ACTION_BLOCKED`; Prozentzahl
   steht drin (fehlt sie, ist dein Mana im Kampf nicht lesbar → bitte melden)
 - [ ] PT-HEAL-159 Unter der eingestellten Schwelle (Standard 30 %) leuchtet der Knopf orange, darüber nicht; „Nie“:
   leuchtet nie; er sendet nie von selbst
 - [ ] PT-HEAL-160 Makro `/click PaTiHealManaButton` auf einer Taste: sendet wie der Klick; `/ph test`: Knopf leuchtet,
   Klick schreibt nur in deinen Chat („Testmodus, nichts gesendet“)
+- [ ] PT-HEAL-169 Mana-Meldung auf Englisch („Mana 23% – I need to drink soon“), auch mit deutscher Oberfläche;
+  Einstellungen → Mana-Meldung → Sprache der Meldung → „Wie die Oberfläche“: wieder deutsch; bleibt nach `/reload`
+  - Owner 2026-10-17: Mana-Meldung „internationaler machen“
 
 ## Unabhängigkeit
 

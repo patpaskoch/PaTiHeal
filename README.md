@@ -26,7 +26,7 @@ exactly the spell you assigned to that click — it never picks a target or a sp
 - **Resurrect with a click:** out of combat, a left click on a dead member casts your resurrection (priest:
   Resurrection, shaman: Ancestral Spirit); the tooltip says so. All other clicks keep their spells. In combat nothing
   changes (WoW does not let addons change clicks in combat, and nobody can be resurrected in combat anyway)
-- **Mana button** in the header: one click tells your group "Mana 23% – I need to drink soon" (party or raid chat).
+- **Mana button** in the header: one click tells your group "Mana 23% – I need to drink soon" (party or raid chat). In English by default, so a random group understands it (or in your interface language: Settings).
   It lights up below a threshold you choose (default 30 %) but never sends by itself. Key binding: a macro with
   `/click PaTiHealManaButton`
 - ••• menu: Settings, Lock, Collapse, Test Mode, Hide. Languages: English, Deutsch (others fall back to English)
@@ -70,7 +70,7 @@ Each one is installed on its own and works on its own; none of them is needed by
 `/ph settings` or ••• → Settings:
 - **Click casting:** a spell and rank per click combination; dispel spells are in the same list (click dispel)
 - **HoTs & shields:** each aura on/off, timers, charges, position (right of or below the health bar)
-- **Mana call:** Mana button on/off; when it lights up (never, below 20/30/40/50 % mana)
+- **Mana call:** Mana button on/off; when it lights up (never, below 20/30/40/50 % mana); message language (English or interface language)
 - **General:** language, scale (applied after combat if changed in combat), window lock, dispellable debuffs on/off
 - *Restore Defaults* keeps your click bindings and the window position.
 - **Window:** panel opacity (30–100 %)

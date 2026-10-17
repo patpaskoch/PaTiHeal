@@ -101,6 +101,8 @@ function Logic.Migrate(db)
     -- Mana call (no schema step: new keys only). A broken threshold falls back to the default.
     if db.showManaButton == nil then db.showManaButton = true end
     if type(db.manaWarn) ~= "number" or db.manaWarn < 0 or db.manaWarn > 100 then db.manaWarn = 30 end
+    -- Mana message language (owner 2026-10-17: "more international"): English for everyone, or the interface language.
+    if db.manaLanguage ~= "en" and db.manaLanguage ~= "ui" then db.manaLanguage = "en" end
     return db
 end
 
@@ -117,6 +119,7 @@ function Logic.RestoreDefaults(db)
     db.showHotCharges = true
     db.showManaButton = true
     db.manaWarn = 30
+    db.manaLanguage = "en"
     db.locked = false
     db.language = "auto"
     return db

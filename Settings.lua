@@ -128,6 +128,11 @@ local function buildSettings()
         get = function() return DB.manaWarn end,
         set = function(step) DB.manaWarn = step; manaChanged() end,
     }))
+    modal:AddRow("MANA_LANGUAGE", UI.CreateDropdown(modal, 200, {
+        items = function() return { { value = "en", text = "MANA_LANGUAGE_EN" }, { value = "ui", text = "MANA_LANGUAGE_UI" } } end,
+        get = function() return DB.manaLanguage end,
+        set = function(language) DB.manaLanguage = language end,
+    }))
     modal:AddNote("MANA_CALL_NOTE_TITLE", nil, "MANA_CALL_NOTE", 2)
 
     modal:AddSection("GENERAL")

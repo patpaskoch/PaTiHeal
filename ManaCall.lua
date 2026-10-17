@@ -26,9 +26,12 @@ local function hasMana()
     return isSecret(maximum) or (type(maximum) == "number" and maximum > 0) -- unreadable: keep the button
 end
 
+-- The group may speak other languages (owner 2026-10-17): English by default, the interface language on request.
 local function message(percent)
-    if percent then return L.MANA_CALL_TEXT:format(percent) end
-    return L.MANA_CALL_TEXT_LOW
+    local db = app.db()
+    local texts = db and db.manaLanguage == "ui" and L or ns.Locales.enUS
+    if percent then return texts.MANA_CALL_TEXT:format(percent) end
+    return texts.MANA_CALL_TEXT_LOW
 end
 
 -- Exactly one chat line per click; nothing alone, nothing twice within the cooldown, test mode only prints.
