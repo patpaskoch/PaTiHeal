@@ -245,6 +245,9 @@ Neu 2026-10-02: ein fester Secure-Balken für dein aktuelles Ziel direkt über d
 - [ ] PT-HEAL-169 Mana-Meldung auf Englisch („Mana 23% – I need to drink soon“), auch mit deutscher Oberfläche;
   Einstellungen → Mana-Meldung → Sprache der Meldung → „Wie die Oberfläche“: wieder deutsch; bleibt nach `/reload`
   - Owner 2026-10-17: Mana-Meldung „internationaler machen“
+- [ ] PT-HEAL-170 Klick auf „Mana“ in der Gruppe: Chatzeile UND Emote „… ist das Mana ausgegangen“ (mit Sprachausgabe);
+  zweiter Klick innerhalb von 5 Sekunden: weder Zeile noch Emote; Testmodus: nur „… + /oom“ im eigenen Chat
+  - Owner 2026-10-17: /oom zusätzlich zur Chatzeile
 
 ## Unabhängigkeit
 

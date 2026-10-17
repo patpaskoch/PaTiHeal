@@ -8,6 +8,8 @@ History before this file: `git log`.
 - Mana message language (owner 2026-10-17: "more international"): the group line is in English by default ("Mana 23% –
   I need to drink soon"), so everyone in a random group understands it; Settings → Mana call → Message language →
   Interface language sends it as before. Saved as `manaLanguage` ("en" | "ui").
+- The Mana button click also plays the voice emote `/oom` (owner 2026-10-17): everyone reads it in their own language
+  and hears it; the chat line with the percentage stays. One click, both parts, same 5-second lock.
 - Resurrect with a click (owner 2026-10-17): out of combat, the plain left click on a dead member casts the class
   profile's resurrection (Priest: Resurrection, Shaman: Ancestral Spirit; highest known rank); the other clicks keep
   their bindings, the row tooltip names it. Set out of combat when the dead state changes and again after combat.

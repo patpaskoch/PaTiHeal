@@ -9,6 +9,7 @@ local ManaCall = {}
 ns.ManaCall = ManaCall
 
 local TEST_MANA = 25 -- test mode: low enough to show the lit button
+local OOM_EMOTE = "OOM" -- WoW emote token of /oom ("out of mana", a voice emote)
 local app, button, lastSent
 
 local function isSecret(value) return issecretvalue ~= nil and issecretvalue(value) == true end
@@ -39,14 +40,18 @@ local function send()
     local db = app.db()
     if not db then return end
     local text = message(manaPercent())
-    if app.testMode() then app.say("MANA_CALL_TEST", text); return end
+    if app.testMode() then app.say("MANA_CALL_TEST", text .. " + /oom"); return end
     local channel = Logic.ManaChannel({ inGroup = IsInGroup ~= nil and flag(IsInGroup()),
         inRaid = IsInRaid ~= nil and flag(IsInRaid()) })
     if not channel then app.say("MANA_CALL_NO_GROUP"); return end
     if not Logic.ManaCallReady(GetTime(), lastSent) then return end
     if not SendChatMessage then return end
     local ok, err = pcall(SendChatMessage, text, channel)
-    if ok then lastSent = GetTime() else app.say("MANA_CALL_FAILED", tostring(err)) end
+    if not ok then app.say("MANA_CALL_FAILED", tostring(err)); return end
+    lastSent = GetTime()
+    -- The same click also plays the voice emote /oom (owner 2026-10-17): everyone reads it in their own language
+    -- and hears it. Part of this one call for help, never on its own; an unknown token does nothing (pcall).
+    if DoEmote then pcall(DoEmote, OOM_EMOTE) end
 end
 
 -- callbacks = { db = function() return PaTiHealDB end, testMode = function() return testMode end, say, window }
