@@ -232,10 +232,10 @@ Neu 2026-10-02: ein fester Secure-Balken für dein aktuelles Ziel direkt über d
 
 - [ ] PT-HEAL-156 Knopf „Mana“ im Fensterkopf links neben •••; Tooltip zeigt Erklärung, dein Mana in % und das Makro;
   bei einer Klasse ohne Mana (Krieger, Schurke) kein Knopf; Einstellungen → Mana-Meldung → aus: Knopf weg
-- [x] PT-HEAL-157 In der Gruppe: ein Klick = genau eine Zeile im Gruppenchat („Mana 23 % – muss gleich trinken“);
+- [ ] PT-HEAL-157 In der Gruppe: ein Klick = genau eine Zeile im Gruppenchat („Mana 23 % – muss gleich trinken“);
   zweiter Klick innerhalb von 5 Sekunden sendet nichts; allein: Hinweis „keine Gruppe“, nichts gesendet
-  - ✅ VERIFIED 2026-10-17
-  - Owner: Mana-Knopf funktioniert; der Text soll internationaler werden (siehe PT-HEAL-169)
+  - Owner 2026-10-17: Mana-Knopf funktioniert, Zeile kommt im Gruppenchat an; der Text soll internationaler werden
+    (PT-HEAL-169). 5-Sekunden-Sperre und „allein“ noch nicht getestet → offen
 - [ ] PT-HEAL-158 Im Kampf klicken: Nachricht kommt an, kein Lua-Fehler, kein `ADDON_ACTION_BLOCKED`; Prozentzahl
   steht drin (fehlt sie, ist dein Mana im Kampf nicht lesbar → bitte melden)
 - [ ] PT-HEAL-159 Unter der eingestellten Schwelle (Standard 30 %) leuchtet der Knopf orange, darüber nicht; „Nie“:
