@@ -248,6 +248,7 @@ Neu 2026-10-02: ein fester Secure-Balken für dein aktuelles Ziel direkt über d
 - [ ] PT-HEAL-170 Klick auf „Mana“ in der Gruppe: Chatzeile UND Emote „… ist das Mana ausgegangen“ (mit Sprachausgabe);
   zweiter Klick innerhalb von 5 Sekunden: weder Zeile noch Emote; Testmodus: nur „… + /oom“ im eigenen Chat
   - Owner 2026-10-17: /oom zusätzlich zur Chatzeile
+  - Owner 2026-10-17: „das mit oom funktioniert“ (5-Sekunden-Sperre und Testmodus noch unbestätigt)
 
 ## Unabhängigkeit
 
