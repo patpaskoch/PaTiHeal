@@ -67,3 +67,4 @@ L.MANA_CALL_NOTE = "The button lights up as a reminder; the message is sent only
 L.DISPEL_NONE = "Nothing to dispel right now"
 L.DISPEL_CLICK_LEFT = "Left click: %s"
 L.DISPEL_CLICK_RIGHT = "Right click: %s"
+L.REZ_CLICK = "Left click: %s (dead, out of combat)"

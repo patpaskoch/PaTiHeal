@@ -6,6 +6,7 @@ ns.HealProfiles = ns.HealProfiles or {}
 
 ns.HealProfiles.PRIEST = {
     name = "Priest",
+    resurrect = 2006, -- Resurrection: a click on a dead member out of combat (owner 2026-10-17)
     auras = {
         { key = "RENEW", spellID = 139 },
         { key = "POWER_WORD_SHIELD", spellID = 17 },

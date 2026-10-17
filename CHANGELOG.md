@@ -5,6 +5,10 @@ History before this file: `git log`.
 
 ## [Unreleased]
 ### Added
+- Resurrect with a click (owner 2026-10-17): out of combat, the plain left click on a dead member casts the class
+  profile's resurrection (Priest: Resurrection, Shaman: Ancestral Spirit; highest known rank); the other clicks keep
+  their bindings, the row tooltip names it. Set out of combat when the dead state changes and again after combat.
+  Paladin and Druid have no PaTiHeal profile yet, so nothing changes for them.
 - Click dispel on the debuff icons (owner 2026-10-16): a click on a frame's debuff icons dispels that player — left
   click your main dispel (the known one that removes the most types), right click a second one that removes other
   types (priest: Dispel Magic / Abolish or Cure Disease). One secure button per frame, set up out of combat; in combat

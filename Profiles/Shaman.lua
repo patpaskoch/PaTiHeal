@@ -8,6 +8,7 @@ ns.HealProfiles = ns.HealProfiles or {}
 
 ns.HealProfiles.SHAMAN = {
     name = "Shaman",
+    resurrect = 2008, -- Ancestral Spirit: a click on a dead member out of combat (owner 2026-10-17)
     auras = {
         { key = "EARTH_SHIELD", spellID = 974, showCount = true }, -- charges
         { key = "RIPTIDE", spellID = 61295 },

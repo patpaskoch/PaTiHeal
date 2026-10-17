@@ -416,3 +416,23 @@ describe("Logic.DispelClicks (click the debuff icons, owner 2026-10-16)", functi
         assert.same({}, Logic.DispelClicks(nil, knows(527)))
     end)
 end)
+
+describe("Logic.RowAttributes (resurrection on a dead member)", function()
+    it("a dead member's left click casts the resurrection; the other clicks keep their bindings", function()
+        local M = load()
+        local base = M.ClickAttributes({ LEFT = "Heilende Welle", SHIFT_LEFT = "Springflut" })
+        local map = attributeMap(M.RowAttributes(base, true, "Geist der Ahnen"))
+        assert.equal("spell", map["type1"])
+        assert.equal("Geist der Ahnen", map["spell1"])
+        assert.equal("Springflut", map["shift-spell1"])
+        assert.equal("Heilende Welle", attributeMap(base)["spell1"]) -- the shared list stays unchanged
+    end)
+
+    it("also without a left binding; alive or without a known resurrection nothing changes", function()
+        local M = load()
+        local base = M.ClickAttributes({})
+        assert.equal("Auferstehung", attributeMap(M.RowAttributes(base, true, "Auferstehung"))["spell1"])
+        assert.equal(base, M.RowAttributes(base, false, "Auferstehung"))
+        assert.equal(base, M.RowAttributes(base, true, nil))
+    end)
+end)

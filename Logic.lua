@@ -274,3 +274,18 @@ function Logic.DispelClicks(dispels, isKnown)
     end
     return { left = left.spellID, right = right and right.spellID }
 end
+
+-- A dead member's plain left click casts the resurrection spell instead of the binding (owner 2026-10-17: "when
+-- someone is dead and I click them, the rez should be cast"). Secure attributes change only out of combat, which fits:
+-- nobody can be resurrected in combat. attributes: Logic.ClickAttributes; rezName: castable name or nil.
+-- Returns a new list; the other clicks keep their bindings.
+function Logic.RowAttributes(attributes, dead, rezName)
+    if not dead or not rezName then return attributes end
+    local result = {}
+    for index, attribute in ipairs(attributes) do
+        local value = attribute.value
+        if attribute.name == "type1" then value = "spell" elseif attribute.name == "spell1" then value = rezName end
+        result[index] = { name = attribute.name, value = value }
+    end
+    return result
+end

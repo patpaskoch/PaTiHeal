@@ -52,6 +52,13 @@ Fresh-Install-Test (PT-HEAL-001) werden sie ohnehin mitgeprüft.
   scrollbar (dünner Balken rechts), öffnet oben; „Befehle“ eingeklappt, Klick auf „BEFEHLE +“ klappt auf/zu;
   Dropdowns und Zauberfelder funktionieren auch nach dem Scrollen (gilt für die Einstellungen aller PaTi-Addons)
   - Owner 2026-10-16: Einstellungen zu groß, oben und unten abgeschnitten → scrollbar, Befehle eingeklappt
+- [ ] PT-HEAL-166 Außerhalb des Kampfes: Linksklick auf ein totes Gruppenmitglied wirkt die Wiederbelebung (Priester:
+  Auferstehung, Schamane: Geist der Ahnen) auf genau diesen Spieler; Tooltip zeigt „Linksklick: … (tot, außerhalb des
+  Kampfes)“; Shift-/Rechtsklick usw. wirken weiter ihre Zauber
+  - Owner 2026-10-17: Klick auf einen Toten soll den Rez wirken
+- [ ] PT-HEAL-167 Spieler stirbt im Kampf: nach dem Kampf wirkt der Linksklick die Wiederbelebung ohne `/reload`;
+  wiederbelebt → Linksklick heilt wieder; als Geist (freigelassen) ebenso; kein Lua-Fehler, kein „Aktion blockiert“
+- [ ] PT-HEAL-168 Tank oben (Reihenfolge geändert) und ein anderer Toter: der Rez trifft den Spieler, den man anklickt
   - 🔧 FIX IMPLEMENTED 2026-10-16
   - MANUAL RETEST REQUIRED
 

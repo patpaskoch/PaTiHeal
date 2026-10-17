@@ -23,6 +23,9 @@ exactly the spell you assigned to that click — it never picks a target or a sp
 - Click dispel: click the debuff icons on a frame — left click casts your main dispel (e.g. Cleanse Spirit, Dispel
   Magic), right click a second one if your class has it (e.g. Abolish Disease); the tooltip names both. You can also
   still put a dispel spell on any click combination of the whole frame
+- **Resurrect with a click:** out of combat, a left click on a dead member casts your resurrection (priest:
+  Resurrection, shaman: Ancestral Spirit); the tooltip says so. All other clicks keep their spells. In combat nothing
+  changes (WoW does not let addons change clicks in combat, and nobody can be resurrected in combat anyway)
 - **Mana button** in the header: one click tells your group "Mana 23% – I need to drink soon" (party or raid chat).
   It lights up below a threshold you choose (default 30 %) but never sends by itself. Key binding: a macro with
   `/click PaTiHealManaButton`

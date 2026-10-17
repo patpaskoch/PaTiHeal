@@ -66,3 +66,4 @@ L.MANA_CALL_NOTE = "Der Knopf leuchtet nur zur Erinnerung; gesendet wird erst, w
 L.DISPEL_NONE = "Gerade nichts zu reinigen"
 L.DISPEL_CLICK_LEFT = "Linksklick: %s"
 L.DISPEL_CLICK_RIGHT = "Rechtsklick: %s"
+L.REZ_CLICK = "Linksklick: %s (tot, außerhalb des Kampfes)"

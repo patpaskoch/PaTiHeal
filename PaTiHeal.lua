@@ -141,6 +141,9 @@ end
 -- Its spells and visibility change only out of combat; in combat the area stays clickable also without an icon (WoW
 -- then answers "nothing to dispel"). One click = one cast, nothing by itself.
 local dispelClick = {} -- { left = { cast, name }, right = { cast, name } } (applyBindings)
+-- Click attributes of every row (applyBindings) and the resurrection spell a dead member's left click casts
+-- (owner 2026-10-17). rezCast = castable name, rezLabel = display name; nil without a known resurrection.
+local clickAttributes, rezCast, rezLabel = {}, nil, nil
 local function dispelTooltip(row)
     local lines = {}
     for _, icon in ipairs(row.dispelIcons) do
@@ -227,6 +230,10 @@ local function makeRow(frameName, unit)
         if not testMode and UnitExists(self.unit) then
             GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
             GameTooltip:SetUnit(self.unit)
+            if self.rezClick then
+                local r, g, b = UI.Color("Accent")
+                GameTooltip:AddLine(L.REZ_CLICK:format(rezLabel), r, g, b)
+            end
             GameTooltip:Show()
         end
     end)
@@ -441,6 +448,22 @@ hotTicker:SetScript("OnUpdate", function(self, elapsed)
     if not running or not DB.showHotTimers or DB.collapsed then self:Hide() end
 end)
 
+-- One row's click attributes: the bindings, or on a dead member the resurrection on the left click. Out of combat
+-- only (secure attributes); after combat applyBindings sets every row again. row.rezClick remembers what is set, so
+-- the unit events write attributes only when the dead state actually changed.
+local function applyRowClicks(row, dead)
+    if InCombatLockdown() then return end
+    row.rezClick = dead and rezCast ~= nil
+    for _, attribute in ipairs(Logic.RowAttributes(clickAttributes, dead, rezCast)) do
+        row:SetAttribute(attribute.name, attribute.value)
+    end
+end
+
+local function followDeath(row, data)
+    local dead = not testMode and data ~= nil and data.state == "DEAD"
+    if row.rezClick ~= (dead and rezCast ~= nil) then applyRowClicks(row, dead) end
+end
+
 -- Row contents only; visibility is handled by updateLayout / the unit watch.
 local function refresh()
     if not DB then return end
@@ -451,6 +474,7 @@ local function refresh()
         local data = unitData(row.unit)
         if data then paintRow(row, data); paintDispels(row, data.state); paintHoTs(row, data.state)
         else row.dispelCount = 0 end
+        followDeath(row, data)
     end
     reportAlerts()
 end
@@ -524,11 +548,17 @@ end
 local function applyBindings()
     if not DB or InCombatLockdown() then return end
     local names = Logic.SpellNames(DB.bindings, DB.bindingRanks, castName)
-    local attributes = Logic.ClickAttributes(names)
-    local anyBinding = next(names) ~= nil
+    clickAttributes = Logic.ClickAttributes(names)
+    local profile = HoTs.Profile(false)
+    rezCast = profile and profile.resurrect and castName(profile.resurrect) or nil
+    rezLabel = rezCast and (spellName(profile.resurrect) or rezCast)
+    local clickable = not testMode and (next(names) ~= nil or rezCast ~= nil)
     for _, row in ipairs(paintRows) do
-        for _, attribute in ipairs(attributes) do row:SetAttribute(attribute.name, attribute.value) end
-        row:SetEnabled(not testMode and anyBinding)
+        local dead = not testMode and Logic.Flag(UnitExists(row.unit), isSecret) == true
+            and Logic.Flag(UnitIsConnected(row.unit), isSecret) ~= false
+            and Logic.Flag(UnitIsDeadOrGhost(row.unit), isSecret) == true -- the same rule as unitData's "DEAD"
+        applyRowClicks(row, dead)
+        row:SetEnabled(clickable)
     end
     applyDispelClicks()
 end
@@ -713,6 +743,7 @@ events:SetScript("OnEvent", function(_, event, unit)
         if row and (not DB.collapsed or alertsApi()) and not testMode then
             local data = unitData(unit)
             if data and event ~= "UNIT_AURA" then paintRow(row, data) end
+            if event ~= "UNIT_AURA" and event ~= "UNIT_POWER_UPDATE" then followDeath(row, data) end
             -- Debuffs and HoTs only change with auras or the offline/dead state: no aura scan on the
             -- health/power hot path (FOLLOW_UPS F20).
             if event ~= "UNIT_HEALTH" and event ~= "UNIT_POWER_UPDATE" then
