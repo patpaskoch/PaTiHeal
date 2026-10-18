@@ -58,11 +58,15 @@ Fresh-Install-Test (PT-HEAL-001) werden sie ohnehin mitgeprüft.
   - Owner 2026-10-17: Klick auf einen Toten soll den Rez wirken
   - ✅ VERIFIED 2026-10-17
   - Owner: „das rezzen von toten … funktioniert wie ne eins“
-- [ ] PT-HEAL-167 Spieler stirbt im Kampf: nach dem Kampf wirkt der Linksklick die Wiederbelebung ohne `/reload`;
+- [x] PT-HEAL-167 Spieler stirbt im Kampf: nach dem Kampf wirkt der Linksklick die Wiederbelebung ohne `/reload`;
   wiederbelebt → Linksklick heilt wieder; als Geist (freigelassen) ebenso; kein Lua-Fehler, kein „Aktion blockiert“
-- [ ] PT-HEAL-168 Tank oben (Reihenfolge geändert) und ein anderer Toter: der Rez trifft den Spieler, den man anklickt
+  - ✅ VERIFIED 2026-10-18
+  - Owner: in der Abhak-Liste als „Geht“ markiert
+- [x] PT-HEAL-168 Tank oben (Reihenfolge geändert) und ein anderer Toter: der Rez trifft den Spieler, den man anklickt
   - 🔧 FIX IMPLEMENTED 2026-10-16
   - MANUAL RETEST REQUIRED
+  - ✅ VERIFIED 2026-10-18
+  - Owner: in der Abhak-Liste als „Geht“ markiert
 
 ## SavedVariables
 
@@ -232,23 +236,29 @@ Neu 2026-10-02: ein fester Secure-Balken für dein aktuelles Ziel direkt über d
 
 - [ ] PT-HEAL-156 Knopf „Mana“ im Fensterkopf links neben •••; Tooltip zeigt Erklärung, dein Mana in % und das Makro;
   bei einer Klasse ohne Mana (Krieger, Schurke) kein Knopf; Einstellungen → Mana-Meldung → aus: Knopf weg
-- [ ] PT-HEAL-157 In der Gruppe: ein Klick = genau eine Zeile im Gruppenchat („Mana 23 % – muss gleich trinken“);
+- [x] PT-HEAL-157 In der Gruppe: ein Klick = genau eine Zeile im Gruppenchat („Mana 23 % – muss gleich trinken“);
   zweiter Klick innerhalb von 5 Sekunden sendet nichts; allein: Hinweis „keine Gruppe“, nichts gesendet
   - Owner 2026-10-17: Mana-Knopf funktioniert, Zeile kommt im Gruppenchat an; der Text soll internationaler werden
     (PT-HEAL-169). 5-Sekunden-Sperre und „allein“ noch nicht getestet → offen
+  - ✅ VERIFIED 2026-10-18
+  - Owner: in der Abhak-Liste als „Geht“ markiert
 - [ ] PT-HEAL-158 Im Kampf klicken: Nachricht kommt an, kein Lua-Fehler, kein `ADDON_ACTION_BLOCKED`; Prozentzahl
   steht drin (fehlt sie, ist dein Mana im Kampf nicht lesbar → bitte melden)
 - [ ] PT-HEAL-159 Unter der eingestellten Schwelle (Standard 30 %) leuchtet der Knopf orange, darüber nicht; „Nie“:
   leuchtet nie; er sendet nie von selbst
 - [ ] PT-HEAL-160 Makro `/click PaTiHealManaButton` auf einer Taste: sendet wie der Klick; `/ph test`: Knopf leuchtet,
   Klick schreibt nur in deinen Chat („Testmodus, nichts gesendet“)
-- [ ] PT-HEAL-169 Mana-Meldung auf Englisch („Mana 23% – I need to drink soon“), auch mit deutscher Oberfläche;
+- [x] PT-HEAL-169 Mana-Meldung auf Englisch („Mana 23% – I need to drink soon“), auch mit deutscher Oberfläche;
   Einstellungen → Mana-Meldung → Sprache der Meldung → „Wie die Oberfläche“: wieder deutsch; bleibt nach `/reload`
   - Owner 2026-10-17: Mana-Meldung „internationaler machen“
-- [ ] PT-HEAL-170 Klick auf „Mana“ in der Gruppe: Chatzeile UND Emote „… ist das Mana ausgegangen“ (mit Sprachausgabe);
+  - ✅ VERIFIED 2026-10-18
+  - Owner: in der Abhak-Liste als „Geht“ markiert
+- [x] PT-HEAL-170 Klick auf „Mana“ in der Gruppe: Chatzeile UND Emote „… ist das Mana ausgegangen“ (mit Sprachausgabe);
   zweiter Klick innerhalb von 5 Sekunden: weder Zeile noch Emote; Testmodus: nur „… + /oom“ im eigenen Chat
   - Owner 2026-10-17: /oom zusätzlich zur Chatzeile
   - Owner 2026-10-17: „das mit oom funktioniert“ (5-Sekunden-Sperre und Testmodus noch unbestätigt)
+  - ✅ VERIFIED 2026-10-18
+  - Owner: in der Abhak-Liste als „Geht“ markiert
 
 ## Unabhängigkeit
 
