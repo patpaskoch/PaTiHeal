@@ -1,5 +1,5 @@
--- PaTiHeal: the "Mana" button in the header (owner 2026-10-14). One click sends one line to your group ("Mana 23% –
--- I need to drink soon"); below a threshold you choose, the button lights up as a reminder. It never sends by itself
+-- PaTiHeal: the "Mana" button in the header (owner 2026-10-14). One click sends one line to your group ("Low on mana
+-- (23%)"); below a threshold you choose, the button lights up as a reminder. It never sends by itself
 -- (AGENTS.md §8: one click = one action). A plain button (no secure template): SendChatMessage runs in its click, a
 -- hardware event, like PaTiSocial. Named PaTiHealManaButton so a macro "/click PaTiHealManaButton" can bind it to a key.
 local _, ns = ...

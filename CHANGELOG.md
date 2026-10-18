@@ -58,6 +58,8 @@ History before this file: `git log`.
 - `/ph auras` lists what the client reports for the profile's spell IDs.
 - English UI texts; German translation. Chinese and Korean fall back to English except for shared menu texts.
 ### Changed
+- Mana message shorter (owner 2026-10-18): "Low on mana (23%)" instead of "Mana 23% – I need to drink soon"
+  (German: "Wenig Mana (23 %)"); without a readable percentage just "Low on mana".
 - In a group the tank's row moves to the top, above yours, then the others (owner 2026-10-14). Only a role WoW
   assigned counts (no guessing); the order changes out of combat (roster or role check), the rows' clicks stay.
 - Health and mana bars get a lighter background for the missing part and a thin outline (owner 2026-10-14): you see

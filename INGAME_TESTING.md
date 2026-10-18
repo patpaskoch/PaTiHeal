@@ -259,6 +259,9 @@ Neu 2026-10-02: ein fester Secure-Balken für dein aktuelles Ziel direkt über d
   - Owner 2026-10-17: „das mit oom funktioniert“ (5-Sekunden-Sperre und Testmodus noch unbestätigt)
   - ✅ VERIFIED 2026-10-18
   - Owner: in der Abhak-Liste als „Geht“ markiert
+- [ ] PT-HEAL-171 Klick auf „Mana“ in der Gruppe: die Chatzeile lautet „Low on mana (23%)“ (deine echte Prozentzahl);
+  mit „Wie die Oberfläche“ auf Deutsch „Wenig Mana (23 %)“; das Emote /oom kommt weiter dazu
+  - Owner 2026-10-18: lieber „low on mana“ und Prozent statt „need to drink“
 
 ## Unabhängigkeit
 
