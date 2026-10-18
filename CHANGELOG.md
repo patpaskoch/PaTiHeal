@@ -60,6 +60,9 @@ History before this file: `git log`.
 ### Changed
 - Mana message shorter (owner 2026-10-18): "Low on mana (23%)" instead of "Mana 23% – I need to drink soon"
   (German: "Wenig Mana (23 %)"); without a readable percentage just "Low on mana".
+- Heal target and tank no longer look alike (owner 2026-10-18): the accent stripe and accent colour are only the
+  tank's (stripe a little wider); the heal target keeps its own panel with an outline on all four sides and a neutral
+  "TARGET" mark.
 - In a group the tank's row moves to the top, above yours, then the others (owner 2026-10-14). Only a role WoW
   assigned counts (no guessing); the order changes out of combat (roster or role check), the rows' clicks stay.
 - Health and mana bars get a lighter background for the missing part and a thin outline (owner 2026-10-14): you see

@@ -104,7 +104,7 @@ local FULL_HEIGHT = Logic.HealLayout(SIZE, 5, false).height
 
 local DISPEL_ICON = 13 -- fits between the health bar and the bottom edge of a row; judge the size in game
 local HOT_ICON_RIGHT, HOT_ICON_BELOW = 20, 13 -- HoT icons: as tall as the health bar, or as the dispel icons
-local TANK_MARK = 3 -- width of the tank stripe
+local TANK_MARK = 4 -- width of the tank stripe (the only accent stripe; owner 2026-10-18: wider, unlike the target)
 
 local window = UI.CreateWindow("PaTiHealFrame", "PaTiHeal", WIDTH, FULL_HEIGHT)
 
@@ -262,13 +262,14 @@ targetTag:SetWidth(TARGET_TAG - 4)
 targetTag:SetJustifyH("LEFT")
 targetTag:SetWordWrap(false)
 UI.BindText(targetTag, function() return string.upper(L.TARGET_TAG) end) -- a section mark, not a value
-UI.Paint(targetTag, "SetTextColor", "Accent")
+UI.Paint(targetTag, "SetTextColor", "Text") -- neutral: the accent colour belongs to the tank stripe (owner 2026-10-18)
 targetRow.mana:ClearAllPoints()
 targetRow.mana:SetPoint("BOTTOMLEFT", TARGET_TAG, 3)
 targetRow.manaInset = TARGET_TAG - 3
 -- Target panel: plain textures of the secure row itself (no new frame, no new parent, no attribute) — they show,
 -- hide and move with the row, also in combat, so nothing extra happens in the secure layout. Colours are PaTiShared
--- tokens only: a different panel shade, a stronger outline and a thin accent stripe on the left.
+-- tokens only: a different panel shade and a stronger outline on all four sides. No accent stripe (owner 2026-10-18:
+-- target and tank looked too alike) — the left accent stripe marks only the tank.
 do
     local pad = TARGET_PANEL_PAD
     local panel = targetRow:CreateTexture(nil, "BACKGROUND", nil, -8) -- below the row's own background
@@ -285,11 +286,7 @@ do
     edge("TOPLEFT", "TOPRIGHT", true)
     edge("BOTTOMLEFT", "BOTTOMRIGHT", true)
     edge("TOPRIGHT", "BOTTOMRIGHT", false)
-    local stripe = targetRow:CreateTexture(nil, "BACKGROUND", nil, -6)
-    stripe:SetPoint("TOPLEFT", panel, "TOPLEFT")
-    stripe:SetPoint("BOTTOMLEFT", panel, "BOTTOMLEFT")
-    stripe:SetWidth(2)
-    UI.Paint(stripe, "SetColorTexture", "Accent")
+    edge("TOPLEFT", "BOTTOMLEFT", false)
 end
 -- The player row hangs on the target row (its top while that is hidden): only secure rows anchor each other, so the
 -- restricted snippet may move it in combat (TargetFrame.lua). updateLayout / the driver switch the anchor.

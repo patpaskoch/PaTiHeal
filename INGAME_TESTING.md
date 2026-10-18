@@ -222,8 +222,11 @@ Neu 2026-10-02: ein fester Secure-Balken für dein aktuelles Ziel direkt über d
 - [ ] PT-HEAL-145 Einklappen: nur Header, auch mit Ziel; Ausklappen: alles wieder da
 - [ ] PT-HEAL-146 `taint.log` ohne PaTiHeal-Eintrag nach Zielwechseln im Kampf
 - [ ] PT-HEAL-147 Ziel-Balken erzeugt keine PaTiAlerts-Meldung (bannbarer Debuff am NPC-Ziel)
-- [ ] PT-HEAL-148 Ziel-Balken wirkt als eigener Bereich: eigene Fläche mit Rahmen und Akzentstreifen links, „ZIEL“ in
-  Akzentfarbe, sichtbar größerer Abstand (12 px) zu deinem Balken; Name, Stufe, Leben, Mana, HoTs, Debuffs unverändert
+- [ ] PT-HEAL-148 Ziel-Balken wirkt als eigener Bereich: eigene Fläche mit Rahmen rundum, OHNE farbigen Streifen, „ZIEL“
+  in weißer Schrift, sichtbar größerer Abstand (12 px) zu deinem Balken; Name, Stufe, Leben, Mana, HoTs, Debuffs unverändert;
+  der farbige Streifen links (etwas breiter) gibt es nur noch beim Tank – Ziel und Tank sind klar zu unterscheiden
+  - Owner 2026-10-18: Ziel und Tank sehen sich zu ähnlich → Akzentstreifen nur noch beim Tank
+  - 🔧 FIX IMPLEMENTED 2026-10-18
 - [ ] PT-HEAL-149 Kein freundliches Ziel: keine Fläche, kein „ZIEL“, kein Leerraum über deinem Balken (solo und in der
   Gruppe, auch nach `/reload`)
 - [ ] PT-HEAL-150 Test Mode: „Verwundeter Soldat · St. 42“ steht im abgesetzten Ziel-Bereich; Fenster nicht abgeschnitten
