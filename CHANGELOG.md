@@ -5,6 +5,8 @@ History before this file: `git log`.
 
 ## [Unreleased]
 ### Added
+- Theme **Soft Fantasy** (PaTiShared, owner wish 2026-10-19): calm slate blue, grey and violet with a muted
+  lavender accent — the fourth choice in the settings and in PaTiSuite.
 - Mana message language (owner 2026-10-17: "more international"): the group line is in English by default ("Mana 23% –
   I need to drink soon"), so everyone in a random group understands it; Settings → Mana call → Message language →
   Interface language sends it as before. Saved as `manaLanguage` ("en" | "ui").
