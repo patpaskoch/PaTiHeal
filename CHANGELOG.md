@@ -4,6 +4,11 @@ Format: `## [Unreleased]` / `## [x.y.z] - YYYY-MM-DD` with Added, Changed, Fixed
 History before this file: `git log`.
 
 ## [Unreleased]
+### Fixed
+- A click on an offline member cast the spell on you (owner 2026-10-19: "Healing Wave lands on me when the target
+  is offline" — WoW's auto self-cast). Out of combat an offline member's frame now casts nothing; the tooltip says so.
+  A member who goes offline during combat keeps the clicks until combat ends (WoW allows no click change in combat).
+
 ### Added
 - Theme **Soft Fantasy** (PaTiShared, owner wish 2026-10-19): calm slate blue, grey and violet with a muted
   lavender accent — the fourth choice in the settings and in PaTiSuite.

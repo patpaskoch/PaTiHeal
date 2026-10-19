@@ -26,6 +26,8 @@ exactly the spell you assigned to that click — it never picks a target or a sp
 - **Resurrect with a click:** out of combat, a left click on a dead member casts your resurrection (priest:
   Resurrection, shaman: Ancestral Spirit); the tooltip says so. All other clicks keep their spells. In combat nothing
   changes (WoW does not let addons change clicks in combat, and nobody can be resurrected in combat anyway)
+- **Offline members:** out of combat their frame casts nothing, so no spell lands on you by WoW's self-cast. A member
+  who goes offline during combat keeps the clicks until combat ends
 - **Mana button** in the header: one click tells your group "Low on mana (23%)" (party or raid chat). The same click plays the voice emote `/oom` (everyone sees it in their own language). In English by default, so a random group understands it (or in your interface language: Settings).
   It lights up below a threshold you choose (default 30 %) but never sends by itself. Key binding: a macro with
   `/click PaTiHealManaButton`

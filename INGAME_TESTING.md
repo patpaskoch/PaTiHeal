@@ -67,6 +67,11 @@ Fresh-Install-Test (PT-HEAL-001) werden sie ohnehin mitgeprüft.
   - MANUAL RETEST REQUIRED
   - ✅ VERIFIED 2026-10-18
   - Owner: in der Abhak-Liste als „Geht“ markiert
+- [ ] PT-HEAL-172 Außerhalb des Kampfes: ein Mitglied ist offline — Klick (alle Kombinationen) auf seinen Rahmen wirkt
+  nichts, nichts landet bei dir; Tooltip „Offline: Klicks zaubern nichts“; wieder online → der Klick heilt ihn wieder
+  - ❌ FAIL 2026-10-19 (Owner: „Welle der Heilung geht auf mich, wenn das Ziel offline ist“)
+  - 🔧 FIX IMPLEMENTED 2026-10-19 (offline: keine Klick-Zauber, außerhalb des Kampfes gesetzt)
+  - MANUAL RETEST REQUIRED
 
 ## SavedVariables
 

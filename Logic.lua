@@ -281,14 +281,18 @@ end
 
 -- A dead member's plain left click casts the resurrection spell instead of the binding (owner 2026-10-17: "when
 -- someone is dead and I click them, the rez should be cast"). Secure attributes change only out of combat, which fits:
--- nobody can be resurrected in combat. attributes: Logic.ClickAttributes; rezName: castable name or nil.
--- Returns a new list; the other clicks keep their bindings.
-function Logic.RowAttributes(attributes, dead, rezName)
-    if not dead or not rezName then return attributes end
+-- nobody can be resurrected in combat. An offline member's frame casts nothing (owner 2026-10-19: "Healing Wave lands
+-- on me when the target is offline" — WoW's auto self-cast takes over when the unit cannot be targeted).
+-- attributes: Logic.ClickAttributes; state: "DEAD", "OFFLINE" or nil; rezName: castable name or nil.
+-- Returns a new list; on a dead member the other clicks keep their bindings.
+function Logic.RowAttributes(attributes, state, rezName)
+    local offline = state == "OFFLINE"
+    if not offline and not (state == "DEAD" and rezName) then return attributes end
     local result = {}
     for index, attribute in ipairs(attributes) do
         local value = attribute.value
-        if attribute.name == "type1" then value = "spell" elseif attribute.name == "spell1" then value = rezName end
+        if offline then value = nil
+        elseif attribute.name == "type1" then value = "spell" elseif attribute.name == "spell1" then value = rezName end
         result[index] = { name = attribute.name, value = value }
     end
     return result
