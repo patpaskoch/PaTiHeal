@@ -4,38 +4,19 @@
 
 ## What is PaTiHeal?
 
-> **Installation-test beta available:** [Download the current ZIP from Releases](https://github.com/patpaskoch/PaTiHeal/releases). This is an unverified preview for testing the installation, not a stable release.
+**PaTiHeal is a lightweight healer addon for World of Warcraft: Forever**, built around flexible Click-Healing. Choose which healing spell and rank each mouse click or modifier combination casts. Compact party frames, Decursive-style dispelling, and HoT tracking keep your focus on the fight. **Every spell requires your click** — nothing is cast automatically.
 
-
+> **Installation-test beta available:** [Download the current ZIP from Releases](https://github.com/patpaskoch/PaTiHeal/releases). This preview is for installation testing and is not yet a stable release.
 
 ## Features
 
-- Party frames for you and party1–4 — in a group the tank (role from WoW) on top, then you, then the others;
-  name in class colour, health in percent, mana, offline/dead state;
-  the tank gets an accent stripe
-- **Heal target:** a frame for your current target directly above your own — for a friendly player or NPC that
-  is alive (name, level, health, mana, your HoTs, dispellable debuffs). Same click bindings as every frame; it
-  appears and disappears with your target, also in combat (WoW's secure state driver; not yet confirmed in the
-  Forever client). Without a friendly target the window stays as compact as before
-- Click casting for nine combinations (left, right, middle, Shift/Ctrl/Alt + left/right), each with a rank choice
-- Your HoTs and shields on the frames, with charges and remaining time — Shaman: Earth Shield, Riptide;
-  Priest: Renew, Power Word: Shield, Prayer of Mending. Only your own; each can be switched off;
-  right of the health bar or below it
-- Dispellable debuffs as small icons coloured by type (display only)
-- Click dispel: click the debuff icons on a frame — left click casts your main dispel (e.g. Cleanse Spirit, Dispel
-  Magic), right click a second one if your class has it (e.g. Abolish Disease); the tooltip names both. You can also
-  still put a dispel spell on any click combination of the whole frame
-- **Resurrect with a click:** out of combat, a left click on a dead member casts your resurrection (priest:
-  Resurrection, shaman: Ancestral Spirit); the tooltip says so. All other clicks keep their spells. In combat nothing
-  changes (WoW does not let addons change clicks in combat, and nobody can be resurrected in combat anyway)
-- **Offline members:** out of combat their frame casts nothing, so no spell lands on you by WoW's self-cast. A member
-  who goes offline during combat keeps the clicks until combat ends
-- **Mana button** in the header: one click tells your group "Low on mana (23%)" (party or raid chat). The same click plays the voice emote `/oom` (everyone sees it in their own language). In English by default, so a random group understands it (or in your interface language: Settings).
-  It lights up below a threshold you choose (default 30 %) but never sends by itself. Key binding: a macro with
-  `/click PaTiHealManaButton`
-- ••• menu: Settings, Lock, Collapse, Test Mode, Hide. Languages: English, Deutsch (others fall back to English)
-- Works on its own; PaTiAuras is not needed. With **PaTiAlerts** installed (optional), members with a dispellable
-  debuff also appear there
+- **Flexible Click-Healing:** Assign your own spells and ranks to nine mouse-click and modifier combinations.
+- **Decursive-style dispelling:** Spot removable debuffs and click their icons to cleanse.
+- **Party & target frames:** Health, mana, tank highlight, and a separate friendly target.
+- **HoTs & shields:** Track your own effects, charges, and remaining durations.
+- **Resurrection:** Left-click dead party members outside combat (Priest and Shaman in this beta).
+- **Mana call:** Tell your group you need mana and trigger `/oom` with one click.
+- **Make it yours:** Themes, scaling, language, test mode, and an optional PaTiAlerts integration.
 
 ## Installation
 
@@ -60,13 +41,6 @@
 - **General:** language, scale (applied after combat if changed in combat), window lock, dispellable debuffs on/off
 - *Restore Defaults* keeps your click bindings and the window position.
 - **Window:** panel opacity (30–100 %)
-
-## What is PaTiHeal?
-
-Compact party frames for healers in World of Warcraft: Forever (Interface 16001). You click a frame, PaTiHeal casts
-exactly the spell you assigned to that click — it never picks a target or a spell by itself.
-
-> Status: in development, not yet stable. Parts are tested in game (see Known limitations).
 
 ## PaTiSuite
 
