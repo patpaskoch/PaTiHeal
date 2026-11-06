@@ -2,6 +2,8 @@
 
 <img src="assets/icon-128.png" width="96" alt="PaTiHeal icon">
 
+## Install
+
 **📥 [Download PaTiHeal Beta](https://github.com/patpaskoch/PaTiHeal/releases/download/v0.6.0-beta.1/PaTiHeal-0.6.0-beta.1.zip)** · [Installation guide](#installation)
 
 *Installation-test preview — not yet a stable release.*
