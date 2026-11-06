@@ -4,6 +4,8 @@
 
 ## What is PaTiHeal?
 
+> **Installation-test beta available:** [Download the current ZIP from Releases](https://github.com/patpaskoch/PaTiHeal/releases). This is an unverified preview for testing the installation, not a stable release.
+
 
 
 ## Features
@@ -64,7 +66,7 @@
 Compact party frames for healers in World of Warcraft: Forever (Interface 16001). You click a frame, PaTiHeal casts
 exactly the spell you assigned to that click — it never picks a target or a spell by itself.
 
-> Status: in development, not yet released. Parts are tested in game (see Known limitations).
+> Status: in development, not yet stable. Parts are tested in game (see Known limitations).
 
 ## PaTiSuite
 
