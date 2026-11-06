@@ -4,6 +4,11 @@ Format: `## [Unreleased]` / `## [x.y.z] - YYYY-MM-DD` with Added, Changed, Fixed
 History before this file: `git log`.
 
 ## [Unreleased]
+
+## [0.6.0-beta.1] - 2026-11-06
+
+**Installation-test pre-release:** Not yet validated in the live WoW Forever client. Intended for the owner's fresh-install test only; report bugs on GitHub.
+
 ### Fixed
 - A click on an offline member cast the spell on you (owner 2026-10-19: "Healing Wave lands on me when the target
   is offline" — WoW's auto self-cast). Out of combat an offline member's frame now casts nothing; the tooltip says so.
