@@ -2,11 +2,15 @@
 
 <img src="assets/icon-128.png" width="96" alt="PaTiHeal icon">
 
+**📥 [Download PaTiHeal Beta](https://github.com/patpaskoch/PaTiHeal/releases/download/v0.6.0-beta.1/PaTiHeal-0.6.0-beta.1.zip)** · [Installation guide](#installation)
+
+*Installation-test preview — not yet a stable release.*
+
 ## What is PaTiHeal?
 
-**PaTiHeal is a lightweight healer addon for World of Warcraft: Forever**, built around flexible Click-Healing. Choose which healing spell and rank each mouse click or modifier combination casts. Compact party frames, Decursive-style dispelling, and HoT tracking keep your focus on the fight. **Every spell requires your click** — nothing is cast automatically.
+**Your party needs a healer. You need PaTiHeal.**
 
-> **Installation-test beta available:** [Download the current ZIP from Releases](https://github.com/patpaskoch/PaTiHeal/releases). This preview is for installation testing and is not yet a stable release.
+When the fight gets chaotic, every second matters. PaTiHeal keeps your party in focus and puts healing, cleansing and lifesaving decisions right at your fingertips — without the clutter. React faster, stay in control and heal **your way**, with an interface built for the moments that matter most.
 
 ## Features
 
