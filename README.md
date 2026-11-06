@@ -4,10 +4,7 @@
 
 ## What is PaTiHeal?
 
-Compact party frames for healers in World of Warcraft: Forever (Interface 16001). You click a frame, PaTiHeal casts
-exactly the spell you assigned to that click — it never picks a target or a spell by itself.
 
-> Status: in development, not yet released. Parts are tested in game (see Known limitations).
 
 ## Features
 
@@ -61,6 +58,13 @@ exactly the spell you assigned to that click — it never picks a target or a sp
 - **General:** language, scale (applied after combat if changed in combat), window lock, dispellable debuffs on/off
 - *Restore Defaults* keeps your click bindings and the window position.
 - **Window:** panel opacity (30–100 %)
+
+## What is PaTiHeal?
+
+Compact party frames for healers in World of Warcraft: Forever (Interface 16001). You click a frame, PaTiHeal casts
+exactly the spell you assigned to that click — it never picks a target or a spell by itself.
+
+> Status: in development, not yet released. Parts are tested in game (see Known limitations).
 
 ## PaTiSuite
 
