@@ -59,9 +59,12 @@ Each one is installed on its own and works on its own; none of them is needed by
 - [PaTiSuite](https://github.com/patpaskoch/PaTiSuite) – control panel to show and hide all PaTi windows
 
 ## Installation
-1. Download the release zip (`PaTiHeal-<version>.zip`).
-2. Unpack it and copy the folder `PaTiHeal` into `World of Warcraft/<client>/Interface/AddOns/`.
-3. Start WoW and enable PaTiHeal in the AddOns list.
+
+![PaTiHeal – three-step installation guide](assets/installation_en.svg)
+
+1. 📥 **Download** – Open [GitHub Releases](https://github.com/patpaskoch/PaTiHeal/releases) and download the `PaTiHeal-<version>.zip` file under **Assets** (not **Source code (zip)**).
+2. 📂 **Extract & Copy** – Right-click the ZIP, select **Extract All**, then copy the extracted `PaTiHeal` folder into the WoW Forever client's `Interface/AddOns/` folder. No renaming is needed.
+3. ☑️ **Enable in Game** – Start WoW, open the **AddOns** menu at character selection, tick **PaTiHeal**, and click **OK**.
 
 ## First steps
 - `/ph settings` → Click casting: choose a spell for e.g. Left Click; "HoTs & shields" for the frame icons
