@@ -2,12 +2,15 @@
 
 <img src="assets/icon-128.png" width="96" alt="PaTiHeal icon">
 
+## What is PaTiHeal?
+
 Compact party frames for healers in World of Warcraft: Forever (Interface 16001). You click a frame, PaTiHeal casts
 exactly the spell you assigned to that click — it never picks a target or a spell by itself.
 
 > Status: in development, not yet released. Parts are tested in game (see Known limitations).
 
 ## Features
+
 - Party frames for you and party1–4 — in a group the tank (role from WoW) on top, then you, then the others;
   name in class colour, health in percent, mana, offline/dead state;
   the tank gets an accent stripe
@@ -35,6 +38,30 @@ exactly the spell you assigned to that click — it never picks a target or a sp
 - Works on its own; PaTiAuras is not needed. With **PaTiAlerts** installed (optional), members with a dispellable
   debuff also appear there
 
+## Installation
+
+![PaTiHeal – three-step installation guide](assets/installation_en.svg)
+
+1. 📥 **Download** – Open [GitHub Releases](https://github.com/patpaskoch/PaTiHeal/releases) and download the `PaTiHeal-<version>.zip` file under **Assets** (not **Source code (zip)**).
+2. 📂 **Extract & Copy** – Right-click the ZIP, select **Extract All**, then copy the extracted `PaTiHeal` folder into the WoW Forever client's `Interface/AddOns/` folder. No renaming is needed.
+3. ☑️ **Enable in Game** – Start WoW, open the **AddOns** menu at character selection, tick **PaTiHeal**, and click **OK**.
+
+## Getting Started
+
+- `/ph settings` → Click casting: choose a spell for e.g. Left Click; "HoTs & shields" for the frame icons
+- `/ph test` shows example frames (clicks do nothing in test mode)
+- `/ph` shows or hides the window; drag it by its header
+
+## Settings
+
+`/ph settings` or ••• → Settings:
+- **Click casting:** a spell and rank per click combination; dispel spells are in the same list (click dispel)
+- **HoTs & shields:** each aura on/off, timers, charges, position (right of or below the health bar)
+- **Mana call:** Mana button on/off; when it lights up (never, below 20/30/40/50 % mana); message language (English or interface language)
+- **General:** language, scale (applied after combat if changed in combat), window lock, dispellable debuffs on/off
+- *Restore Defaults* keeps your click bindings and the window position.
+- **Window:** panel opacity (30–100 %)
+
 ## PaTiSuite
 
 This addon is part of the **PaTiSuite** — a collection of small addons for World of Warcraft: Forever.
@@ -58,29 +85,8 @@ Each one is installed on its own and works on its own; none of them is needed by
 - [PaTiAlerts](https://github.com/patpaskoch/PaTiAlerts) – shows party members with a dispellable debuff in one central window
 - [PaTiSuite](https://github.com/patpaskoch/PaTiSuite) – control panel to show and hide all PaTi windows
 
-## Installation
-
-![PaTiHeal – three-step installation guide](assets/installation_en.svg)
-
-1. 📥 **Download** – Open [GitHub Releases](https://github.com/patpaskoch/PaTiHeal/releases) and download the `PaTiHeal-<version>.zip` file under **Assets** (not **Source code (zip)**).
-2. 📂 **Extract & Copy** – Right-click the ZIP, select **Extract All**, then copy the extracted `PaTiHeal` folder into the WoW Forever client's `Interface/AddOns/` folder. No renaming is needed.
-3. ☑️ **Enable in Game** – Start WoW, open the **AddOns** menu at character selection, tick **PaTiHeal**, and click **OK**.
-
-## First steps
-- `/ph settings` → Click casting: choose a spell for e.g. Left Click; "HoTs & shields" for the frame icons
-- `/ph test` shows example frames (clicks do nothing in test mode)
-- `/ph` shows or hides the window; drag it by its header
-
-## Settings
-`/ph settings` or ••• → Settings:
-- **Click casting:** a spell and rank per click combination; dispel spells are in the same list (click dispel)
-- **HoTs & shields:** each aura on/off, timers, charges, position (right of or below the health bar)
-- **Mana call:** Mana button on/off; when it lights up (never, below 20/30/40/50 % mana); message language (English or interface language)
-- **General:** language, scale (applied after combat if changed in combat), window lock, dispellable debuffs on/off
-- *Restore Defaults* keeps your click bindings and the window position.
-- **Window:** panel opacity (30–100 %)
-
 ## Commands
+
 `/ph` or `/patiheal` — alone: show/hide · `settings` · `test` · `show` · `hide` · `lock` · `unlock` · `reset` (position) ·
 `spells` (known heals with ID) · `auras` (which HoT/shield/dispel spells your client knows) · `debug` · `version`
 
@@ -88,6 +94,7 @@ Hide, collapse, test mode and reset are blocked in combat (WoW does not allow ch
 Click-casting changes made in combat apply after combat.
 
 ## Known limitations
+
 - HoT/shield and dispel spell IDs are not yet confirmed in the Forever client — `/ph auras` shows what it knows.
 - Not yet tested in game: rank choice, dispel icons, HoTs & shields, click dispel.
 - Party only (no raid frames).
@@ -105,4 +112,5 @@ PaTiHeal is free and open source, and it stays that way. If it makes your runs a
 [Issues](https://github.com/patpaskoch/PaTiHeal/issues).
 
 ## License
+
 MIT — see [LICENSE](LICENSE). Copyright (c) 2026 Patrick Koch.
