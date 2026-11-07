@@ -122,6 +122,8 @@ Fresh-Install-Test (PT-HEAL-001) werden sie ohnehin mitgeprüft.
   toten/offline Mitglied (dann roter Balken mit dunkelrotem Rahmen)
   - Owner 2026-11-07: Rahmen in der Balkenfarbe, nur etwas dunkler, je Theme passend
   - 🔧 FIX IMPLEMENTED 2026-11-07
+  - Owner 2026-11-07: Rahmen noch besser sichtbar → 2 px statt 1 px
+  - 🔧 FIX IMPLEMENTED 2026-11-07
   - MANUAL RETEST REQUIRED
 - [ ] PT-HEAL-155 In der Gruppe mit zugewiesenem Tank: Tank-Rahmen ganz oben, darunter du, dann die anderen; Klick-Heilung
   heilt auf jedem Rahmen genau den angezeigten Spieler; ohne Rollen bleibt die Reihenfolge (du oben); `/ph test`: Tank oben
