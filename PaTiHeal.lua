@@ -119,6 +119,7 @@ end
 -- Owner 2026-10-16: too many strong frames → a half-transparent track.
 -- Owner 2026-11-07: the outline is the bar's own colour, darker (Logic.Darken) — always visible, fits every theme.
 local TRACK_ALPHA = 0.5
+local BAR_OUTLINE = 2 -- px; owner 2026-11-07: "the frames should be easier to see" (was UI.Sizes.Border = 1)
 local outlinedBars = {}
 -- Fill and outline of a bar in theme colour `colorName`; kept on the bar so a theme change repaints both.
 local function setBarColor(bar, colorName)
@@ -137,7 +138,7 @@ local function outlineBar(bar, colorName)
         local line = bar:CreateTexture(nil, "OVERLAY", nil, -1) -- above the fill, below the texts
         line:SetPoint(point1, bar, point1)
         line:SetPoint(point2, bar, point2)
-        if horizontal then line:SetHeight(UI.Sizes.Border) else line:SetWidth(UI.Sizes.Border) end
+        if horizontal then line:SetHeight(BAR_OUTLINE) else line:SetWidth(BAR_OUTLINE) end
         bar.outline[#bar.outline + 1] = line
     end
     edge("TOPLEFT", "TOPRIGHT", true)
