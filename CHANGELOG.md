@@ -9,7 +9,8 @@ History before this file: `git log`.
   the target row stays hidden while you target yourself. In combat WoW decides alone and cannot tell you apart from a
   friend, so there the row shows as before.
 - Health and mana bars: the thin outline now has the bar's own colour, only darker (owner 2026-11-07), so you always
-  see the edge and whether the bar is full. It follows the theme and the bar (red for a dead/offline member).
+  see the edge and whether the bar is full. It follows the theme and the bar (red for a dead/offline member);
+  2 px wide so it stands out.
 - Health and mana bar are equally long (owner 2026-11-07): both end before the wider of the icon blocks on the right
   (your HoTs, the dispel icons). The heal target's mana bar still starts after its "TARGET" mark.
 
