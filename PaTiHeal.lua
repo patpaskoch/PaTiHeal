@@ -392,8 +392,10 @@ local function layoutHoTs(row)
     local below = DB.hotPosition == "BELOW"
     local size = below and HOT_ICON_BELOW or HOT_ICON_RIGHT
     local space = slots > 0 and slots * (size + UI.Spacing.XS) + UI.Spacing.XS or 0
-    row.health:SetWidth(ROW_WIDTH - 6 - (below and 0 or space))
-    row.mana:SetWidth(ROW_WIDTH - 6 - DISPEL_SPACE - (below and space or 0) - (row.manaInset or 0))
+    local health, mana = Logic.BarWidths(ROW_WIDTH - 6, below and 0 or space, DISPEL_SPACE + (below and space or 0),
+        row.manaInset)
+    row.health:SetWidth(health)
+    row.mana:SetWidth(mana)
     for slot, icon in ipairs(row.hotIcons) do
         icon:SetSize(size, size)
         icon:ClearAllPoints()

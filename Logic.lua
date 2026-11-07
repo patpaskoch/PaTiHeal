@@ -158,6 +158,14 @@ function Logic.DispelAlerts(members, detail, isSecret)
     return list
 end
 
+-- Widths of the health and mana bar (owner 2026-11-07: both equally long). Both end before the wider of the two icon
+-- blocks on the right (HoTs next to the health bar, dispels and HoTs "below" next to the mana bar), so they share the
+-- right edge. manaInset: the heal target's mana bar starts later (the "TARGET" mark on its left).
+function Logic.BarWidths(inner, healthRight, manaRight, manaInset)
+    local width = inner - math.max(healthRight, manaRight)
+    return width, width - (manaInset or 0)
+end
+
 -- "48%" for plain numbers. nil when a value is secret or unusable: the caller then hands the raw health
 -- value to the widget (allowed for secret values) instead of calculating with it.
 function Logic.HealthPercent(health, maximum, isSecret)

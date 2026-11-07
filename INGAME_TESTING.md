@@ -121,6 +121,11 @@ Fresh-Install-Test (PT-HEAL-001) werden sie ohnehin mitgeprüft.
   - Owner 2026-10-14: Wunsch Tank ganz oben
   - 🔧 FIX IMPLEMENTED 2026-10-14
   - MANUAL RETEST REQUIRED
+- [ ] PT-HEAL-176 Lebens- und Manabalken gleich lang mit gemeinsamer rechter Kante — HoTs rechts und HoTs unten,
+  mit und ohne Bann-Symbole; Heal-Ziel: Manabalken beginnt nach „ZIEL“, endet wie der Lebensbalken; nichts überlappt
+  - Owner 2026-11-07: Lebens- und Manabalken sollen gleich lang sein
+  - 🔧 FIX IMPLEMENTED 2026-11-07
+  - MANUAL RETEST REQUIRED
 
 ## Click Healing
 
