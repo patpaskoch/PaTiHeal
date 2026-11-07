@@ -4,6 +4,10 @@ Format: `## [Unreleased]` / `## [x.y.z] - YYYY-MM-DD` with Added, Changed, Fixed
 History before this file: `git log`.
 
 ## [Unreleased]
+### Changed
+- Health and mana bar are equally long (owner 2026-11-07): both end before the wider of the icon blocks on the right
+  (your HoTs, the dispel icons). The heal target's mana bar still starts after its "TARGET" mark.
+
 ### Fixed
 - A click on an offline member cast the spell on you (owner 2026-10-19: "Healing Wave lands on me when the target
   is offline" — WoW's auto self-cast). Out of combat an offline member's frame now casts nothing; the tooltip says so.
