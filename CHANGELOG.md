@@ -14,6 +14,10 @@ History before this file: `git log`.
 - Health and mana bar are equally long (owner 2026-11-07): both end before the wider of the icon blocks on the right
   (your HoTs, the dispel icons). The heal target's mana bar still starts after its "TARGET" mark.
 
+### Added
+- Locking or unlocking the window (••• menu, slash command or settings) now answers with a chat line,
+  e.g. "Window locked." (PaTiShared, owner 2026-11-07).
+
 ### Fixed
 - A click on an offline member cast the spell on you (owner 2026-10-19: "Healing Wave lands on me when the target
   is offline" — WoW's auto self-cast). Out of combat an offline member's frame now casts nothing; the tooltip says so.
