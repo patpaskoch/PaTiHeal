@@ -114,6 +114,15 @@ describe("Logic.Darken", function()
 
     it("uses an explicit factor", function()
         assert.same({ 0.25, 0.5, 0 }, { load().Darken(0.5, 1, 0, 0.5) })
+describe("Logic.BarWidths", function()
+    it("gives both bars the same width, ending before the wider icon block", function()
+        local Logic = load()
+        assert.same({ 168, 168 }, { Logic.BarWidths(236, 68, 49) }) -- HoTs right are wider than the dispels
+        assert.same({ 187, 187 }, { Logic.BarWidths(236, 0, 49) }) -- HoTs below: the dispel block decides
+    end)
+
+    it("the heal target's mana bar keeps its inset and the same right edge", function()
+        assert.same({ 187, 156 }, { load().BarWidths(236, 0, 49, 31) })
     end)
 end)
 

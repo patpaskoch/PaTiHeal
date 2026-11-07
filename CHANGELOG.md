@@ -10,6 +10,8 @@ History before this file: `git log`.
   friend, so there the row shows as before.
 - Health and mana bars: the thin outline now has the bar's own colour, only darker (owner 2026-11-07), so you always
   see the edge and whether the bar is full. It follows the theme and the bar (red for a dead/offline member).
+- Health and mana bar are equally long (owner 2026-11-07): both end before the wider of the icon blocks on the right
+  (your HoTs, the dispel icons). The heal target's mana bar still starts after its "TARGET" mark.
 
 ### Fixed
 - A click on an offline member cast the spell on you (owner 2026-10-19: "Healing Wave lands on me when the target
