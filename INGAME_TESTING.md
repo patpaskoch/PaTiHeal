@@ -125,6 +125,7 @@ Fresh-Install-Test (PT-HEAL-001) werden sie ohnehin mitgeprüft.
   - Owner 2026-11-07: Rahmen noch besser sichtbar → 2 px statt 1 px
   - 🔧 FIX IMPLEMENTED 2026-11-07
   - MANUAL RETEST REQUIRED
+  - Owner 2026-11-07 (Teilbefund): „passt alles“ — Rahmen in Balkenfarbe sichtbar (2 px); alle vier Themes und tot/offline noch offen.
 - [ ] PT-HEAL-155 In der Gruppe mit zugewiesenem Tank: Tank-Rahmen ganz oben, darunter du, dann die anderen; Klick-Heilung
   heilt auf jedem Rahmen genau den angezeigten Spieler; ohne Rollen bleibt die Reihenfolge (du oben); `/ph test`: Tank oben
   - Owner 2026-10-14: Wunsch Tank ganz oben
