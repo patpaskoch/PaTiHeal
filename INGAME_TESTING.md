@@ -22,8 +22,12 @@ Fresh-Install-Test (PT-HEAL-001) werden sie ohnehin mitgeprüft.
 
 ## Installation / Laden
 
-- [ ] PT-HEAL-001 Fresh Install aus dem Release-ZIP: genau ein Ordner `PaTiHeal/`, Addon lädt allein
-- [ ] PT-HEAL-002 PaTiHeal erscheint in der AddOn-Liste mit Beschreibung
+- [x] PT-HEAL-001 Fresh Install aus dem Release-ZIP: genau ein Ordner `PaTiHeal/`, Addon lädt allein
+  - ✅ VERIFIED 2026-11-07
+  - Owner: auf der Ingame-Test-Seite „Geht“ (2026-11-07).
+- [x] PT-HEAL-002 PaTiHeal erscheint in der AddOn-Liste mit Beschreibung
+  - ✅ VERIFIED 2026-11-07
+  - Owner: auf der Ingame-Test-Seite „Geht“ (2026-11-07).
 - [x] PT-HEAL-003 Icon in der AddOn-Liste korrekt, keine weiße oder fehlende Textur
   - ✅ VERIFIED 2026-10-02
   - Owner: die Icons erscheinen im Spiel in der AddOn-Liste korrekt.
@@ -35,23 +39,47 @@ Fresh-Install-Test (PT-HEAL-001) werden sie ohnehin mitgeprüft.
 
 ## Fenster
 
-- [ ] PT-HEAL-010 `/ph` bzw. `/patiheal` blendet das Fenster ein und aus; `/ph show`, `/ph hide`
-- [ ] PT-HEAL-011 Fenster am Header verschieben (entsperrt)
-- [ ] PT-HEAL-012 Position bleibt nach `/reload`
-- [ ] PT-HEAL-013 Lock/Unlock (••• und `/ph lock` / `unlock`): gesperrt nicht verschiebbar
-- [ ] PT-HEAL-014 Größe (Scale) wirkt; im Kampf geändert → erst nach dem Kampf angewendet
+- [x] PT-HEAL-010 `/ph` bzw. `/patiheal` blendet das Fenster ein und aus; `/ph show`, `/ph hide`
+  - ✅ VERIFIED 2026-11-07
+  - Owner: auf der Ingame-Test-Seite „Geht“ (2026-11-07).
+- [x] PT-HEAL-011 Fenster am Header verschieben (entsperrt)
+  - ✅ VERIFIED 2026-11-07
+  - Owner: auf der Ingame-Test-Seite „Geht“ (2026-11-07).
+- [x] PT-HEAL-012 Position bleibt nach `/reload`
+  - ✅ VERIFIED 2026-11-07
+  - Owner: auf der Ingame-Test-Seite „Geht“ (2026-11-07).
+- [x] PT-HEAL-013 Lock/Unlock (••• und `/ph lock` / `unlock`): gesperrt nicht verschiebbar
+  - ✅ VERIFIED 2026-11-07
+  - Owner: auf der Ingame-Test-Seite „Geht“ (2026-11-07).
+- [x] PT-HEAL-014 Größe (Scale) wirkt; im Kampf geändert → erst nach dem Kampf angewendet
+  - ✅ VERIFIED 2026-11-07
+  - Owner: auf der Ingame-Test-Seite „Geht“ (2026-11-07).
 - [x] PT-HEAL-015 Einstellungen öffnen (`/ph settings` und •••) und speichern
   - ✅ VERIFIED 2026-09-28
-- [ ] PT-HEAL-016 Collapse/Expand über •••, Zustand bleibt nach `/reload`
-- [ ] PT-HEAL-017 Test Mode `/ph test` zeigt Beispielrahmen; Klicks im Test Mode zaubern nichts
-- [ ] PT-HEAL-018 Panel-Deckkraft 30–100 %: nur der Hintergrund ändert sich, Balken und Texte bleiben
-- [ ] PT-HEAL-019 Keine Einrast-Einstellung mehr, Fenster frei verschiebbar
-- [ ] PT-HEAL-020 `/ph reset` setzt die Position zurück
-- [ ] PT-HEAL-021 `/ph spells` listet bekannte Heilzauber mit ID; `/ph auras` listet HoT-, Schild- und Dispel-Zauber
-- [ ] PT-HEAL-165 Einstellungen passen auf den Bildschirm: Titel und Knöpfe unten immer sichtbar, Inhalt mit dem Mausrad
+- [x] PT-HEAL-016 Collapse/Expand über •••, Zustand bleibt nach `/reload`
+  - ✅ VERIFIED 2026-11-07
+  - Owner: auf der Ingame-Test-Seite „Geht“ (2026-11-07).
+- [x] PT-HEAL-017 Test Mode `/ph test` zeigt Beispielrahmen; Klicks im Test Mode zaubern nichts
+  - ✅ VERIFIED 2026-11-07
+  - Owner: auf der Ingame-Test-Seite „Geht“ (2026-11-07).
+- [x] PT-HEAL-018 Panel-Deckkraft 30–100 %: nur der Hintergrund ändert sich, Balken und Texte bleiben
+  - ✅ VERIFIED 2026-11-07
+  - Owner: auf der Ingame-Test-Seite „Geht“ (2026-11-07).
+- [x] PT-HEAL-019 Keine Einrast-Einstellung mehr, Fenster frei verschiebbar
+  - ✅ VERIFIED 2026-11-07
+  - Owner: auf der Ingame-Test-Seite „Geht“ (2026-11-07).
+- [x] PT-HEAL-020 `/ph reset` setzt die Position zurück
+  - ✅ VERIFIED 2026-11-07
+  - Owner: auf der Ingame-Test-Seite „Geht“ (2026-11-07).
+- [x] PT-HEAL-021 `/ph spells` listet bekannte Heilzauber mit ID; `/ph auras` listet HoT-, Schild- und Dispel-Zauber
+  - ✅ VERIFIED 2026-11-07
+  - Owner: auf der Ingame-Test-Seite „Geht“ (2026-11-07).
+- [x] PT-HEAL-165 Einstellungen passen auf den Bildschirm: Titel und Knöpfe unten immer sichtbar, Inhalt mit dem Mausrad
   scrollbar (dünner Balken rechts), öffnet oben; „Befehle“ eingeklappt, Klick auf „BEFEHLE +“ klappt auf/zu;
   Dropdowns und Zauberfelder funktionieren auch nach dem Scrollen (gilt für die Einstellungen aller PaTi-Addons)
   - Owner 2026-10-16: Einstellungen zu groß, oben und unten abgeschnitten → scrollbar, Befehle eingeklappt
+  - ✅ VERIFIED 2026-11-07
+  - Owner: auf der Ingame-Test-Seite „Geht“ (2026-11-07).
 - [x] PT-HEAL-166 Außerhalb des Kampfes: Linksklick auf ein totes Gruppenmitglied wirkt die Wiederbelebung (Priester:
   Auferstehung, Schamane: Geist der Ahnen) auf genau diesen Spieler; Tooltip zeigt „Linksklick: … (tot, außerhalb des
   Kampfes)“; Shift-/Rechtsklick usw. wirken weiter ihre Zauber
@@ -67,11 +95,13 @@ Fresh-Install-Test (PT-HEAL-001) werden sie ohnehin mitgeprüft.
   - MANUAL RETEST REQUIRED
   - ✅ VERIFIED 2026-10-18
   - Owner: in der Abhak-Liste als „Geht“ markiert
-- [ ] PT-HEAL-172 Außerhalb des Kampfes: ein Mitglied ist offline — Klick (alle Kombinationen) auf seinen Rahmen wirkt
+- [x] PT-HEAL-172 Außerhalb des Kampfes: ein Mitglied ist offline — Klick (alle Kombinationen) auf seinen Rahmen wirkt
   nichts, nichts landet bei dir; Tooltip „Offline: Klicks zaubern nichts“; wieder online → der Klick heilt ihn wieder
   - ❌ FAIL 2026-10-19 (Owner: „Welle der Heilung geht auf mich, wenn das Ziel offline ist“)
   - 🔧 FIX IMPLEMENTED 2026-10-19 (offline: keine Klick-Zauber, außerhalb des Kampfes gesetzt)
   - MANUAL RETEST REQUIRED
+  - ✅ VERIFIED 2026-11-07
+  - Owner: auf der Ingame-Test-Seite „Geht“ (2026-11-07).
 
 ## SavedVariables
 
@@ -79,11 +109,15 @@ Fresh-Install-Test (PT-HEAL-001) werden sie ohnehin mitgeprüft.
 - [ ] PT-HEAL-031 Einstellungen bleiben nach Relog
 - [x] PT-HEAL-032 Update mit alten Einstellungen: bisherige Klickbelegung wird übernommen
   - ✅ VERIFIED 2026-09-28
-- [ ] PT-HEAL-033 „Standard wiederherstellen“ behält Klickbelegung und Position
+- [x] PT-HEAL-033 „Standard wiederherstellen“ behält Klickbelegung und Position
+  - ✅ VERIFIED 2026-11-07
+  - Owner: auf der Ingame-Test-Seite „Geht“ (2026-11-07).
 
 ## Sprachen
 
-- [ ] PT-HEAL-040 deDE: alle Texte deutsch
+- [x] PT-HEAL-040 deDE: alle Texte deutsch
+  - ✅ VERIFIED 2026-11-07
+  - Owner: auf der Ingame-Test-Seite „Geht“ (2026-11-07).
 - [x] PT-HEAL-041 Sprachwahl in den Einstellungen gilt nach `/reload`
   - ✅ VERIFIED 2026-09-28
 - [ ] PT-HEAL-042 zhCN/zhTW/koKR: Englisch als Rückfall, keine Schlüsselnamen oder Kästchen
