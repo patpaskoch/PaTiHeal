@@ -4,6 +4,10 @@ Format: `## [Unreleased]` / `## [x.y.z] - YYYY-MM-DD` with Added, Changed, Fixed
 History before this file: `git log`.
 
 ## [Unreleased]
+### Added
+- Locking or unlocking the window (••• menu, slash command or settings) now answers with a chat line,
+  e.g. "Window locked." (PaTiShared, owner 2026-11-07).
+
 ### Fixed
 - A click on an offline member cast the spell on you (owner 2026-10-19: "Healing Wave lands on me when the target
   is offline" — WoW's auto self-cast). Out of combat an offline member's frame now casts nothing; the tooltip says so.
