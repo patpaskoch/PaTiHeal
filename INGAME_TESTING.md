@@ -126,6 +126,7 @@ Fresh-Install-Test (PT-HEAL-001) werden sie ohnehin mitgeprüft.
   - Owner 2026-11-07: Lebens- und Manabalken sollen gleich lang sein
   - 🔧 FIX IMPLEMENTED 2026-11-07
   - MANUAL RETEST REQUIRED
+  - Owner 2026-11-07 (Teilbefund): „passt alles“ — Balken gleich lang; HoTs unten, Bann-Symbole und Heal-Ziel noch offen.
 
 ## Click Healing
 
