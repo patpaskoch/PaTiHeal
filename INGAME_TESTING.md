@@ -239,11 +239,12 @@ Neu 2026-10-02: ein fester Secure-Balken für dein aktuelles Ziel direkt über d
   Lua-Fehler, kein `ADDON_ACTION_BLOCKED`, Klickheilen auf das Ziel unverändert
 - [ ] PT-HEAL-152 Ziel-Bereich in allen drei Themes: Default subtil, WoForever warm mit Bronze-/Goldrahmen, Dracula dunkel
   mit Lila-Akzent; Abstand und Größe in allen Themes gleich
-- [ ] PT-HEAL-174 Außerhalb des Kampfes: dich selbst anvisieren → keine Ziel-Zeile, keine Lücke über deiner Zeile,
+- [x] PT-HEAL-174 Außerhalb des Kampfes: dich selbst anvisieren → keine Ziel-Zeile, keine Lücke über deiner Zeile,
   Fenster nicht höher; ein Mitglied oder freundlicher NPC als Ziel → Ziel-Zeile wie bisher
   - Owner 2026-11-07: sich selbst als Ziel anzuzeigen ergibt keinen Sinn
   - 🔧 FIX IMPLEMENTED 2026-11-07
-  - MANUAL RETEST REQUIRED
+  - ✅ VERIFIED 2026-11-07
+  - Owner: „passt alles“ — sich selbst anvisiert, keine Ziel-Zeile.
 - [ ] PT-HEAL-175 Dich selbst anvisiert in den Kampf gehen (Ziel-Zeile erscheint bei Kampfbeginn), im Kampf auf ein
   Gruppenmitglied wechseln → seine Ziel-Zeile ist da und heilt per Klick; kein Lua-Fehler, kein ADDON_ACTION_BLOCKED;
   nach dem Kampf mit dir als Ziel verschwindet die Zeile wieder
