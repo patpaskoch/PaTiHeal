@@ -164,6 +164,8 @@ Logic.OUTLINE_SHADE = 0.6 -- share of the bar colour's brightness; judge in game
 function Logic.Darken(r, g, b, factor)
     factor = factor or Logic.OUTLINE_SHADE
     return r * factor, g * factor, b * factor
+end
+
 -- Widths of the health and mana bar (owner 2026-11-07: both equally long). Both end before the wider of the two icon
 -- blocks on the right (HoTs next to the health bar, dispels and HoTs "below" next to the mana bar), so they share the
 -- right edge. manaInset: the heal target's mana bar starts later (the "TARGET" mark on its left).

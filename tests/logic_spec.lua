@@ -114,6 +114,9 @@ describe("Logic.Darken", function()
 
     it("uses an explicit factor", function()
         assert.same({ 0.25, 0.5, 0 }, { load().Darken(0.5, 1, 0, 0.5) })
+    end)
+end)
+
 describe("Logic.BarWidths", function()
     it("gives both bars the same width, ending before the wider icon block", function()
         local Logic = load()
