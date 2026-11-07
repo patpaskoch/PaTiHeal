@@ -493,7 +493,9 @@ end
 
 -- Secure changes: only out of combat; PLAYER_REGEN_ENABLED calls this again.
 -- RegisterUnitWatch shows/hides rows with their unit, also in combat (FOLLOW_UPS F2).
-local function updateLayout()
+-- combatStarts: PLAYER_REGEN_DISABLED, the last moment before the lockdown — the target row follows the driver
+-- again, also when you are the target (Logic.TargetRowShown).
+local function updateLayout(combatStarts)
     if not DB or InCombatLockdown() then return end
     applyRowOrder() -- tank on top; the roles change out of combat (roster, role check)
     local watch = RegisterUnitWatch ~= nil
@@ -514,7 +516,9 @@ local function updateLayout()
     -- directly, plus the window height — the snippet cannot resize the plain window (owner-observed 2026-10-03).
     local mode = Logic.TargetMode(testMode, DB.collapsed)
     if targetDriver then TargetFrame.Configure(targetDriver, TARGET_GAP, mode) end
-    local shown = TargetFrame.Shown(mode, isSecret, Logic.Flag)
+    local targetIsSelf = UnitIsUnit ~= nil and Logic.Flag(UnitIsUnit("target", "player"), isSecret) == true
+    local shown = Logic.TargetRowShown(mode, TargetFrame.Shown(mode, isSecret, Logic.Flag), targetIsSelf,
+        not combatStarts)
     targetRow:SetShown(shown)
     rows[1]:ClearAllPoints()
     if shown then
@@ -720,7 +724,8 @@ end
 
 local events = CreateFrame("Frame")
 for _, event in ipairs({ "PLAYER_LOGIN", "PLAYER_ENTERING_WORLD", "GROUP_ROSTER_UPDATE", "UNIT_HEALTH", "UNIT_POWER_UPDATE",
-    "UNIT_CONNECTION", "UNIT_FLAGS", "UNIT_AURA", "PLAYER_REGEN_ENABLED", "SPELLS_CHANGED", "PLAYER_TARGET_CHANGED" }) do
+    "UNIT_CONNECTION", "UNIT_FLAGS", "UNIT_AURA", "PLAYER_REGEN_ENABLED", "SPELLS_CHANGED", "PLAYER_TARGET_CHANGED",
+    "PLAYER_REGEN_DISABLED" }) do
     events:RegisterEvent(event)
 end
 pcall(events.RegisterEvent, events, "PLAYER_ROLES_ASSIGNED") -- role check: the tank row moves up (may not exist)
@@ -765,6 +770,9 @@ events:SetScript("OnEvent", function(_, event, unit)
             paintDispels(targetRow, data.state)
             paintHoTs(targetRow, data.state)
         end
+        return
+    elseif event == "PLAYER_REGEN_DISABLED" then
+        updateLayout(true) -- you as the target: the row comes back while still allowed (Logic.TargetRowShown)
         return
     elseif event == "PLAYER_REGEN_ENABLED" then
         if scalePending then applyScale() end
