@@ -772,7 +772,9 @@ events:SetScript("OnEvent", function(_, event, unit)
         end
         return
     elseif event == "PLAYER_REGEN_DISABLED" then
-        updateLayout(true) -- you as the target: the row comes back while still allowed (Logic.TargetRowShown)
+        -- You as the target: the row comes back while still allowed (Logic.TargetRowShown) — only with the driver;
+        -- without it nothing can change the row in combat, so it stays hidden.
+        if targetDriver then updateLayout(true) end
         return
     elseif event == "PLAYER_REGEN_ENABLED" then
         if scalePending then applyScale() end
