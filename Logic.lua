@@ -187,6 +187,14 @@ function Logic.TargetMode(testMode, collapsed)
     return "auto"
 end
 
+-- Is the target row shown? driverShows = the driver's answer (TargetFrame.Shown). Owner 2026-11-07: you as the heal
+-- target make no sense — your own row is already there — so out of combat the row hides for you (hideSelf). The
+-- secure driver cannot tell you apart in combat; at combat start the row follows it again (hideSelf = false), so a
+-- switch to a friend in combat still shows the row. Only "auto": test mode keeps its example target.
+function Logic.TargetRowShown(mode, driverShows, targetIsSelf, hideSelf)
+    return driverShows and not (mode == "auto" and hideSelf and targetIsSelf)
+end
+
 -- Geometry of the window, all in px from the window's top. size = { top, row, gap, targetGap, bottom, header, rowX }.
 -- The target row sits at the top; the player row (and the party rows chained below it) moves down by one row plus
 -- targetGap while the target row is shown. rowCount = Logic.RowCount (party rows to make room for).
