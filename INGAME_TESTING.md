@@ -112,6 +112,11 @@ Fresh-Install-Test (PT-HEAL-001) werden sie ohnehin mitgeprüft.
   sieht man, wo „voll“ ist (in allen drei Themes, auch beim Heal-Ziel)
   - Owner 2026-10-14: im schwarzen Balken nicht erkennbar, wann das Leben voll ist → Rahmen + heller Hintergrund
   - 🔧 FIX IMPLEMENTED 2026-10-14
+- [ ] PT-HEAL-173 Rahmen der Lebens- und Manabalken in der Balkenfarbe, etwas dunkler: immer sichtbar, man sieht,
+  ob der Balken voll ist — in allen vier Themes (Theme im Spiel umschalten), auch beim Heal-Ziel und bei einem
+  toten/offline Mitglied (dann roter Balken mit dunkelrotem Rahmen)
+  - Owner 2026-11-07: Rahmen in der Balkenfarbe, nur etwas dunkler, je Theme passend
+  - 🔧 FIX IMPLEMENTED 2026-11-07
   - Owner 2026-10-14: Rahmen auch für Mana → 🔧 FIX IMPLEMENTED 2026-10-14
   - Owner 2026-10-16: zu viele, zu kräftige Rahmen → dezenter (helle Rahmenfarbe, halb durchsichtiger Hintergrund)
   - 🔧 FIX IMPLEMENTED 2026-10-16

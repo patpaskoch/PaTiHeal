@@ -4,6 +4,10 @@ Format: `## [Unreleased]` / `## [x.y.z] - YYYY-MM-DD` with Added, Changed, Fixed
 History before this file: `git log`.
 
 ## [Unreleased]
+### Changed
+- Health and mana bars: the thin outline now has the bar's own colour, only darker (owner 2026-11-07), so you always
+  see the edge and whether the bar is full. It follows the theme and the bar (red for a dead/offline member).
+
 ### Fixed
 - A click on an offline member cast the spell on you (owner 2026-10-19: "Healing Wave lands on me when the target
   is offline" — WoW's auto self-cast). Out of combat an offline member's frame now casts nothing; the tooltip says so.
