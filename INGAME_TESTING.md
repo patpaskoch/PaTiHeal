@@ -116,6 +116,16 @@ Fresh-Install-Test (PT-HEAL-001) werden sie ohnehin mitgeprüft.
   - Owner 2026-10-16: zu viele, zu kräftige Rahmen → dezenter (helle Rahmenfarbe, halb durchsichtiger Hintergrund)
   - 🔧 FIX IMPLEMENTED 2026-10-16
   - MANUAL RETEST REQUIRED
+  - Rahmenfarbe ab 2026-11-07: siehe PT-HEAL-173 (der Hintergrund bleibt Teil dieses Tests)
+- [ ] PT-HEAL-173 Rahmen der Lebens- und Manabalken in der Balkenfarbe, etwas dunkler: immer sichtbar, man sieht,
+  ob der Balken voll ist — in allen vier Themes (Theme im Spiel umschalten), auch beim Heal-Ziel und bei einem
+  toten/offline Mitglied (dann roter Balken mit dunkelrotem Rahmen)
+  - Owner 2026-11-07: Rahmen in der Balkenfarbe, nur etwas dunkler, je Theme passend
+  - 🔧 FIX IMPLEMENTED 2026-11-07
+  - Owner 2026-11-07: Rahmen noch besser sichtbar → 2 px statt 1 px
+  - 🔧 FIX IMPLEMENTED 2026-11-07
+  - MANUAL RETEST REQUIRED
+  - Owner 2026-11-07 (Teilbefund): „passt alles“ — Rahmen in Balkenfarbe sichtbar (2 px); alle vier Themes und tot/offline noch offen.
 - [ ] PT-HEAL-155 In der Gruppe mit zugewiesenem Tank: Tank-Rahmen ganz oben, darunter du, dann die anderen; Klick-Heilung
   heilt auf jedem Rahmen genau den angezeigten Spieler; ohne Rollen bleibt die Reihenfolge (du oben); `/ph test`: Tank oben
   - Owner 2026-10-14: Wunsch Tank ganz oben
