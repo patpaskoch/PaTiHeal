@@ -116,24 +116,40 @@ end
 -- Owner 2026-10-14: on the dark row you could not see where a full bar ends. Health and mana bars get their own
 -- lighter track (the missing part) and a thin outline, so "full" shows at a glance. Plain textures of the plain
 -- status bar: they follow its width (layoutHoTs) and need nothing secure.
--- Owner 2026-10-16: too many strong frames → the subtle border colour and a half-transparent track.
+-- Owner 2026-10-16: too many strong frames → a half-transparent track.
+-- Owner 2026-11-07: the outline is the bar's own colour, darker (Logic.Darken) — always visible, fits every theme.
 local TRACK_ALPHA = 0.5
-local function outlineBar(bar)
+local outlinedBars = {}
+-- Fill and outline of a bar in theme colour `colorName`; kept on the bar so a theme change repaints both.
+local function setBarColor(bar, colorName)
+    bar.colorName = colorName
+    local r, g, b = UI.Color(colorName)
+    bar:SetStatusBarColor(r, g, b)
+    r, g, b = Logic.Darken(r, g, b)
+    for _, line in ipairs(bar.outline) do line:SetColorTexture(r, g, b, 1) end
+end
+local function outlineBar(bar, colorName)
     local track = bar:CreateTexture(nil, "BACKGROUND")
     track:SetAllPoints()
     UI.Paint(track, "SetColorTexture", "PanelHover", TRACK_ALPHA)
+    bar.outline = {}
     local function edge(point1, point2, horizontal)
         local line = bar:CreateTexture(nil, "OVERLAY", nil, -1) -- above the fill, below the texts
         line:SetPoint(point1, bar, point1)
         line:SetPoint(point2, bar, point2)
         if horizontal then line:SetHeight(UI.Sizes.Border) else line:SetWidth(UI.Sizes.Border) end
-        UI.Paint(line, "SetColorTexture", "Border")
+        bar.outline[#bar.outline + 1] = line
     end
     edge("TOPLEFT", "TOPRIGHT", true)
     edge("BOTTOMLEFT", "BOTTOMRIGHT", true)
     edge("TOPLEFT", "BOTTOMLEFT", false)
     edge("TOPRIGHT", "BOTTOMRIGHT", false)
+    outlinedBars[#outlinedBars + 1] = bar
+    setBarColor(bar, colorName)
 end
+UI.OnThemeChanged(function()
+    for _, bar in ipairs(outlinedBars) do setBarColor(bar, bar.colorName) end
+end)
 
 -- Click dispel on the debuff icons (owner 2026-10-16: "why Alt-click when I click the icon anyway?"). One secure
 -- button per frame over the icon area, created now (out of combat) and set up in applyBindings: left/right click cast
@@ -182,7 +198,7 @@ local function makeRow(frameName, unit)
     health:SetPoint("TOPLEFT", 3, -3)
     health:SetSize(ROW_WIDTH - 6, 20)
     health:SetStatusBarTexture(UI.WHITE)
-    outlineBar(health)
+    outlineBar(health, "Health")
     local status = health:CreateFontString(nil, "OVERLAY", UI.Fonts.Text)
     status:SetPoint("RIGHT", -6, 0)
     local name = health:CreateFontString(nil, "OVERLAY", UI.Fonts.Text)
@@ -202,8 +218,7 @@ local function makeRow(frameName, unit)
     mana:SetPoint("BOTTOMLEFT", 3, 3)
     mana:SetSize(ROW_WIDTH - 6 - Dispels.MAX * (DISPEL_ICON + UI.Spacing.XS) - UI.Spacing.SM, 10)
     mana:SetStatusBarTexture(UI.WHITE)
-    UI.Paint(mana, "SetStatusBarColor", "Mana")
-    outlineBar(mana)
+    outlineBar(mana, "Mana")
     row.health, row.mana, row.name, row.status = health, mana, name, status
     -- Dispellable debuffs: small plain icons (not secure), bottom right next to the mana bar.
     row.dispelIcons = {}
@@ -334,11 +349,12 @@ local function paintRow(row, data)
     setBar(row.mana, data.mana, data.manaMax)
     if data.state then
         row.status:SetText(L[data.state])
-        row.health:SetStatusBarColor(UI.Color("Danger"))
     else
         row.status:SetText(Logic.HealthPercent(data.health, data.healthMax, isSecret) or data.health)
-        row.health:SetStatusBarColor(UI.Color("Health"))
     end
+    local healthColor = data.state and "Danger" or "Health"
+    -- UNIT_HEALTH path: repaint only on a change (a theme change repaints through outlineBar's listener)
+    if row.health.colorName ~= healthColor then setBarColor(row.health, healthColor) end
 end
 
 -- Offline/dead members show no debuff icons (their state is the important information).

@@ -101,6 +101,22 @@ describe("Logic.RestoreDefaults", function()
     end)
 end)
 
+describe("Logic.Darken", function()
+    it("keeps the hue and lowers the brightness by the outline shade", function()
+        local Logic = load()
+        local r, g, b = Logic.Darken(0.5, 1, 0.25)
+        local f = Logic.OUTLINE_SHADE
+        assert.equal(0.5 * f, r)
+        assert.equal(1 * f, g)
+        assert.equal(0.25 * f, b)
+        assert.is_true(f > 0 and f < 1) -- darker than the bar, never black
+    end)
+
+    it("uses an explicit factor", function()
+        assert.same({ 0.25, 0.5, 0 }, { load().Darken(0.5, 1, 0, 0.5) })
+    end)
+end)
+
 describe("Logic.HealthPercent", function()
     local never = function() return false end
     it("rounds to whole percent", function()

@@ -158,6 +158,14 @@ function Logic.DispelAlerts(members, detail, isSecret)
     return list
 end
 
+-- Outline of a health/mana bar (owner 2026-11-07): the bar's own colour, only darker, so the edge stays visible on
+-- the dark row and you see where "full" is — in every theme, because the bar colour comes from the theme.
+Logic.OUTLINE_SHADE = 0.6 -- share of the bar colour's brightness; judge in game
+function Logic.Darken(r, g, b, factor)
+    factor = factor or Logic.OUTLINE_SHADE
+    return r * factor, g * factor, b * factor
+end
+
 -- "48%" for plain numbers. nil when a value is secret or unusable: the caller then hands the raw health
 -- value to the widget (allowed for secret values) instead of calculating with it.
 function Logic.HealthPercent(health, maximum, isSecret)
