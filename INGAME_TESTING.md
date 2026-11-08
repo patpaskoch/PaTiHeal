@@ -106,8 +106,12 @@ Fresh-Install-Test (PT-HEAL-001) werden sie ohnehin mitgeprüft.
 
 ## SavedVariables
 
-- [ ] PT-HEAL-030 Einstellungen (Klickbelegung, HoTs, Größe, Sprache) bleiben nach `/reload`
-- [ ] PT-HEAL-031 Einstellungen bleiben nach Relog
+- [x] PT-HEAL-030 Einstellungen (Klickbelegung, HoTs, Größe, Sprache) bleiben nach `/reload`
+  - ✅ VERIFIED 2026-11-08
+  - Owner: auf der Testseite mit „Geht“ bestätigt.
+- [x] PT-HEAL-031 Einstellungen bleiben nach Relog
+  - ✅ VERIFIED 2026-11-08
+  - Owner: auf der Testseite mit „Geht“ bestätigt.
 - [x] PT-HEAL-032 Update mit alten Einstellungen: bisherige Klickbelegung wird übernommen
   - ✅ VERIFIED 2026-09-28
 - [x] PT-HEAL-033 „Standard wiederherstellen“ behält Klickbelegung und Position
@@ -121,8 +125,12 @@ Fresh-Install-Test (PT-HEAL-001) werden sie ohnehin mitgeprüft.
   - Owner: auf der Ingame-Test-Seite „Geht“ (2026-11-07).
 - [x] PT-HEAL-041 Sprachwahl in den Einstellungen gilt nach `/reload`
   - ✅ VERIFIED 2026-09-28
-- [ ] PT-HEAL-042 zhCN/zhTW/koKR: Englisch als Rückfall, keine Schlüsselnamen oder Kästchen
-- [ ] PT-HEAL-043 Keine abgeschnittenen wichtigen Texte (deDE), auch in der Klickbelegung
+- [x] PT-HEAL-042 zhCN/zhTW/koKR: Englisch als Rückfall, keine Schlüsselnamen oder Kästchen
+  - ✅ VERIFIED 2026-11-08
+  - Owner: auf der Testseite mit „Geht“ bestätigt.
+- [x] PT-HEAL-043 Keine abgeschnittenen wichtigen Texte (deDE), auch in der Klickbelegung
+  - ✅ VERIFIED 2026-11-08
+  - Owner: auf der Testseite mit „Geht“ bestätigt.
 
 ## Party Frames
 
@@ -133,17 +141,19 @@ Fresh-Install-Test (PT-HEAL-001) werden sie ohnehin mitgeprüft.
 - [ ] PT-HEAL-054 Mitglied tritt bei / verlässt die Gruppe (auch im Kampf: Rahmen stimmen spätestens nach dem Kampf)
 - [ ] PT-HEAL-055 Offline-Mitglied wird als offline angezeigt
 - [ ] PT-HEAL-056 Totes Mitglied wird als tot angezeigt
-- [ ] PT-HEAL-057 Solo: Fenster nur so hoch wie der eigene Rahmen, kein Leerraum darunter
+- [x] PT-HEAL-057 Solo: Fenster nur so hoch wie der eigene Rahmen, kein Leerraum darunter
   - ❌ FAIL 2026-10-02
   - Solo nur der eigene Balken, das Fenster blieb aber so hoch wie für fünf Rahmen.
   - 🔧 FIX IMPLEMENTED 2026-10-02
   - Höhe folgt den vorhandenen Gruppenmitgliedern (`Logic.RowCount`), außerhalb des Kampfes.
   - MANUAL RETEST REQUIRED
+  - ✅ VERIFIED 2026-11-08
+  - Owner: auf der Testseite mit „Geht“ bestätigt.
 - [ ] PT-HEAL-058 Gruppe mit 2, 3 und 5: Fenster wächst und schrumpft mit, kein Rahmen abgeschnitten
 - [ ] PT-HEAL-059 Beitritt/Verlassen im Kampf: Rahmen erscheint/verschwindet, die Höhe passt sich nach dem Kampf
   an; kein Lua-Fehler, kein ADDON_ACTION_BLOCKED
 - [ ] PT-HEAL-079 Test Mode zeigt weiterhin alle fünf Beispielrahmen in voller Höhe; Einklappen = nur Header
-- [ ] PT-HEAL-154 Lebens- und Manabalken mit hellerem Hintergrund und dünnem Rahmen: auch bei fast vollem Leben/Mana
+- [x] PT-HEAL-154 Lebens- und Manabalken mit hellerem Hintergrund und dünnem Rahmen: auch bei fast vollem Leben/Mana
   sieht man, wo „voll“ ist (in allen drei Themes, auch beim Heal-Ziel)
   - Owner 2026-10-14: im schwarzen Balken nicht erkennbar, wann das Leben voll ist → Rahmen + heller Hintergrund
   - 🔧 FIX IMPLEMENTED 2026-10-14
@@ -151,6 +161,8 @@ Fresh-Install-Test (PT-HEAL-001) werden sie ohnehin mitgeprüft.
   - Owner 2026-10-16: zu viele, zu kräftige Rahmen → dezenter (helle Rahmenfarbe, halb durchsichtiger Hintergrund)
   - 🔧 FIX IMPLEMENTED 2026-10-16
   - MANUAL RETEST REQUIRED
+  - ✅ VERIFIED 2026-11-08
+  - Owner: auf der Testseite mit „Geht“ bestätigt.
 - [ ] PT-HEAL-155 In der Gruppe mit zugewiesenem Tank: Tank-Rahmen ganz oben, darunter du, dann die anderen; Klick-Heilung
   heilt auf jedem Rahmen genau den angezeigten Spieler; ohne Rollen bleibt die Reihenfolge (du oben); `/ph test`: Tank oben
   - Owner 2026-10-14: Wunsch Tank ganz oben
