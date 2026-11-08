@@ -5,6 +5,8 @@ History before this file: `git log`.
 
 ## [Unreleased]
 ### Fixed
+- Heal target row: a target change now updates the click state too (a dead target gets the resurrection click).
+### Fixed
 - A click on an offline member cast the spell on you (owner 2026-10-19: "Healing Wave lands on me when the target
   is offline" — WoW's auto self-cast). Out of combat an offline member's frame now casts nothing; the tooltip says so.
   A member who goes offline during combat keeps the clicks until combat ends (WoW allows no click change in combat).

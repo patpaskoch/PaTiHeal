@@ -764,6 +764,7 @@ events:SetScript("OnEvent", function(_, event, unit)
             paintRow(targetRow, data)
             paintDispels(targetRow, data.state)
             paintHoTs(targetRow, data.state)
+            followState(targetRow, data) -- a dead target gets the resurrection click (out of combat)
         end
         return
     elseif event == "PLAYER_REGEN_ENABLED" then
