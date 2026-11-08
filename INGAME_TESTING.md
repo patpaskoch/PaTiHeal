@@ -102,6 +102,7 @@ Fresh-Install-Test (PT-HEAL-001) werden sie ohnehin mitgeprüft.
   - MANUAL RETEST REQUIRED
   - ✅ VERIFIED 2026-11-07
   - Owner: auf der Ingame-Test-Seite „Geht“ (2026-11-07).
+- [ ] PT-HEAL-173 Außerhalb des Kampfes: ein totes Ziel anvisieren, dann ein lebendes (und zurück) — die Heilziel-Zeile benutzt jeweils die passende Klickbelegung (tot = Wiederbeleben, lebend = deine Zauber) (Fix 2026-11-08)
 
 ## SavedVariables
 
