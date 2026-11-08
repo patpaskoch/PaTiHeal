@@ -335,5 +335,7 @@ Neu 2026-10-02: ein fester Secure-Balken für dein aktuelles Ziel direkt über d
 ## Combined
 
 - [ ] PT-HEAL-120 Zusammen mit allen PaTi-Addons geladen: kein Lua-Fehler
-- [ ] PT-HEAL-121 Keine Slash-Command-Kollision: `/ph` und `/patiheal` antworten nur PaTiHeal
+- [x] PT-HEAL-121 Keine Slash-Command-Kollision: `/ph` und `/patiheal` antworten nur PaTiHeal
+  - ✅ VERIFIED 2026-11-08
+  - Owner: /patitest 2× grün in-game (vor und nach /reload, 42 ok, 0 Fehler; 7 PaTi-Addons installiert)
 - [ ] PT-HEAL-122 Eigene Einstellungen speichern nur PaTiHeal-Werte; Fenster erscheint in PaTiSuite
