@@ -105,8 +105,12 @@ Fresh-Install-Test (PT-HEAL-001) werden sie ohnehin mitgeprüft.
 
 ## SavedVariables
 
-- [ ] PT-HEAL-030 Einstellungen (Klickbelegung, HoTs, Größe, Sprache) bleiben nach `/reload`
-- [ ] PT-HEAL-031 Einstellungen bleiben nach Relog
+- [x] PT-HEAL-030 Einstellungen (Klickbelegung, HoTs, Größe, Sprache) bleiben nach `/reload`
+  - ✅ VERIFIED 2026-11-08
+  - Owner: auf der Testseite mit „Geht“ bestätigt.
+- [x] PT-HEAL-031 Einstellungen bleiben nach Relog
+  - ✅ VERIFIED 2026-11-08
+  - Owner: auf der Testseite mit „Geht“ bestätigt.
 - [x] PT-HEAL-032 Update mit alten Einstellungen: bisherige Klickbelegung wird übernommen
   - ✅ VERIFIED 2026-09-28
 - [x] PT-HEAL-033 „Standard wiederherstellen“ behält Klickbelegung und Position
@@ -120,8 +124,12 @@ Fresh-Install-Test (PT-HEAL-001) werden sie ohnehin mitgeprüft.
   - Owner: auf der Ingame-Test-Seite „Geht“ (2026-11-07).
 - [x] PT-HEAL-041 Sprachwahl in den Einstellungen gilt nach `/reload`
   - ✅ VERIFIED 2026-09-28
-- [ ] PT-HEAL-042 zhCN/zhTW/koKR: Englisch als Rückfall, keine Schlüsselnamen oder Kästchen
-- [ ] PT-HEAL-043 Keine abgeschnittenen wichtigen Texte (deDE), auch in der Klickbelegung
+- [x] PT-HEAL-042 zhCN/zhTW/koKR: Englisch als Rückfall, keine Schlüsselnamen oder Kästchen
+  - ✅ VERIFIED 2026-11-08
+  - Owner: auf der Testseite mit „Geht“ bestätigt.
+- [x] PT-HEAL-043 Keine abgeschnittenen wichtigen Texte (deDE), auch in der Klickbelegung
+  - ✅ VERIFIED 2026-11-08
+  - Owner: auf der Testseite mit „Geht“ bestätigt.
 
 ## Party Frames
 
