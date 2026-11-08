@@ -5,6 +5,7 @@ History before this file: `git log`.
 
 ## [Unreleased]
 ### Fixed
+- The heal-target row follows the dead/alive state of the new target on every target change (out of combat), so a dead target keeps the resurrection click and a living one the bound spells; the role lookup is existence-guarded (audit 2026-11-08).
 - A click on an offline member cast the spell on you (owner 2026-10-19: "Healing Wave lands on me when the target
   is offline" — WoW's auto self-cast). Out of combat an offline member's frame now casts nothing; the tooltip says so.
   A member who goes offline during combat keeps the clicks until combat ends (WoW allows no click change in combat).

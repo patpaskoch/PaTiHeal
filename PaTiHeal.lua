@@ -85,7 +85,7 @@ local function unitData(unit)
         data.mana = Logic.ValueOr(UnitPower(unit, 0), 0, isSecret)
         data.manaMax = Logic.ValueOr(UnitPowerMax(unit, 0), 0, isSecret)
     end
-    local role = UnitGroupRolesAssigned(unit)
+    local role = UnitGroupRolesAssigned and UnitGroupRolesAssigned(unit)
     data.isTank = not isSecret(role) and role == "TANK"
     return data
 end
@@ -760,6 +760,9 @@ events:SetScript("OnEvent", function(_, event, unit)
         -- Painting is plain (fine in combat); showing/moving is the secure driver's job. Without a driver: out of combat.
         updateLayout() -- out of combat: target row, anchors and window height (returns at once in combat)
         local data = not testMode and unitData("target")
+        -- A dead target gets the resurrection click, a living one the bound spells: follow the state on every
+        -- target change (out of combat; applyRowClicks returns at once in combat).
+        if not testMode then followState(targetRow, data or nil) end
         if data and not DB.collapsed then
             paintRow(targetRow, data)
             paintDispels(targetRow, data.state)
