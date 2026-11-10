@@ -136,7 +136,9 @@ Fresh-Install-Test (PT-HEAL-001) werden sie ohnehin mitgeprüft.
 
 - [ ] PT-HEAL-050 Spieler und party1–4 sichtbar, Name in Klassenfarbe
 - [ ] PT-HEAL-051 Leben in Prozent aktualisiert sich
-- [ ] PT-HEAL-052 Mana aktualisiert sich
+- [x] PT-HEAL-052 Mana aktualisiert sich
+  - ✅ VERIFIED 2026-11-10
+  - Owner: Testseite „Geht“
 - [ ] PT-HEAL-053 Tank hat den Akzentstreifen
 - [ ] PT-HEAL-054 Mitglied tritt bei / verlässt die Gruppe (auch im Kampf: Rahmen stimmen spätestens nach dem Kampf)
 - [ ] PT-HEAL-055 Offline-Mitglied wird als offline angezeigt
@@ -152,7 +154,9 @@ Fresh-Install-Test (PT-HEAL-001) werden sie ohnehin mitgeprüft.
 - [ ] PT-HEAL-058 Gruppe mit 2, 3 und 5: Fenster wächst und schrumpft mit, kein Rahmen abgeschnitten
 - [ ] PT-HEAL-059 Beitritt/Verlassen im Kampf: Rahmen erscheint/verschwindet, die Höhe passt sich nach dem Kampf
   an; kein Lua-Fehler, kein ADDON_ACTION_BLOCKED
-- [ ] PT-HEAL-079 Test Mode zeigt weiterhin alle fünf Beispielrahmen in voller Höhe; Einklappen = nur Header
+- [x] PT-HEAL-079 Test Mode zeigt weiterhin alle fünf Beispielrahmen in voller Höhe; Einklappen = nur Header
+  - ✅ VERIFIED 2026-11-10
+  - Owner: Testseite „Geht“
 - [x] PT-HEAL-154 Lebens- und Manabalken mit hellerem Hintergrund und dünnem Rahmen: auch bei fast vollem Leben/Mana
   sieht man, wo „voll“ ist (in allen drei Themes, auch beim Heal-Ziel)
   - Owner 2026-10-14: im schwarzen Balken nicht erkennbar, wann das Leben voll ist → Rahmen + heller Hintergrund
@@ -163,11 +167,13 @@ Fresh-Install-Test (PT-HEAL-001) werden sie ohnehin mitgeprüft.
   - MANUAL RETEST REQUIRED
   - ✅ VERIFIED 2026-11-08
   - Owner: auf der Testseite mit „Geht“ bestätigt.
-- [ ] PT-HEAL-155 In der Gruppe mit zugewiesenem Tank: Tank-Rahmen ganz oben, darunter du, dann die anderen; Klick-Heilung
+- [x] PT-HEAL-155 In der Gruppe mit zugewiesenem Tank: Tank-Rahmen ganz oben, darunter du, dann die anderen; Klick-Heilung
   heilt auf jedem Rahmen genau den angezeigten Spieler; ohne Rollen bleibt die Reihenfolge (du oben); `/ph test`: Tank oben
   - Owner 2026-10-14: Wunsch Tank ganz oben
   - 🔧 FIX IMPLEMENTED 2026-10-14
   - MANUAL RETEST REQUIRED
+  - ✅ VERIFIED 2026-11-10
+  - Owner: Testseite „Geht“
 
 ## Click Healing
 
@@ -175,8 +181,12 @@ Jeweils: Zauber landet auf der angeklickten Einheit, das eigene Ziel ändert sic
 
 - [x] PT-HEAL-060 Linksklick zaubert den gewählten Zauber
   - ✅ VERIFIED 2026-09-28
-- [ ] PT-HEAL-061 Rechtsklick
-- [ ] PT-HEAL-062 Mittelklick
+- [x] PT-HEAL-061 Rechtsklick
+  - ✅ VERIFIED 2026-11-10
+  - Owner: Testseite „Geht“
+- [x] PT-HEAL-062 Mittelklick
+  - ✅ VERIFIED 2026-11-10
+  - Owner: Testseite „Geht“
 - [ ] PT-HEAL-063 Shift + Linksklick
 - [x] PT-HEAL-064 Shift + Rechtsklick
   - ✅ VERIFIED 2026-09-28
@@ -184,7 +194,9 @@ Jeweils: Zauber landet auf der angeklickten Einheit, das eigene Ziel ändert sic
 - [ ] PT-HEAL-066 Strg + Rechtsklick
 - [ ] PT-HEAL-067 Alt + Linksklick
 - [ ] PT-HEAL-068 Alt + Rechtsklick
-- [ ] PT-HEAL-069 Rangwahl: gewählter Rang wird gezaubert (nicht immer der höchste)
+- [x] PT-HEAL-069 Rangwahl: gewählter Rang wird gezaubert (nicht immer der höchste)
+  - ✅ VERIFIED 2026-11-10
+  - Owner: Testseite „Geht“
 - [ ] PT-HEAL-070 Belegung umstellen (z. B. Strg+Links → Shift+Links): alte Kombination zaubert nichts mehr
 - [ ] PT-HEAL-071 Belegung im Kampf geändert → gilt nach dem Kampf
 - [x] PT-HEAL-072 Linksklick auf den eigenen Spielerframe führt den konfigurierten Heal aus
