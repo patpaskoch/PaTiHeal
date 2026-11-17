@@ -187,12 +187,23 @@ function Logic.TargetMode(testMode, collapsed)
     return "auto"
 end
 
--- Is the target row shown? driverShows = the driver's answer (TargetFrame.Shown). Owner 2026-11-07: you as the heal
--- target make no sense — your own row is already there — so out of combat the row hides for you (hideSelf). The
--- secure driver cannot tell you apart in combat; at combat start the row follows it again (hideSelf = false), so a
--- switch to a friend in combat still shows the row. Only "auto": test mode keeps its example target.
-function Logic.TargetRowShown(mode, driverShows, targetIsSelf, hideSelf)
-    return driverShows and not (mode == "auto" and hideSelf and targetIsSelf)
+-- Does the target already have its own row? units = the row units (you, party1–4); isSameUnit(a, b) → true only for
+-- a readable "same unit" (UnitIsUnit via Logic.Flag). Owner 2026-11-17: the target row is only for someone outside
+-- your group — a group member is already on its own row.
+function Logic.TargetHasRow(units, isSameUnit)
+    for _, unit in ipairs(units) do
+        if isSameUnit("target", unit) then return true end
+    end
+    return false
+end
+
+-- Is the target row shown? driverShows = the driver's answer (TargetFrame.Shown). targetHasRow = Logic.TargetHasRow:
+-- you (owner 2026-11-07) or a group member (owner 2026-11-17) as the heal target make no sense — their own row is
+-- already there — so out of combat the row hides for them (hideSelf). The secure driver cannot tell them apart in
+-- combat; at combat start the row follows it again (hideSelf = false), so a switch to a friend outside the group in
+-- combat still shows the row. Only "auto": test mode keeps its example target.
+function Logic.TargetRowShown(mode, driverShows, targetHasRow, hideSelf)
+    return driverShows and not (mode == "auto" and hideSelf and targetHasRow)
 end
 
 -- Geometry of the window, all in px from the window's top. size = { top, row, gap, targetGap, bottom, header, rowX }.

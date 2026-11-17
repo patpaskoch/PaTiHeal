@@ -8,6 +8,10 @@ History before this file: `git log`.
 - You as the heal target no longer get a second row (owner 2026-11-07): your own row is already there. Out of combat
   the target row stays hidden while you target yourself. In combat WoW decides alone and cannot tell you apart from a
   friend, so there the row shows as before.
+- The heal target row is only for someone outside your group (owner 2026-11-17): a group member already has a row,
+  so out of combat the target row stays hidden while you target one (in combat WoW decides alone, as for you).
+- The heal target row is set further apart from your group (owner 2026-11-17): 20 px instead of 12 px gap and a
+  divider line across the row width between the target and your row.
 
 ### Fixed
 - A click on an offline member cast the spell on you (owner 2026-10-19: "Healing Wave lands on me when the target

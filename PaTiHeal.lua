@@ -94,9 +94,10 @@ end
 
 local WIDTH, ROW_WIDTH, ROW_HEIGHT, ROW_GAP = 270, 242, 39, 4
 -- Window geometry (Logic.HealLayout): rows keep fixed slots (player, party1–4); the heal target row sits above the
--- player row, TARGET_GAP apart, only while it is shown. The larger gap (12 px instead of the 4 px between party rows)
--- and the target panel (below) set "my heal target" visibly apart from "my group" (owner wish 2026-10-03).
-local TARGET_GAP = UI.Spacing.LG
+-- player row, TARGET_GAP apart, only while it is shown. The larger gap (20 px instead of the 4 px between party rows),
+-- the divider line in it and the target panel (below) set "my heal target" visibly apart from "my group" (owner wish
+-- 2026-10-03; owner 2026-11-17: still too close to the group — gap 12 → 20 px plus the divider).
+local TARGET_GAP = UI.Spacing.LG + UI.Spacing.MD
 local TARGET_PANEL_PAD = 3 -- the decorative panel reaches this far around the target row (inside TARGET_GAP)
 local SIZE = { top = UI.Sizes.HeaderHeight + UI.Spacing.SM, row = ROW_HEIGHT, gap = ROW_GAP, targetGap = TARGET_GAP,
     bottom = UI.Spacing.MD, header = UI.Sizes.HeaderHeight, rowX = (WIDTH - ROW_WIDTH) / 2 }
@@ -290,6 +291,13 @@ do
     edge("BOTTOMLEFT", "BOTTOMRIGHT", true)
     edge("TOPRIGHT", "BOTTOMRIGHT", false)
     edge("TOPLEFT", "BOTTOMLEFT", false)
+    -- Divider in the middle of the gap to your group, across the whole row width (owner 2026-11-17): a texture of the
+    -- target row, so it shows, hides and moves with it, also in combat.
+    local divider = targetRow:CreateTexture(nil, "BACKGROUND", nil, -7)
+    divider:SetPoint("TOPLEFT", targetRow, "BOTTOMLEFT", 0, -TARGET_GAP / 2)
+    divider:SetPoint("TOPRIGHT", targetRow, "BOTTOMRIGHT", 0, -TARGET_GAP / 2)
+    divider:SetHeight(UI.Sizes.Border * 2)
+    UI.Paint(divider, "SetColorTexture", "BorderStrong")
 end
 -- The player row hangs on the target row (its top while that is hidden): only secure rows anchor each other, so the
 -- restricted snippet may move it in combat (TargetFrame.lua). updateLayout / the driver switch the anchor.
@@ -516,8 +524,11 @@ local function updateLayout(combatStarts)
     -- directly, plus the window height — the snippet cannot resize the plain window (owner-observed 2026-10-03).
     local mode = Logic.TargetMode(testMode, DB.collapsed)
     if targetDriver then TargetFrame.Configure(targetDriver, TARGET_GAP, mode) end
-    local targetIsSelf = UnitIsUnit ~= nil and Logic.Flag(UnitIsUnit("target", "player"), isSecret) == true
-    local shown = Logic.TargetRowShown(mode, TargetFrame.Shown(mode, isSecret, Logic.Flag), targetIsSelf,
+    -- You or a group member as the target: they already have their own row (Logic.TargetHasRow, owner 2026-11-17).
+    local targetHasRow = UnitIsUnit ~= nil and Logic.TargetHasRow(Logic.ROW_UNITS, function(a, b)
+        return Logic.Flag(UnitIsUnit(a, b), isSecret) == true
+    end)
+    local shown = Logic.TargetRowShown(mode, TargetFrame.Shown(mode, isSecret, Logic.Flag), targetHasRow,
         not combatStarts)
     targetRow:SetShown(shown)
     rows[1]:ClearAllPoints()
