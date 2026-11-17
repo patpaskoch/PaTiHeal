@@ -13,6 +13,10 @@ History before this file: `git log`.
   2 px wide so it stands out.
 - Health and mana bar are equally long (owner 2026-11-07): both end before the wider of the icon blocks on the right
   (your HoTs, the dispel icons). The heal target's mana bar still starts after its "TARGET" mark.
+- The heal target row is only for someone outside your group (owner 2026-11-17): a group member already has a row,
+  so out of combat the target row stays hidden while you target one (in combat WoW decides alone, as for you).
+- The heal target row is set further apart from your group (owner 2026-11-17): 20 px instead of 12 px gap and a
+  divider line across the row width between the target and your row.
 
 ### Added
 - Locking or unlocking the window (••• menu, slash command or settings) now answers with a chat line,
