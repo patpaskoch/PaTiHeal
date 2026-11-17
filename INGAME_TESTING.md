@@ -250,6 +250,16 @@ Neu 2026-10-02: ein fester Secure-Balken für dein aktuelles Ziel direkt über d
   nach dem Kampf mit dir als Ziel verschwindet die Zeile wieder
   - 🔧 FIX IMPLEMENTED 2026-11-07
   - MANUAL RETEST REQUIRED
+- [ ] PT-HEAL-178 Außerhalb des Kampfes: ein Gruppenmitglied anvisieren → keine Ziel-Zeile, keine Lücke, Fenster nicht
+  höher; einen Spieler außerhalb der Gruppe oder einen freundlichen NPC anvisieren → Ziel-Zeile erscheint
+  - Owner 2026-11-17: nur Ziele anzeigen, die nicht in der Gruppe sind
+  - 🔧 FIX IMPLEMENTED 2026-11-17
+  - MANUAL RETEST REQUIRED
+- [ ] PT-HEAL-179 Ziel-Zeile ist klar vom Team getrennt: größerer Abstand und Trennlinie über die ganze Breite zwischen
+  Ziel und deiner Zeile; Linie verschwindet mit der Ziel-Zeile; in allen Themes gut sichtbar, nichts überlappt
+  - Owner 2026-11-17: Ziel sollte deutlicher getrennt sein, damit man sieht, dass es die Ziel-Zeile ist, nicht das Team
+  - 🔧 FIX IMPLEMENTED 2026-11-17
+  - MANUAL RETEST REQUIRED
 
 ## Mana-Knopf
 

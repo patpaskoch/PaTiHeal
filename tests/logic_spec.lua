@@ -253,6 +253,19 @@ describe("Heal target row (Logic.TargetMode / HealLayout / LevelText)", function
         assert.equal("hide", M.TargetMode(true, true))
     end)
 
+    it("a group member or you as the target already has a row; someone outside the group not (owner 2026-11-17)",
+        function()
+        local M = load()
+        local target = "party2"
+        local function same(a, b) return a == "target" and b == target end
+        assert.is_true(M.TargetHasRow(M.ROW_UNITS, same))
+        target = "player"
+        assert.is_true(M.TargetHasRow(M.ROW_UNITS, same))
+        target = "npc" -- a friendly NPC or a player outside your group
+        assert.is_false(M.TargetHasRow(M.ROW_UNITS, same))
+        assert.is_false(M.TargetHasRow(M.ROW_UNITS, function() return false end)) -- unreadable: never hidden by guess
+    end)
+
     it("you as the target: hidden out of combat, back at combat start; friends and test mode unchanged", function()
         local M = load()
         assert.is_false(M.TargetRowShown("auto", true, true, true)) -- out of combat, you targeted
