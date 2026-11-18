@@ -22,6 +22,9 @@ Addon facts: `../../PaTiAdmin/docs/ARCHITECTURE.md` · open issues: `../../PaTiA
   Never reference the PaTiHeal window from the snippet: it is no protected frame ("Invalid relative frame handle",
   owner 2026-10-03). The window height follows out of combat (`Logic.HealLayout`, `TargetFrame.Shown` =
   `SecureCmdOptionParse` of the same condition). Mode `Logic.TargetMode`. Without the driver: out of combat only.
+  You as the target (owner 2026-11-07): out of combat `updateLayout` hides the row (`Logic.TargetRowShown`); on
+  PLAYER_REGEN_DISABLED (last moment before the lockdown) it follows the driver again, which cannot tell you apart —
+  otherwise a switch to a friend in combat would leave the row hidden.
 - Secure / combat-sensitive: `PaTiHealUnit1..5` (SecureUnitButtonTemplate). Attributes only via `applyBindings()`,
   which writes the complete list from `Logic.ClickAttributes` out of combat. Row visibility: `RegisterUnitWatch`;
   window height = rows up to the last present member (`Logic.RowCount`)

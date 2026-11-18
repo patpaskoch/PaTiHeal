@@ -253,6 +253,16 @@ describe("Heal target row (Logic.TargetMode / HealLayout / LevelText)", function
         assert.equal("hide", M.TargetMode(true, true))
     end)
 
+    it("you as the target: hidden out of combat, back at combat start; friends and test mode unchanged", function()
+        local M = load()
+        assert.is_false(M.TargetRowShown("auto", true, true, true)) -- out of combat, you targeted
+        assert.is_true(M.TargetRowShown("auto", true, true, false)) -- combat starts: the driver decides again
+        assert.is_true(M.TargetRowShown("auto", true, false, true)) -- a friend stays shown
+        assert.is_false(M.TargetRowShown("auto", false, false, true)) -- enemy / no target: as the driver says
+        assert.is_true(M.TargetRowShown("show", true, true, true)) -- test mode keeps its example target
+        assert.is_false(M.TargetRowShown("hide", false, true, true)) -- collapsed
+    end)
+
     it("solo without target stays as compact as before: the same height as one row", function()
         local layout = load().HealLayout(SIZE, 1, false)
         assert.equal(26, layout.playerTop)
