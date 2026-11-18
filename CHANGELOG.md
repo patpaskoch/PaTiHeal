@@ -4,6 +4,10 @@ Format: `## [Unreleased]` / `## [x.y.z] - YYYY-MM-DD` with Added, Changed, Fixed
 History before this file: `git log`.
 
 ## [Unreleased]
+### Added
+- Locking or unlocking the window (••• menu, slash command or settings) now answers with a chat line,
+  e.g. "Window locked." (PaTiShared, owner 2026-11-07).
+
 ### Fixed
 - The heal-target row follows the dead/alive state of the new target on every target change (out of combat), so a dead target keeps the resurrection click and a living one the bound spells; the role lookup is existence-guarded (audit 2026-11-08).
 - A click on an offline member cast the spell on you (owner 2026-10-19: "Healing Wave lands on me when the target
