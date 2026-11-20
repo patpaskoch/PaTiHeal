@@ -102,11 +102,16 @@ Fresh-Install-Test (PT-HEAL-001) werden sie ohnehin mitgeprüft.
   - MANUAL RETEST REQUIRED
   - ✅ VERIFIED 2026-11-07
   - Owner: auf der Ingame-Test-Seite „Geht“ (2026-11-07).
+- [ ] PT-HEAL-173 Außerhalb des Kampfes: ein totes Ziel anvisieren, dann ein lebendes (und zurück) — die Heilziel-Zeile benutzt jeweils die passende Klickbelegung (tot = Wiederbeleben, lebend = deine Zauber) (Fix 2026-11-08)
 
 ## SavedVariables
 
-- [ ] PT-HEAL-030 Einstellungen (Klickbelegung, HoTs, Größe, Sprache) bleiben nach `/reload`
-- [ ] PT-HEAL-031 Einstellungen bleiben nach Relog
+- [x] PT-HEAL-030 Einstellungen (Klickbelegung, HoTs, Größe, Sprache) bleiben nach `/reload`
+  - ✅ VERIFIED 2026-11-08
+  - Owner: auf der Testseite mit „Geht“ bestätigt.
+- [x] PT-HEAL-031 Einstellungen bleiben nach Relog
+  - ✅ VERIFIED 2026-11-08
+  - Owner: auf der Testseite mit „Geht“ bestätigt.
 - [x] PT-HEAL-032 Update mit alten Einstellungen: bisherige Klickbelegung wird übernommen
   - ✅ VERIFIED 2026-09-28
 - [x] PT-HEAL-033 „Standard wiederherstellen“ behält Klickbelegung und Position
@@ -120,29 +125,39 @@ Fresh-Install-Test (PT-HEAL-001) werden sie ohnehin mitgeprüft.
   - Owner: auf der Ingame-Test-Seite „Geht“ (2026-11-07).
 - [x] PT-HEAL-041 Sprachwahl in den Einstellungen gilt nach `/reload`
   - ✅ VERIFIED 2026-09-28
-- [ ] PT-HEAL-042 zhCN/zhTW/koKR: Englisch als Rückfall, keine Schlüsselnamen oder Kästchen
-- [ ] PT-HEAL-043 Keine abgeschnittenen wichtigen Texte (deDE), auch in der Klickbelegung
+- [x] PT-HEAL-042 zhCN/zhTW/koKR: Englisch als Rückfall, keine Schlüsselnamen oder Kästchen
+  - ✅ VERIFIED 2026-11-08
+  - Owner: auf der Testseite mit „Geht“ bestätigt.
+- [x] PT-HEAL-043 Keine abgeschnittenen wichtigen Texte (deDE), auch in der Klickbelegung
+  - ✅ VERIFIED 2026-11-08
+  - Owner: auf der Testseite mit „Geht“ bestätigt.
 
 ## Party Frames
 
 - [ ] PT-HEAL-050 Spieler und party1–4 sichtbar, Name in Klassenfarbe
 - [ ] PT-HEAL-051 Leben in Prozent aktualisiert sich
-- [ ] PT-HEAL-052 Mana aktualisiert sich
+- [x] PT-HEAL-052 Mana aktualisiert sich
+  - ✅ VERIFIED 2026-11-10
+  - Owner: Testseite „Geht“
 - [ ] PT-HEAL-053 Tank hat den Akzentstreifen
 - [ ] PT-HEAL-054 Mitglied tritt bei / verlässt die Gruppe (auch im Kampf: Rahmen stimmen spätestens nach dem Kampf)
 - [ ] PT-HEAL-055 Offline-Mitglied wird als offline angezeigt
 - [ ] PT-HEAL-056 Totes Mitglied wird als tot angezeigt
-- [ ] PT-HEAL-057 Solo: Fenster nur so hoch wie der eigene Rahmen, kein Leerraum darunter
+- [x] PT-HEAL-057 Solo: Fenster nur so hoch wie der eigene Rahmen, kein Leerraum darunter
   - ❌ FAIL 2026-10-02
   - Solo nur der eigene Balken, das Fenster blieb aber so hoch wie für fünf Rahmen.
   - 🔧 FIX IMPLEMENTED 2026-10-02
   - Höhe folgt den vorhandenen Gruppenmitgliedern (`Logic.RowCount`), außerhalb des Kampfes.
   - MANUAL RETEST REQUIRED
+  - ✅ VERIFIED 2026-11-08
+  - Owner: auf der Testseite mit „Geht“ bestätigt.
 - [ ] PT-HEAL-058 Gruppe mit 2, 3 und 5: Fenster wächst und schrumpft mit, kein Rahmen abgeschnitten
 - [ ] PT-HEAL-059 Beitritt/Verlassen im Kampf: Rahmen erscheint/verschwindet, die Höhe passt sich nach dem Kampf
   an; kein Lua-Fehler, kein ADDON_ACTION_BLOCKED
-- [ ] PT-HEAL-079 Test Mode zeigt weiterhin alle fünf Beispielrahmen in voller Höhe; Einklappen = nur Header
-- [ ] PT-HEAL-154 Lebens- und Manabalken mit hellerem Hintergrund und dünnem Rahmen: auch bei fast vollem Leben/Mana
+- [x] PT-HEAL-079 Test Mode zeigt weiterhin alle fünf Beispielrahmen in voller Höhe; Einklappen = nur Header
+  - ✅ VERIFIED 2026-11-10
+  - Owner: Testseite „Geht“
+- [x] PT-HEAL-154 Lebens- und Manabalken mit hellerem Hintergrund und dünnem Rahmen: auch bei fast vollem Leben/Mana
   sieht man, wo „voll“ ist (in allen drei Themes, auch beim Heal-Ziel)
   - Owner 2026-10-14: im schwarzen Balken nicht erkennbar, wann das Leben voll ist → Rahmen + heller Hintergrund
   - 🔧 FIX IMPLEMENTED 2026-10-14
@@ -150,8 +165,10 @@ Fresh-Install-Test (PT-HEAL-001) werden sie ohnehin mitgeprüft.
   - Owner 2026-10-16: zu viele, zu kräftige Rahmen → dezenter (helle Rahmenfarbe, halb durchsichtiger Hintergrund)
   - 🔧 FIX IMPLEMENTED 2026-10-16
   - MANUAL RETEST REQUIRED
-  - Rahmenfarbe ab 2026-11-07: siehe PT-HEAL-173 (der Hintergrund bleibt Teil dieses Tests)
-- [ ] PT-HEAL-173 Rahmen der Lebens- und Manabalken in der Balkenfarbe, etwas dunkler: immer sichtbar, man sieht,
+  - ✅ VERIFIED 2026-11-08
+  - Owner: auf der Testseite mit „Geht“ bestätigt.
+  - Rahmenfarbe ab 2026-11-07: siehe PT-HEAL-180 (der Hintergrund bleibt Teil dieses Tests)
+- [ ] PT-HEAL-180 Rahmen der Lebens- und Manabalken in der Balkenfarbe, etwas dunkler: immer sichtbar, man sieht,
   ob der Balken voll ist — in allen vier Themes (Theme im Spiel umschalten), auch beim Heal-Ziel und bei einem
   toten/offline Mitglied (dann roter Balken mit dunkelrotem Rahmen)
   - Owner 2026-11-07: Rahmen in der Balkenfarbe, nur etwas dunkler, je Theme passend
@@ -160,11 +177,13 @@ Fresh-Install-Test (PT-HEAL-001) werden sie ohnehin mitgeprüft.
   - 🔧 FIX IMPLEMENTED 2026-11-07
   - MANUAL RETEST REQUIRED
   - Owner 2026-11-07 (Teilbefund): „passt alles“ — Rahmen in Balkenfarbe sichtbar (2 px); alle vier Themes und tot/offline noch offen.
-- [ ] PT-HEAL-155 In der Gruppe mit zugewiesenem Tank: Tank-Rahmen ganz oben, darunter du, dann die anderen; Klick-Heilung
+- [x] PT-HEAL-155 In der Gruppe mit zugewiesenem Tank: Tank-Rahmen ganz oben, darunter du, dann die anderen; Klick-Heilung
   heilt auf jedem Rahmen genau den angezeigten Spieler; ohne Rollen bleibt die Reihenfolge (du oben); `/ph test`: Tank oben
   - Owner 2026-10-14: Wunsch Tank ganz oben
   - 🔧 FIX IMPLEMENTED 2026-10-14
   - MANUAL RETEST REQUIRED
+  - ✅ VERIFIED 2026-11-10
+  - Owner: Testseite „Geht“
 - [ ] PT-HEAL-176 Lebens- und Manabalken gleich lang mit gemeinsamer rechter Kante — HoTs rechts und HoTs unten,
   mit und ohne Bann-Symbole; Heal-Ziel: Manabalken beginnt nach „ZIEL“, endet wie der Lebensbalken; nichts überlappt
   - Owner 2026-11-07: Lebens- und Manabalken sollen gleich lang sein
@@ -178,8 +197,12 @@ Jeweils: Zauber landet auf der angeklickten Einheit, das eigene Ziel ändert sic
 
 - [x] PT-HEAL-060 Linksklick zaubert den gewählten Zauber
   - ✅ VERIFIED 2026-09-28
-- [ ] PT-HEAL-061 Rechtsklick
-- [ ] PT-HEAL-062 Mittelklick
+- [x] PT-HEAL-061 Rechtsklick
+  - ✅ VERIFIED 2026-11-10
+  - Owner: Testseite „Geht“
+- [x] PT-HEAL-062 Mittelklick
+  - ✅ VERIFIED 2026-11-10
+  - Owner: Testseite „Geht“
 - [ ] PT-HEAL-063 Shift + Linksklick
 - [x] PT-HEAL-064 Shift + Rechtsklick
   - ✅ VERIFIED 2026-09-28
@@ -187,7 +210,9 @@ Jeweils: Zauber landet auf der angeklickten Einheit, das eigene Ziel ändert sic
 - [ ] PT-HEAL-066 Strg + Rechtsklick
 - [ ] PT-HEAL-067 Alt + Linksklick
 - [ ] PT-HEAL-068 Alt + Rechtsklick
-- [ ] PT-HEAL-069 Rangwahl: gewählter Rang wird gezaubert (nicht immer der höchste)
+- [x] PT-HEAL-069 Rangwahl: gewählter Rang wird gezaubert (nicht immer der höchste)
+  - ✅ VERIFIED 2026-11-10
+  - Owner: Testseite „Geht“
 - [ ] PT-HEAL-070 Belegung umstellen (z. B. Strg+Links → Shift+Links): alte Kombination zaubert nichts mehr
 - [ ] PT-HEAL-071 Belegung im Kampf geändert → gilt nach dem Kampf
 - [x] PT-HEAL-072 Linksklick auf den eigenen Spielerframe führt den konfigurierten Heal aus
@@ -359,5 +384,7 @@ Neu 2026-10-02: ein fester Secure-Balken für dein aktuelles Ziel direkt über d
 ## Combined
 
 - [ ] PT-HEAL-120 Zusammen mit allen PaTi-Addons geladen: kein Lua-Fehler
-- [ ] PT-HEAL-121 Keine Slash-Command-Kollision: `/ph` und `/patiheal` antworten nur PaTiHeal
+- [x] PT-HEAL-121 Keine Slash-Command-Kollision: `/ph` und `/patiheal` antworten nur PaTiHeal
+  - ✅ VERIFIED 2026-11-08
+  - Owner: /patitest 2× grün in-game (vor und nach /reload, 42 ok, 0 Fehler; 7 PaTi-Addons installiert)
 - [ ] PT-HEAL-122 Eigene Einstellungen speichern nur PaTiHeal-Werte; Fenster erscheint in PaTiSuite
