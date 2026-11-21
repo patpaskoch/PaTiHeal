@@ -102,7 +102,9 @@ Fresh-Install-Test (PT-HEAL-001) werden sie ohnehin mitgeprüft.
   - MANUAL RETEST REQUIRED
   - ✅ VERIFIED 2026-11-07
   - Owner: auf der Ingame-Test-Seite „Geht“ (2026-11-07).
-- [ ] PT-HEAL-173 Außerhalb des Kampfes: ein totes Ziel anvisieren, dann ein lebendes (und zurück) — die Heilziel-Zeile benutzt jeweils die passende Klickbelegung (tot = Wiederbeleben, lebend = deine Zauber) (Fix 2026-11-08)
+- [x] PT-HEAL-173 Außerhalb des Kampfes: ein totes Ziel anvisieren, dann ein lebendes (und zurück) — die Heilziel-Zeile benutzt jeweils die passende Klickbelegung (tot = Wiederbeleben, lebend = deine Zauber) (Fix 2026-11-08)
+  - ✅ VERIFIED 2026-11-21
+  - Owner: auf der Testseite mit „Geht“ bestätigt.
 
 ## SavedVariables
 
@@ -134,8 +136,12 @@ Fresh-Install-Test (PT-HEAL-001) werden sie ohnehin mitgeprüft.
 
 ## Party Frames
 
-- [ ] PT-HEAL-050 Spieler und party1–4 sichtbar, Name in Klassenfarbe
-- [ ] PT-HEAL-051 Leben in Prozent aktualisiert sich
+- [x] PT-HEAL-050 Spieler und party1–4 sichtbar, Name in Klassenfarbe
+  - ✅ VERIFIED 2026-11-21
+  - Owner: auf der Testseite mit „Geht“ bestätigt.
+- [x] PT-HEAL-051 Leben in Prozent aktualisiert sich
+  - ✅ VERIFIED 2026-11-21
+  - Owner: auf der Testseite mit „Geht“ bestätigt.
 - [x] PT-HEAL-052 Mana aktualisiert sich
   - ✅ VERIFIED 2026-11-10
   - Owner: Testseite „Geht“
@@ -265,7 +271,9 @@ Jeweils: erscheint nur bei eigenem Cast, Timer, Aufladungen (falls vorhanden), v
 Neu 2026-10-02: ein fester Secure-Balken für dein aktuelles Ziel direkt über deinem eigenen Balken. Sichtbarkeit im Kampf
 über WoWs Secure State Driver (noch nicht im Forever-Client bestätigt, `/ph debug` zeigt „driver yes/no“).
 
-- [ ] PT-HEAL-130 `/ph debug`: Zeile „heal target: RegisterStateDriver … driver …“ (Ausgabe melden)
+- [x] PT-HEAL-130 `/ph debug`: Zeile „heal target: RegisterStateDriver … driver …“ (Ausgabe melden)
+  - ✅ VERIFIED 2026-11-21
+  - Owner: auf der Testseite mit „Geht“ bestätigt.
 - [x] PT-HEAL-131 Freundlicher NPC als Ziel: Ziel-Balken erscheint über deinem Balken mit „Ziel“, Name, St. (Level),
   Leben in %; Fenster genau eine Zeile höher, nichts abgeschnitten
   - ❌ FAIL 2026-10-03
@@ -277,12 +285,16 @@ Neu 2026-10-02: ein fester Secure-Balken für dein aktuelles Ziel direkt über d
   - MANUAL RETEST REQUIRED
   - ✅ VERIFIED 2026-10-03
   - Owner: freundliches Ziel → der Ziel-Balken erscheint mit eigener Fläche über dem eigenen Balken.
-- [ ] PT-HEAL-132 Fremder freundlicher Spieler als Ziel: Balken erscheint, Name in Klassenfarbe, Mana falls vorhanden
+- [x] PT-HEAL-132 Fremder freundlicher Spieler als Ziel: Balken erscheint, Name in Klassenfarbe, Mana falls vorhanden
+  - ✅ VERIFIED 2026-11-21
+  - Owner: auf der Testseite mit „Geht“ bestätigt.
 - [ ] PT-HEAL-133 Gruppenmitglied (oder du selbst) als Ziel: Balken erscheint zusätzlich, beide Balken zeigen dasselbe
 - [x] PT-HEAL-134 Gegner als Ziel: kein Ziel-Balken; kein Ziel: kein Ziel-Balken, Fenster so kompakt wie vorher
   - ✅ VERIFIED 2026-10-04
   - Owner: bei einem Gegner als Ziel erscheint kein Ziel-Balken.
-- [ ] PT-HEAL-135 Totes freundliches Ziel: kein Ziel-Balken
+- [x] PT-HEAL-135 Totes freundliches Ziel: kein Ziel-Balken
+  - ✅ VERIFIED 2026-11-21
+  - Owner: auf der Testseite mit „Geht“ bestätigt.
 - [x] PT-HEAL-136 Ziel wechseln (freundlich → Gegner → freundlich) außerhalb des Kampfes: Balken und Höhe folgen sofort
   - ✅ VERIFIED 2026-10-04
   - Owner: das Wechseln (freundlich / Gegner / kein Ziel) außerhalb des Kampfes funktioniert.
@@ -297,7 +309,9 @@ Neu 2026-10-02: ein fester Secure-Balken für dein aktuelles Ziel direkt über d
 - [ ] PT-HEAL-140 Eigener HoT/Schild auf dem Ziel (z. B. Springflut / Erneuerung) erscheint mit Restzeit
 - [ ] PT-HEAL-141 Bannbarer Debuff auf dem Ziel erscheint als Icon (falls testbar)
 - [ ] PT-HEAL-142 Level: normale Zahl; Boss/unbekannt „??“
-- [ ] PT-HEAL-143 `/reload` mit freundlichem Ziel: Balken sofort richtig; Test Mode zeigt „Verwundeter Soldat · St. 42“
+- [x] PT-HEAL-143 `/reload` mit freundlichem Ziel: Balken sofort richtig; Test Mode zeigt „Verwundeter Soldat · St. 42“
+  - ✅ VERIFIED 2026-11-21
+  - Owner: auf der Testseite mit „Geht“ bestätigt.
 - [ ] PT-HEAL-144 Gruppengröße 1 / 3 / 5 jeweils mit und ohne Ziel: Höhe stimmt, kein Rahmen abgeschnitten
 - [ ] PT-HEAL-145 Einklappen: nur Header, auch mit Ziel; Ausklappen: alles wieder da
 - [ ] PT-HEAL-146 `taint.log` ohne PaTiHeal-Eintrag nach Zielwechseln im Kampf
@@ -307,13 +321,19 @@ Neu 2026-10-02: ein fester Secure-Balken für dein aktuelles Ziel direkt über d
   der farbige Streifen links (etwas breiter) gibt es nur noch beim Tank – Ziel und Tank sind klar zu unterscheiden
   - Owner 2026-10-18: Ziel und Tank sehen sich zu ähnlich → Akzentstreifen nur noch beim Tank
   - 🔧 FIX IMPLEMENTED 2026-10-18
-- [ ] PT-HEAL-149 Kein freundliches Ziel: keine Fläche, kein „ZIEL“, kein Leerraum über deinem Balken (solo und in der
+- [x] PT-HEAL-149 Kein freundliches Ziel: keine Fläche, kein „ZIEL“, kein Leerraum über deinem Balken (solo und in der
   Gruppe, auch nach `/reload`)
-- [ ] PT-HEAL-150 Test Mode: „Verwundeter Soldat · St. 42“ steht im abgesetzten Ziel-Bereich; Fenster nicht abgeschnitten
+  - ✅ VERIFIED 2026-11-21
+  - Owner: auf der Testseite mit „Geht“ bestätigt.
+- [x] PT-HEAL-150 Test Mode: „Verwundeter Soldat · St. 42“ steht im abgesetzten Ziel-Bereich; Fenster nicht abgeschnitten
+  - ✅ VERIFIED 2026-11-21
+  - Owner: auf der Testseite mit „Geht“ bestätigt.
 - [ ] PT-HEAL-151 Zielwechsel außerhalb und im Kampf mit der neuen Darstellung: Fläche kommt und geht mit dem Balken, kein
   Lua-Fehler, kein `ADDON_ACTION_BLOCKED`, Klickheilen auf das Ziel unverändert
-- [ ] PT-HEAL-152 Ziel-Bereich in allen drei Themes: Default subtil, WoForever warm mit Bronze-/Goldrahmen, Dracula dunkel
+- [x] PT-HEAL-152 Ziel-Bereich in allen drei Themes: Default subtil, WoForever warm mit Bronze-/Goldrahmen, Dracula dunkel
   mit Lila-Akzent; Abstand und Größe in allen Themes gleich
+  - ✅ VERIFIED 2026-11-21
+  - Owner: auf der Testseite mit „Geht“ bestätigt.
 - [x] PT-HEAL-174 Außerhalb des Kampfes: dich selbst anvisieren → keine Ziel-Zeile, keine Lücke über deiner Zeile,
   Fenster nicht höher; ein Mitglied oder freundlicher NPC als Ziel → Ziel-Zeile wie bisher
   - Owner 2026-11-07: sich selbst als Ziel anzuzeigen ergibt keinen Sinn
@@ -338,8 +358,10 @@ Neu 2026-10-02: ein fester Secure-Balken für dein aktuelles Ziel direkt über d
 
 ## Mana-Knopf
 
-- [ ] PT-HEAL-156 Knopf „Mana“ im Fensterkopf links neben •••; Tooltip zeigt Erklärung, dein Mana in % und das Makro;
+- [x] PT-HEAL-156 Knopf „Mana“ im Fensterkopf links neben •••; Tooltip zeigt Erklärung, dein Mana in % und das Makro;
   bei einer Klasse ohne Mana (Krieger, Schurke) kein Knopf; Einstellungen → Mana-Meldung → aus: Knopf weg
+  - ✅ VERIFIED 2026-11-21
+  - Owner: auf der Testseite mit „Geht“ bestätigt.
 - [x] PT-HEAL-157 In der Gruppe: ein Klick = genau eine Zeile im Gruppenchat („Mana 23 % – muss gleich trinken“);
   zweiter Klick innerhalb von 5 Sekunden sendet nichts; allein: Hinweis „keine Gruppe“, nichts gesendet
   - Owner 2026-10-17: Mana-Knopf funktioniert, Zeile kommt im Gruppenchat an; der Text soll internationaler werden
@@ -369,7 +391,9 @@ Neu 2026-10-02: ein fester Secure-Balken für dein aktuelles Ziel direkt über d
 
 ## Unabhängigkeit
 
-- [ ] PT-HEAL-100 Ohne PaTiAlerts und ohne PaTiAuras: unverändert, kein Lua-Fehler
+- [x] PT-HEAL-100 Ohne PaTiAlerts und ohne PaTiAuras: unverändert, kein Lua-Fehler
+  - ✅ VERIFIED 2026-11-21
+  - Owner: auf der Testseite mit „Geht“ bestätigt.
 
 ## Combat / Sicherheit
 
@@ -383,8 +407,12 @@ Neu 2026-10-02: ein fester Secure-Balken für dein aktuelles Ziel direkt über d
 
 ## Combined
 
-- [ ] PT-HEAL-120 Zusammen mit allen PaTi-Addons geladen: kein Lua-Fehler
+- [x] PT-HEAL-120 Zusammen mit allen PaTi-Addons geladen: kein Lua-Fehler
+  - ✅ VERIFIED 2026-11-21
+  - Owner: auf der Testseite mit „Geht“ bestätigt.
 - [x] PT-HEAL-121 Keine Slash-Command-Kollision: `/ph` und `/patiheal` antworten nur PaTiHeal
   - ✅ VERIFIED 2026-11-08
   - Owner: /patitest 2× grün in-game (vor und nach /reload, 42 ok, 0 Fehler; 7 PaTi-Addons installiert)
-- [ ] PT-HEAL-122 Eigene Einstellungen speichern nur PaTiHeal-Werte; Fenster erscheint in PaTiSuite
+- [x] PT-HEAL-122 Eigene Einstellungen speichern nur PaTiHeal-Werte; Fenster erscheint in PaTiSuite
+  - ✅ VERIFIED 2026-11-21
+  - Owner: auf der Testseite mit „Geht“ bestätigt.
