@@ -219,8 +219,11 @@ Jeweils: Zauber landet auf der angeklickten Einheit, das eigene Ziel ändert sic
 - [x] PT-HEAL-069 Rangwahl: gewählter Rang wird gezaubert (nicht immer der höchste)
   - ✅ VERIFIED 2026-11-10
   - Owner: Testseite „Geht“
-- [ ] PT-HEAL-070 Belegung umstellen (z. B. Strg+Links → Shift+Links): alte Kombination zaubert nichts mehr
-- [ ] PT-HEAL-071 Belegung im Kampf geändert → gilt nach dem Kampf
+- [ ] PT-HEAL-070 Belegung umstellen: Einstellungen → Klick-Heilung, einen Zauber von „Strg + Linksklick“ auf „Shift + Linksklick“ legen und Strg + Links leeren. Danach wirkt Shift + Linksklick auf deinen Balken den Zauber, Strg + Linksklick wirkt nichts mehr
+  - Owner 2026-11-21: auf der Testseite „Verstehe ich nicht“ → neu formuliert.
+- [x] PT-HEAL-071 Belegung im Kampf geändert → gilt nach dem Kampf
+  - ✅ VERIFIED 2026-11-21
+  - Owner: auf der Testseite mit „Geht“ bestätigt.
 - [x] PT-HEAL-072 Linksklick auf den eigenen Spielerframe führt den konfigurierten Heal aus
   - ✅ VERIFIED 2026-09-30
   - Nur Linksklick auf den eigenen Frame bestätigt (nicht party1–4, keine anderen Kombinationen).
@@ -228,11 +231,13 @@ Jeweils: Zauber landet auf der angeklickten Einheit, das eigene Ziel ändert sic
   - Owner 2026-10-14: in der Instanz mit Klick-Heilung Gruppenmitglieder geheilt
   - ✅ VERIFIED 2026-10-14
 
-- [ ] PT-HEAL-153 Einstellungen → Klick-Heilung: jede Zeile hat Icon, Namensfeld, Pfeil-Knopf und Rang; Zauber eintippen + Enter,
+- [x] PT-HEAL-153 Einstellungen → Klick-Heilung: jede Zeile hat Icon, Namensfeld, Pfeil-Knopf und Rang; Zauber eintippen + Enter,
   aus dem Zauberbuch ziehen oder über den Pfeil-Knopf auswählen; leeren + Enter entfernt die Belegung; Rang nur bei
   mehreren Rängen aktiv; der Klick auf einen Gruppenbalken wirkt danach genau diesen Zauber (außerhalb des Kampfs)
   - 🔧 FIX IMPLEMENTED 2026-10-07 (Owner-Wunsch: gleiche Zauber-Eingabe wie in PaTiRota/PaTiAuras)
   - MANUAL RETEST REQUIRED
+  - ✅ VERIFIED 2026-11-21
+  - Owner: auf der Testseite mit „Geht“ bestätigt.
 
 ## HoTs / Shields
 
@@ -265,6 +270,7 @@ Jeweils: erscheint nur bei eigenem Cast, Timer, Aufladungen (falls vorhanden), v
 - [ ] PT-HEAL-164 Ohne bekannten Reinigungszauber, mit „Bannbare Debuffs anzeigen“ aus oder im Testmodus: Icon-Bereich nicht
   klickbar (Klick heilt wie sonst auf dem Rahmen bzw. zeigt den Icon-Tooltip)
   - MANUAL RETEST REQUIRED
+  - Owner 2026-11-21: auf der Testseite „Kann ich nicht testen“ (ohne Grund).
 
 ## Heal-Ziel (Target-Balken)
 
@@ -305,22 +311,32 @@ Neu 2026-10-02: ein fester Secure-Balken für dein aktuelles Ziel direkt über d
 - [x] PT-HEAL-138 Linksklick auf den Ziel-Balken wirkt genau den Zauber der Linksklick-Belegung auf das Ziel
   - ✅ VERIFIED 2026-10-04
   - Owner: Linksklick auf den Ziel-Balken wirkt den Zauber der Linksklick-Belegung auf das freundliche Ziel.
-- [ ] PT-HEAL-139 Shift-/Strg-/Alt-Klicks auf dem Ziel-Balken: jeweils genau der belegte Zauber
+- [ ] PT-HEAL-139 Ein freundliches Ziel anklicken (z. B. einen anderen Spieler), damit oben der Ziel-Balken erscheint. Dann mit gedrückter Shift-, Strg- und Alt-Taste auf diesen Ziel-Balken klicken: jedes Mal kommt genau der Zauber, den du in Einstellungen → Klick-Heilung für diese Taste eingestellt hast
+  - Owner 2026-11-21: auf der Testseite „Verstehe ich nicht“ → neu formuliert.
 - [ ] PT-HEAL-140 Eigener HoT/Schild auf dem Ziel (z. B. Springflut / Erneuerung) erscheint mit Restzeit
 - [ ] PT-HEAL-141 Bannbarer Debuff auf dem Ziel erscheint als Icon (falls testbar)
-- [ ] PT-HEAL-142 Level: normale Zahl; Boss/unbekannt „??“
+  - Owner 2026-11-21: auf der Testseite „Kann ich nicht testen“ (ohne Grund).
+- [ ] PT-HEAL-142 Ziel-Balken, Stufe hinter dem Namen: bei einem normalen Spieler oder NPC steht seine Stufe (z. B. „· St. 12“); bei einem Boss oder einem viel höheren Ziel steht „??“
+  - Owner 2026-11-21: auf der Testseite „Verstehe ich nicht“ → neu formuliert.
 - [x] PT-HEAL-143 `/reload` mit freundlichem Ziel: Balken sofort richtig; Test Mode zeigt „Verwundeter Soldat · St. 42“
   - ✅ VERIFIED 2026-11-21
   - Owner: auf der Testseite mit „Geht“ bestätigt.
-- [ ] PT-HEAL-144 Gruppengröße 1 / 3 / 5 jeweils mit und ohne Ziel: Höhe stimmt, kein Rahmen abgeschnitten
-- [ ] PT-HEAL-145 Einklappen: nur Header, auch mit Ziel; Ausklappen: alles wieder da
-- [ ] PT-HEAL-146 `taint.log` ohne PaTiHeal-Eintrag nach Zielwechseln im Kampf
+- [ ] PT-HEAL-144 Fensterhöhe: allein, in einer 3er- und in einer 5er-Gruppe das PaTiHeal-Fenster je einmal ohne Ziel und einmal mit freundlichem Ziel anschauen – unten ist nichts abgeschnitten und kein großer leerer Platz
+  - Owner 2026-11-21: auf der Testseite „Verstehe ich nicht“ → neu formuliert.
+- [x] PT-HEAL-145 Einklappen: nur Header, auch mit Ziel; Ausklappen: alles wieder da
+  - ✅ VERIFIED 2026-11-21
+  - Owner: auf der Testseite mit „Geht“ bestätigt.
+- [x] PT-HEAL-146 `taint.log` ohne PaTiHeal-Eintrag nach Zielwechseln im Kampf
+  - ✅ VERIFIED 2026-11-21
+  - Owner: auf der Testseite mit „Geht“ bestätigt.
 - [ ] PT-HEAL-147 Ziel-Balken erzeugt keine PaTiAlerts-Meldung (bannbarer Debuff am NPC-Ziel)
-- [ ] PT-HEAL-148 Ziel-Balken wirkt als eigener Bereich: eigene Fläche mit Rahmen rundum, OHNE farbigen Streifen, „ZIEL“
+- [x] PT-HEAL-148 Ziel-Balken wirkt als eigener Bereich: eigene Fläche mit Rahmen rundum, OHNE farbigen Streifen, „ZIEL“
   in weißer Schrift, sichtbar größerer Abstand (12 px) zu deinem Balken; Name, Stufe, Leben, Mana, HoTs, Debuffs unverändert;
   der farbige Streifen links (etwas breiter) gibt es nur noch beim Tank – Ziel und Tank sind klar zu unterscheiden
   - Owner 2026-10-18: Ziel und Tank sehen sich zu ähnlich → Akzentstreifen nur noch beim Tank
   - 🔧 FIX IMPLEMENTED 2026-10-18
+  - ✅ VERIFIED 2026-11-21
+  - Owner: auf der Testseite mit „Geht“ bestätigt.
 - [x] PT-HEAL-149 Kein freundliches Ziel: keine Fläche, kein „ZIEL“, kein Leerraum über deinem Balken (solo und in der
   Gruppe, auch nach `/reload`)
   - ✅ VERIFIED 2026-11-21
@@ -328,8 +344,8 @@ Neu 2026-10-02: ein fester Secure-Balken für dein aktuelles Ziel direkt über d
 - [x] PT-HEAL-150 Test Mode: „Verwundeter Soldat · St. 42“ steht im abgesetzten Ziel-Bereich; Fenster nicht abgeschnitten
   - ✅ VERIFIED 2026-11-21
   - Owner: auf der Testseite mit „Geht“ bestätigt.
-- [ ] PT-HEAL-151 Zielwechsel außerhalb und im Kampf mit der neuen Darstellung: Fläche kommt und geht mit dem Balken, kein
-  Lua-Fehler, kein `ADDON_ACTION_BLOCKED`, Klickheilen auf das Ziel unverändert
+- [ ] PT-HEAL-151 Ziel wechseln (freundliches Ziel anklicken, dann ins Leere klicken), einmal außerhalb und einmal im Kampf: der Ziel-Bereich oben erscheint und verschwindet mit; keine rote Fehlermeldung; Klicks auf den Ziel-Balken heilen wie vorher
+  - Owner 2026-11-21: auf der Testseite „Verstehe ich nicht“ → neu formuliert.
 - [x] PT-HEAL-152 Ziel-Bereich in allen drei Themes: Default subtil, WoForever warm mit Bronze-/Goldrahmen, Dracula dunkel
   mit Lila-Akzent; Abstand und Größe in allen Themes gleich
   - ✅ VERIFIED 2026-11-21
@@ -368,12 +384,16 @@ Neu 2026-10-02: ein fester Secure-Balken für dein aktuelles Ziel direkt über d
     (PT-HEAL-169). 5-Sekunden-Sperre und „allein“ noch nicht getestet → offen
   - ✅ VERIFIED 2026-10-18
   - Owner: in der Abhak-Liste als „Geht“ markiert
-- [ ] PT-HEAL-158 Im Kampf klicken: Nachricht kommt an, kein Lua-Fehler, kein `ADDON_ACTION_BLOCKED`; Prozentzahl
-  steht drin (fehlt sie, ist dein Mana im Kampf nicht lesbar → bitte melden)
-- [ ] PT-HEAL-159 Unter der eingestellten Schwelle (Standard 30 %) leuchtet der Knopf orange, darüber nicht; „Nie“:
+- [ ] PT-HEAL-158 Im Kampf auf den Knopf „Mana“ oben im PaTiHeal-Fenster klicken: im Chat erscheint „Wenig Mana (xx %)“ mit deiner Zahl; keine rote Fehlermeldung. Fehlt die Zahl, bitte melden
+  - Owner 2026-11-21: auf der Testseite „Verstehe ich nicht“ → neu formuliert.
+- [x] PT-HEAL-159 Unter der eingestellten Schwelle (Standard 30 %) leuchtet der Knopf orange, darüber nicht; „Nie“:
   leuchtet nie; er sendet nie von selbst
-- [ ] PT-HEAL-160 Makro `/click PaTiHealManaButton` auf einer Taste: sendet wie der Klick; `/ph test`: Knopf leuchtet,
+  - ✅ VERIFIED 2026-11-21
+  - Owner: auf der Testseite mit „Geht“ bestätigt.
+- [x] PT-HEAL-160 Makro `/click PaTiHealManaButton` auf einer Taste: sendet wie der Klick; `/ph test`: Knopf leuchtet,
   Klick schreibt nur in deinen Chat („Testmodus, nichts gesendet“)
+  - ✅ VERIFIED 2026-11-21
+  - Owner: auf der Testseite mit „Geht“ bestätigt.
 - [x] PT-HEAL-169 Mana-Meldung auf Englisch („Mana 23% – I need to drink soon“), auch mit deutscher Oberfläche;
   Einstellungen → Mana-Meldung → Sprache der Meldung → „Wie die Oberfläche“: wieder deutsch; bleibt nach `/reload`
   - Owner 2026-10-17: Mana-Meldung „internationaler machen“
@@ -401,9 +421,13 @@ Neu 2026-10-02: ein fester Secure-Balken für dein aktuelles Ziel direkt über d
   - ✅ VERIFIED 2026-10-14 (Owner: Instanz mit Klick-Heilung)
 - [x] PT-HEAL-111 Keine `ADDON_ACTION_BLOCKED` / `ADDON_ACTION_FORBIDDEN`
   - ✅ VERIFIED 2026-10-14 (Owner: Instanz mit Klick-Heilung)
-- [ ] PT-HEAL-112 `taint.log` (`/console taintLog 1`) ohne PaTiHeal-Eintrag
-- [ ] PT-HEAL-113 Im Kampf gesperrt mit Hinweis: Ausblenden, Collapse, Test Mode, Position zurücksetzen
+- [x] PT-HEAL-112 `taint.log` (`/console taintLog 1`) ohne PaTiHeal-Eintrag
+  - ✅ VERIFIED 2026-11-21
+  - Owner: auf der Testseite mit „Geht“ bestätigt.
+- [x] PT-HEAL-113 Im Kampf gesperrt mit Hinweis: Ausblenden, Collapse, Test Mode, Position zurücksetzen
   (Menüeinträge ausgegraut)
+  - ✅ VERIFIED 2026-11-21
+  - Owner: auf der Testseite mit „Geht“ bestätigt.
 
 ## Combined
 
